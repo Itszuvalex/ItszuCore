@@ -18,7 +18,7 @@
  *  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *  *****************************************************************************
  */
-package com.itszuvalex.itszucore.api.configuration
+package com.itszuvalex.itszucore.configuration
 
 import java.lang.reflect.Field
 import java.util.regex.Pattern
@@ -26,7 +26,7 @@ import java.util.regex.Pattern
 import com.google.common.collect.HashBiMap
 import com.itszuvalex.itszucore.ItszuCore
 import com.itszuvalex.itszucore.api.core.Configurable
-import com.itszuvalex.itszucore.api.implicits.ItemStackImplicits._
+import com.itszuvalex.itszucore.implicits.ItemStackImplicits._
 import net.minecraft.item.ItemStack
 import net.minecraftforge.common.config.Configuration
 import org.apache.logging.log4j.Level

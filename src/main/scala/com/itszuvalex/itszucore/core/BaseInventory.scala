@@ -18,12 +18,13 @@
  *  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *  *****************************************************************************
  */
-package com.itszuvalex.itszucore.api.core
+package com.itszuvalex.itszucore.core
 
 import java.util
 
-import com.itszuvalex.itszucore.api.util.DataUtils
-import com.itszuvalex.itszucore.api.util.DataUtils.EnumSaveType
+import com.itszuvalex.itszucore.api.core.{NBTSerializable, Saveable}
+import com.itszuvalex.itszucore.util.DataUtils
+import com.itszuvalex.itszucore.util.DataUtils.EnumSaveType
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.inventory.{Container, IInventory}
 import net.minecraft.item.ItemStack

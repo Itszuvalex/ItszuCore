@@ -2,7 +2,7 @@ package com.itszuvalex.itszucore.core.traits.block
 
 import java.util.Random
 
-import com.itszuvalex.itszucore.api.util.InventoryUtils
+import com.itszuvalex.itszucore.util.InventoryUtils
 import net.minecraft.block.Block
 import net.minecraft.inventory.IInventory
 import net.minecraft.world.World

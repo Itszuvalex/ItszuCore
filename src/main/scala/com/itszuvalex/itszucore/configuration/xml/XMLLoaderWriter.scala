@@ -1,4 +1,4 @@
-package com.itszuvalex.itszucore.api.configuration.xml
+package com.itszuvalex.itszucore.configuration.xml
 
 import java.io.File
 

@@ -1,4 +1,4 @@
-package com.itszuvalex.itszucore.api.implicits
+package com.itszuvalex.itszucore.implicits
 
 /**
  * Created by Christopher Harris (Itszuvalex) on 3/27/15.

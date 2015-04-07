@@ -1,6 +1,6 @@
-package com.itszuvalex.itszucore.api.implicits
+package com.itszuvalex.itszucore.implicits
 
-import com.itszuvalex.itszucore.api.util.StringUtils
+import com.itszuvalex.itszucore.util.StringUtils
 import net.minecraft.item.ItemStack
 import net.minecraftforge.oredict.OreDictionary
 

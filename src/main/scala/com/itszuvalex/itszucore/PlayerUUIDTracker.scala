@@ -3,7 +3,7 @@ package com.itszuvalex.itszucore
 import java.io.File
 import java.util.UUID
 
-import com.itszuvalex.itszucore.api.configuration.xml.XMLLoaderWriter
+import com.itszuvalex.itszucore.configuration.xml.XMLLoaderWriter
 
 import scala.collection.mutable
 

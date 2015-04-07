@@ -4,13 +4,14 @@ import cpw.mods.fml.common.event.FMLInterModComms
 import org.apache.logging.log4j.Level
 
 import scala.collection.JavaConversions._
+import scala.collection.mutable
 
 /**
  * Created by Christopher Harris (Itszuvalex) on 4/6/15.
  */
 object InterModComms {
   final val KEY_GREETING = "GREETING"
-  final val mods         = Set[String]()
+  final val mods         = new mutable.HashSet[String]()
 
   def imcCallback(event: FMLInterModComms.IMCEvent) {
     event.getMessages.foreach { message =>
@@ -29,6 +30,7 @@ object InterModComms {
 
 
   private def onGreeting(modID: String, talkBack: String): Unit = {
+    mods += modID
     ItszuCore.logger.log(Level.INFO, talkBack)
   }
 }

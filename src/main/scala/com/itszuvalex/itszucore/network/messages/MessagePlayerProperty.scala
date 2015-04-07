@@ -3,7 +3,7 @@ package com.itszuvalex.itszucore.network.messages
 import java.io.{ByteArrayInputStream, IOException}
 
 import com.itszuvalex.itszucore.ItszuCore
-import com.itszuvalex.itszucore.api.util.PlayerUtils
+import com.itszuvalex.itszucore.util.PlayerUtils
 import com.itszuvalex.itszucore.player.PlayerProperties
 import cpw.mods.fml.common.network.simpleimpl.{IMessage, IMessageHandler, MessageContext}
 import io.netty.buffer.ByteBuf

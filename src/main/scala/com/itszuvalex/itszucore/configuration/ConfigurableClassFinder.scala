@@ -1,4 +1,4 @@
-package com.itszuvalex.itszucore.api.configuration
+package com.itszuvalex.itszucore.configuration
 
 import com.google.common.reflect.ClassPath
 import com.itszuvalex.itszucore.ItszuCore

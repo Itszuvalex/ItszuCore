@@ -1,4 +1,4 @@
-package com.itszuvalex.itszucore.api.implicits
+package com.itszuvalex.itszucore.implicits
 
 import net.minecraft.block.Block
 import net.minecraft.item.{Item, ItemStack}

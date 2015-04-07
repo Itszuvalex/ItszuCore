@@ -19,10 +19,10 @@
  *  *****************************************************************************
  */
 
-package com.itszuvalex.itszucore.api.command;
+package com.itszuvalex.itszucore.command;
 
 import com.itszuvalex.itszucore.ItszuCore;
-import com.itszuvalex.itszucore.api.util.PlayerUtils;
+import com.itszuvalex.itszucore.util.PlayerUtils;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;

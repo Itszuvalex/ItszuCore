@@ -1,4 +1,4 @@
-package com.itszuvalex.itszucore.api.util
+package com.itszuvalex.itszucore.util
 
 /**
  * Created by Christopher Harris (Itszuvalex) on 4/6/15.

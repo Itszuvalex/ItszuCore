@@ -19,7 +19,7 @@
  *  *****************************************************************************
  */
 
-package com.itszuvalex.itszucore.api.util;
+package com.itszuvalex.itszucore.util;
 
 import com.itszuvalex.itszucore.ItszuCore;
 import com.itszuvalex.itszucore.PlayerUUIDTracker;

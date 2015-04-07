@@ -1,4 +1,4 @@
-package com.itszuvalex.itszucore.api.util
+package com.itszuvalex.itszucore.util
 
 import java.util.regex.{Matcher, Pattern}
 

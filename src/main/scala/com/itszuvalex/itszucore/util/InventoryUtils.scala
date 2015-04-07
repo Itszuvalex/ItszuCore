@@ -1,9 +1,9 @@
-package com.itszuvalex.itszucore.api.util
+package com.itszuvalex.itszucore.util
 
 import java.util
 import java.util.Random
 
-import com.itszuvalex.itszucore.api.implicits.IDImplicits._
+import com.itszuvalex.itszucore.implicits.IDImplicits._
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound

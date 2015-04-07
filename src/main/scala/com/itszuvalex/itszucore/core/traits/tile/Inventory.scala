@@ -1,7 +1,7 @@
 package com.itszuvalex.itszucore.core.traits.tile
 
-import com.itszuvalex.itszucore.api.core.{BaseInventory, Saveable}
-import com.itszuvalex.itszucore.core.TileEntityBase
+import com.itszuvalex.itszucore.api.core.Saveable
+import com.itszuvalex.itszucore.core.{BaseInventory, TileEntityBase}
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.inventory.ISidedInventory
 import net.minecraft.item.ItemStack

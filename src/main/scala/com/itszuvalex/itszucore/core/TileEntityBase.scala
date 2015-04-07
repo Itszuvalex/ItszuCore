@@ -21,7 +21,7 @@
 package com.itszuvalex.itszucore.core
 
 import com.itszuvalex.itszucore.api.core.Loc4
-import com.itszuvalex.itszucore.api.util.DataUtils
+import com.itszuvalex.itszucore.util.DataUtils
 import com.itszuvalex.itszucore.core.traits.tile.DescriptionPacket
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
