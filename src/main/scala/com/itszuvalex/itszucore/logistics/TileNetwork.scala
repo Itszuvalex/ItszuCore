@@ -44,8 +44,8 @@ abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]](val id:
   override def addNode(node: C): Unit = {
     if (!canAddNode(node)) return
     getNodes.filter(_.canConnect(node.getLoc)).foreach(n => {
-      node.onConnectionAdd(node.getLoc)
-      n.onConnectionAdd(n.getLoc)
+      node.onConnectionAdd(n.getLoc)
+      n.onConnectionAdd(node.getLoc)
     })
     nodeMap(node.getLoc) = node
     node.onAdd(this)
@@ -83,7 +83,10 @@ abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]](val id:
     val connections = node.getConnections
     node.onRemove(this)
     nodeMap.remove(node.getLoc)
-    getNodes.filter(_.getConnections.contains(node.getLoc)).foreach(_.onConnectionRemove(node.getLoc))
+    (connections.map(_.getTileEntity())
+     .collect { case Some(a) if a.isInstanceOf[C] => a.asInstanceOf[C]}
+     ++ getNodes.filter(_.getConnections.contains(node.getLoc))
+      ).foreach(_.onConnectionRemove(node.getLoc))
     split(node, connections)
   }
 
