@@ -37,7 +37,7 @@ import org.apache.logging.log4j.Level
 import scala.collection.JavaConversions._
 
 object PlayerProperties {
-  val PROP_TAG = "femtocraft.player.properties"
+  val PROP_TAG = "itszucore.player.properties"
   private val propertiesClasses = new util.TreeMap[String, Class[_ <: IPlayerProperty]]
 
   def registerPlayerProperty(name: String, propertyClass: Class[_ <: IPlayerProperty]): Boolean = {
