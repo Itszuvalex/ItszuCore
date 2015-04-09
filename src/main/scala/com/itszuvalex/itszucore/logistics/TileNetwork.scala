@@ -157,10 +157,7 @@ abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]](val id:
 
   override def addNode(node: C): Unit = {
     if (!(canAddNode(node) && node.canAdd(this))) return
-    getNodes.filter { a => a.canConnect(node.getLoc) && node.canConnect(a.getLoc)}.foreach(n => {
-      node.connect(n.getLoc)
-      n.connect(node.getLoc)
-    })
+    getNodes.filter { a => a.canConnect(node.getLoc) && node.canConnect(a.getLoc)}.foreach(n => addConnection(n.getLoc, node.getLoc))
     addNodeSilently(node)
     node.added(this)
   }
