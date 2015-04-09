@@ -22,6 +22,7 @@ package com.itszuvalex.itszucore.api.core
 
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.tileentity.TileEntity
+import net.minecraft.world.chunk.Chunk
 import net.minecraftforge.common.DimensionManager
 import net.minecraftforge.common.util.ForgeDirection
 
@@ -58,6 +59,20 @@ case class Loc4(var x: Int, var y: Int, var z: Int, var dim: Int) extends NBTSer
   def getBlock(force: Boolean = false) = getWorld match {
     case Some(a) => Option(if (a.blockExists(x, y, z) || force) a.getBlock(x, y, z) else null)
     case None => None
+  }
+
+  def getChunk(force: Boolean = false) = getWorld match {
+    case Some(a) => Option(if (a.blockExists(x, y, z) || force) a.getChunkFromBlockCoords(x, z) else null)
+    case None => None
+  }
+
+  def chunkContains(chunk: Chunk): Boolean = {
+    if (chunk.worldObj.provider.dimensionId != dim) false
+    else if (x <= chunk.xPosition) false
+    else if (x > chunk.xPosition + 16) false
+    else if (z <= chunk.zPosition) false
+    else if (z > chunk.zPosition + 16) false
+    else true
   }
 
   def getOffset(dir: ForgeDirection, distance: Int = 1): Loc4 = getOffset(distance * dir.offsetX,

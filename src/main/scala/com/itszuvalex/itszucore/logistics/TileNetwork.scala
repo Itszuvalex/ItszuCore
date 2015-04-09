@@ -1,8 +1,10 @@
 package com.itszuvalex.itszucore.logistics
 
+import java.util
 import java.util.concurrent.ConcurrentHashMap
 
 import com.itszuvalex.itszucore.api.core.Loc4
+import com.itszuvalex.itszucore.logistics.TileNetwork._
 
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
@@ -15,17 +17,17 @@ import scala.collection.immutable.HashSet
 object TileNetwork {
 
   object NetworkExplorer {
-    def explore[N <: TileNetwork[_, N]](start: Loc4): HashSet[Loc4] = {
-      immutable.HashSet[Loc4]() ++ expandLoc[N](start, mutable.HashSet[Loc4]())
+    def explore[N <: TileNetwork[_, N]](start: Loc4, network: N): HashSet[Loc4] = {
+      immutable.HashSet[Loc4]() ++ expandLoc[N](start, network, mutable.HashSet[Loc4]())
     }
 
-    private def expandLoc[N <: TileNetwork[_, N]](node: Loc4, explored: mutable.HashSet[Loc4]): mutable.HashSet[Loc4] = {
+    private def expandLoc[N <: TileNetwork[_, N]](node: Loc4, network: N, explored: mutable.HashSet[Loc4]): mutable.HashSet[Loc4] = {
       node.getTileEntity() match {
         case Some(c) =>
           c match {
             case a: INetworkNode[N] if !explored.contains(a.getLoc) =>
               explored += node
-              a.getConnections.foreach(expandLoc(_, explored))
+              network.getConnections(a.getLoc).getOrElse(return explored).foreach(expandLoc(_, network, explored))
             case _ =>
           }
         case None =>
@@ -41,14 +43,130 @@ object TileNetwork {
 abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]](val id: Int) extends INetwork[C, N] {
   def nodeMap = new ConcurrentHashMap[Loc4, C]().asScala
 
+  def connectionMap = mutable.HashMap[Loc4, mutable.HashSet[Loc4]]()
+
+  override def addConnection(a: Loc4, b: Loc4): Unit = {
+    addConnectionSilently(a, b)
+    (a.getTileEntity().get, b.getTileEntity().get) match {
+      case (nodeA: INetworkNode[N], nodeB: INetworkNode[N]) =>
+        nodeA.connect(b)
+        nodeB.connect(a)
+      case _ =>
+    }
+  }
+
+  private def addConnectionSilently(a: Loc4, b: Loc4): Unit =
+    connectionMap.synchronized {
+                                 connectionMap.getOrElseUpdate(a, mutable.HashSet[Loc4]()) += b
+                                 connectionMap.getOrElseUpdate(b, mutable.HashSet[Loc4]()) += a
+
+                               }
+
+
+  override def canConnect(a: Loc4, b: Loc4): Boolean = (a.getTileEntity().get, b.getTileEntity().get) match {
+    case (nodeA: INetworkNode[N], nodeB: INetworkNode[N]) => nodeA.canConnect(b) && nodeB.canConnect(a)
+    case _ => false
+  }
+
+  override def getConnections: util.Map[Loc4, util.Set[Loc4]] = connectionMap.map { case (k, v) => k -> v.asJava}.asJava
+
+  /**
+   * Removes all nodes in nodes from the network.
+   * Use this method for mass-removal, for instance in chunk unloading instances, to prevent creating multiple sub-networks redundantly.
+   *
+   * @param nodes
+   */
+  override def removeNodes(nodes: util.Collection[C]): Unit = {
+    //Map nodes to locations
+    val nodeLocs = HashSet() ++ nodes.map(_.getLoc)
+    //Find all edges.  These are the set of locations that are connected to nodeLocs, that aren't nodeLocs themselves.
+    val edges = nodes.flatMap(a => getConnections(a.getLoc)).flatten.toSet -- nodeLocs
+    //Removal all edges that touch nodeLocs.
+    nodeLocs.foreach { a =>
+      getConnections(a).getOrElse(Set()).foreach(removeConnection(a, _))
+                     }
+    split(edges)
+  }
+
+  /**
+   *
+   * Called when a node is removed from the network.  Maps all out all sub-networks created by the split, creates and registers them, and informs nodes.
+   *
+   * @param edges All nodes that were connected to all nodes that were removed.
+   */
+  override def split(edges: util.Set[Loc4]): Unit = {
+    val workingSet = mutable.HashSet() ++= edges
+    val networks = mutable.ArrayBuffer[util.Collection[Loc4]]()
+    while (workingSet.size > 0) {
+      val first = workingSet.head
+      val nodes = NetworkExplorer.explore(first, this)
+      networks += nodes
+      workingSet --= nodes.union(workingSet)
+    }
+
+    //Get here, so we don't rebuild the java collection multiple times
+    val connections = getConnections
+
+    networks.foreach { collect =>
+      val nodes = collect.map(_.getTileEntity().get).collect { case a: C => a.asInstanceOf[C]}.asJavaCollection
+      val edges = connections.filter { case (loc, set) => collect.contains(loc)}
+      val network = create(nodes, edges)
+      network.onSplit(this)
+      network.register()
+                     }
+    nodeMap.clear()
+    connectionMap.clear()
+    unregister()
+  }
+
+  /**
+   *
+   * Called when a node is added to the network.  Sets ownership of all of its nodes to this one, takes over connections.
+   *
+   * @param iNetwork Network that this network is taking over.
+   */
+  override def merge[V <: N](iNetwork: V): Unit = {
+
+  }
+
+  override def removeConnection(a: Loc4, b: Loc4): Unit = {
+    removeConnectionSilently(a, b)
+    (a.getTileEntity().get, b.getTileEntity().get) match {
+      case (nodeA: INetworkNode[N], nodeB: INetworkNode[N]) =>
+        nodeA.disconnect(b)
+        nodeB.disconnect(a)
+      case _ =>
+    }
+  }
+
+  private def removeConnectionSilently(a: Loc4, b: Loc4): Unit =
+    connectionMap.synchronized {
+                                 val setA = connectionMap.getOrElse(a, return)
+                                 setA -= b
+                                 if (setA.size == 0) connectionMap.remove(a)
+                                 val setB = connectionMap.getOrElse(b, return)
+                                 setB -= a
+                                 if (setB.size == 0) connectionMap.remove(b)
+                               }
+
+
+  def getConnections(a: Loc4): Option[mutable.HashSet[Loc4]] =
+    connectionMap.synchronized {
+                                 connectionMap.get(a)
+                               }
+
   override def addNode(node: C): Unit = {
-    if (!canAddNode(node)) return
-    getNodes.filter(_.canConnect(node.getLoc)).foreach(n => {
-      node.onConnectionAdd(n.getLoc)
-      n.onConnectionAdd(node.getLoc)
+    if (!(canAddNode(node) && node.canAdd(this))) return
+    getNodes.filter { a => a.canConnect(node.getLoc) && node.canConnect(a.getLoc)}.foreach(n => {
+      node.connect(n.getLoc)
+      n.connect(node.getLoc)
     })
+    addNodeSilently(node)
+    node.added(this)
+  }
+
+  def addNodeSilently(node: C): Unit = {
     nodeMap(node.getLoc) = node
-    node.onAdd(this)
   }
 
   override def ID = id
@@ -60,36 +178,10 @@ abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]](val id:
   }
 
   override def refresh(): Unit = {
-    //    val nodes = getNodes
-    //    nodeMap.clear()
     getNodes.foreach(_.refresh())
-    //    if (getNodes.size() == 0) {
-    //      ManagerNetwork.removeNetwork(this)
-    //    }
   }
 
-  override def merge(iNetwork: INetwork[C, N]): Unit = {
-    val nodes = iNetwork.getNodes
-    iNetwork.clear()
-    iNetwork.refresh()
-    nodes.foreach(addNode)
-  }
-
-  override def split(pivot: C, connections: HashSet[Loc4]): Unit = {
-
-  }
-
-  override def removeNode(node: C) = {
-    val connections = node.getConnections
-    node.onRemove(this)
-    nodeMap.remove(node.getLoc)
-    (connections.map(_.getTileEntity())
-     .collect { case Some(a) if a.isInstanceOf[C] => a.asInstanceOf[C]}
-     ++ getNodes.filter(_.getConnections.contains(node.getLoc))
-      ).foreach(_.onConnectionRemove(node.getLoc))
-    split(node, connections)
-  }
-
+  override def removeNode(node: C) = removeNodes(List(node))
 
   override def getNodes = nodeMap.values.asJavaCollection
 
@@ -98,4 +190,17 @@ abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]](val id:
   override def register() = ManagerNetwork.addNetwork(this)
 
   override def unregister(): Unit = ManagerNetwork.removeNetwork(this)
+
+  /**
+   *
+   * @param nodes Nodes to make a new network out of
+   * @param edges Edges to include in the network.
+   * @return Create a new network of this type from the given collection of nodes.
+   */
+  override def create(nodes: util.Collection[C], edges: util.Map[Loc4, util.Set[Loc4]]): N = {
+    val t = create()
+    nodes.foreach(n => {t.addNodeSilently(n); n.setNetwork(t)})
+    edges.foreach { case (loc, set) => set.foreach(t.addConnectionSilently(loc, _))}
+    t
+  }
 }
