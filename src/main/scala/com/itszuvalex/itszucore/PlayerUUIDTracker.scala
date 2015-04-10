@@ -4,6 +4,9 @@ import java.io.File
 import java.util.UUID
 
 import com.itszuvalex.itszucore.configuration.xml.XMLLoaderWriter
+import cpw.mods.fml.common.FMLCommonHandler
+import cpw.mods.fml.common.eventhandler.SubscribeEvent
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent
 
 import scala.collection.mutable
 
@@ -12,6 +15,10 @@ import scala.collection.mutable
  */
 object PlayerUUIDTracker {
   private var xml: XMLLoaderWriter = null
+
+  def init(): Unit = {
+    FMLCommonHandler.instance().bus().register(this)
+  }
 
   def setFile(file: File): Unit = {
     xml = new XMLLoaderWriter(file)
@@ -47,4 +54,8 @@ object PlayerUUIDTracker {
     (xml.xml \ "Mapping").foreach(node => try addMapping(UUID.fromString(node \@ "uuid"), node \@ "username") catch {case _: Throwable =>})
   }
 
+  @SubscribeEvent
+  def onPlayerLogin(event: PlayerLoggedInEvent) = {
+    addMapping(event.player.getUniqueID, event.player.getCommandSenderName)
+  }
 }

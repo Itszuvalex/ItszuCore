@@ -1,9 +1,10 @@
 package com.itszuvalex.itszucore
 
 import com.itszuvalex.itszucore.network.PacketHandler
-import cpw.mods.fml.common.Mod
+import com.itszuvalex.itszucore.proxy.ProxyCommon
 import cpw.mods.fml.common.Mod.EventHandler
 import cpw.mods.fml.common.event.{FMLInitializationEvent, FMLInterModComms, FMLPostInitializationEvent, FMLPreInitializationEvent}
+import cpw.mods.fml.common.{Mod, SidedProxy}
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -15,8 +16,14 @@ object ItszuCore {
   final val VERSION = Version.FULL_VERSION
   final val logger  = LogManager.getLogger(ID)
 
+  @SidedProxy(clientSide = "com.itszuvalex.itszucore.proxy.ProxyClient",
+              serverSide = "com.itszuvalex.itszucore.proxy.ProxyServer")
+  var proxy: ProxyCommon = null
+
   @EventHandler def preInit(event: FMLPreInitializationEvent): Unit = {
     PacketHandler.init()
+    PlayerUUIDTracker.init()
+    proxy.init()
   }
 
   @EventHandler def load(event: FMLInitializationEvent): Unit = {

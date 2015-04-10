@@ -8,7 +8,7 @@ import com.itszuvalex.itszucore.api.core.Loc4
  * Created by Christopher on 4/5/2015.
  */
 
-trait INetwork[C, N <: INetwork[C, N]] {
+trait INetwork[C <: INetworkNode[N], N <: INetwork[C, N]] {
 
   /**
    *
@@ -36,7 +36,20 @@ trait INetwork[C, N <: INetwork[C, N]] {
    */
   def getNodes: util.Collection[INetworkNode[N]]
 
+  /**
+   * Helper function for getting connections in an easy to parse manner.
+   * Connections, due to how its formatted.
+   *
+   * @return All connections, mapped by location.
+   */
   def getConnections: util.Map[Loc4, util.Set[Loc4]]
+
+  /**
+   * Helper function for getting edges in an easy to parse manner.
+   *
+   * @return Tuple of all edge pairs.
+   */
+  def getEdges: util.Set[(Loc4, Loc4)]
 
   def canConnect(a: Loc4, b: Loc4): Boolean
 
