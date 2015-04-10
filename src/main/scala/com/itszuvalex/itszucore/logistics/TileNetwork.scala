@@ -70,7 +70,7 @@ abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]]() exten
     case _ => false
   }
 
-  override def getConnections: util.Map[Loc4, util.Set[Loc4]] = connectionMap.map { case (k, v) => k -> v.asJava }.asJava
+  override def getConnections: util.Map[Loc4, util.Set[Loc4]] = connectionMap.map { case (k, v) => k -> v.asJava}.asJava
 
   /**
    * Removes all nodes in nodes from the network.
@@ -110,10 +110,9 @@ abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]]() exten
     val connections = getConnections
 
     networks.foreach { collect =>
-      val nodes = collect.map(_.getTileEntity().get).collect { case a if a.isInstanceOf[INetworkNode[N]] => a.asInstanceOf[INetworkNode[N]] }.asJavaCollection
-      val edges = mutable.HashMap[Loc4, mutable.HashSet[Loc4]]()
-      connections.foreach { case (loc, set) if collect.contains(loc) => edges.getOrElseUpdate(loc, mutable.HashSet[Loc4]()) ++= connections.get(loc).filter(collect.contains(_)) }
-      val network = create(nodes, edges.map { case (k, v) => k -> v.asJava }.asJava)
+      val nodes = collect.map(_.getTileEntity().get).collect { case a if a.isInstanceOf[INetworkNode[N]] => a.asInstanceOf[INetworkNode[N]]}.asJavaCollection
+      val edges = connections.map { case (loc, set) if collect.contains(loc) => set.filter(collect.contains).map(loc ->)}.flatten.toSet
+      val network = create(nodes, edges)
       network.onSplit(this)
       network.register()
                      }
@@ -160,7 +159,7 @@ abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]]() exten
 
   override def addNode(node: INetworkNode[N]): Unit = {
     if (!(canAddNode(node) && node.canAdd(this))) return
-    getNodes.filter { a => a.canConnect(node.getLoc) && node.canConnect(a.getLoc) }.foreach(n => addConnection(n.getLoc, node.getLoc))
+    getNodes.filter { a => a.canConnect(node.getLoc) && node.canConnect(a.getLoc)}.foreach(n => addConnection(n.getLoc, node.getLoc))
     addNodeSilently(node)
     node.added(this)
   }
@@ -197,10 +196,10 @@ abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]]() exten
    * @param edges Edges to include in the network.
    * @return Create a new network of this type from the given collection of nodes.
    */
-  override def create(nodes: util.Collection[INetworkNode[N]], edges: util.Map[Loc4, util.Set[Loc4]]): N = {
+  override def create(nodes: util.Collection[INetworkNode[N]], edges: util.Set[(Loc4, Loc4)]): N = {
     val t = create()
     nodes.foreach(n => {t.addNodeSilently(n); n.setNetwork(t)})
-    edges.foreach { case (loc, set) => set.foreach(t.addConnectionSilently(loc, _)) }
+    edges.foreach(a => t.addConnectionSilently(a._1, a._2))
     t
   }
 }

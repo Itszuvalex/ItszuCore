@@ -3,7 +3,6 @@ package com.itszuvalex.itszucore.logistics
 import java.util
 
 import com.itszuvalex.itszucore.api.core.Loc4
-import io.netty.buffer.ByteBuf
 
 /**
  * Created by Christopher on 4/5/2015.
@@ -29,7 +28,7 @@ trait INetwork[C, N <: INetwork[C, N]] {
    * @param edges Edges to include in the network.
    * @return Create a new network of this type from the given collection of nodes.
    */
-  def create(nodes: util.Collection[INetworkNode[N]], edges: util.Map[Loc4, util.Set[Loc4]]): N
+  def create(nodes: util.Collection[INetworkNode[N]], edges: util.Set[(Loc4, Loc4)]): N
 
   /**
    *
@@ -125,20 +124,20 @@ trait INetwork[C, N <: INetwork[C, N]] {
    *
    * @param iNetwork Network that this network is taking over.
    */
-  def merge(iNetwork: INetwork[C,N]): Unit
+  def merge(iNetwork: INetwork[C, N]): Unit
 
   /**
    * Called on networks by another network, when that network is incorporating this network.
    *
    * @param iNetwork Network that is taking over this network.
    */
-  def onTakeover(iNetwork: INetwork[C,N]): Unit
+  def onTakeover(iNetwork: INetwork[C, N]): Unit
 
   /**
    * Called on sub networks by a main network, when that network is splitting apart.
    *
    * @param iNetwork Network that will split into this sub network.
    */
-  def onSplit(iNetwork: INetwork[C,N]): Unit
+  def onSplit(iNetwork: INetwork[C, N]): Unit
 
 }
