@@ -9,7 +9,7 @@ import io.netty.buffer.ByteBuf
  * Created by Christopher on 4/5/2015.
  */
 
-trait INetwork[C <: INetworkNode[T], T <: INetwork[C, T]] {
+trait INetwork[C, N <: INetwork[C, N]] {
 
   /**
    *
@@ -21,7 +21,7 @@ trait INetwork[C <: INetworkNode[T], T <: INetwork[C, T]] {
    *
    * @return Create an empty new network of this type.
    */
-  def create(): T
+  def create(): N
 
   /**
    *
@@ -29,13 +29,13 @@ trait INetwork[C <: INetworkNode[T], T <: INetwork[C, T]] {
    * @param edges Edges to include in the network.
    * @return Create a new network of this type from the given collection of nodes.
    */
-  def create(nodes: util.Collection[C], edges: util.Map[Loc4, util.Set[Loc4]]): T
+  def create(nodes: util.Collection[INetworkNode[N]], edges: util.Map[Loc4, util.Set[Loc4]]): N
 
   /**
    *
    * @return All nodes in this network.
    */
-  def getNodes: util.Collection[C]
+  def getNodes: util.Collection[INetworkNode[N]]
 
   def getConnections: util.Map[Loc4, util.Set[Loc4]]
 
@@ -51,21 +51,21 @@ trait INetwork[C <: INetworkNode[T], T <: INetwork[C, T]] {
    *
    * @param node Node to add.
    */
-  def addNode(node: C): Unit
+  def addNode(node: INetworkNode[N]): Unit
 
   /**
    *
    * @param node Node to be added.
    * @return true if this node can be added to the network.
    */
-  def canAddNode(node: C): Boolean
+  def canAddNode(node: INetworkNode[N]): Boolean
 
   /**
    * Removes a node from the network.  Informs the node of its being removed.  Informs all other nodes that this node is being removed.
    *
    * @param node
    */
-  def removeNode(node: C): Unit
+  def removeNode(node: INetworkNode[N]): Unit
 
   /**
    * Removes all nodes in nodes from the network.
@@ -73,7 +73,7 @@ trait INetwork[C <: INetworkNode[T], T <: INetwork[C, T]] {
    *
    * @param nodes
    */
-  def removeNodes(nodes: util.Collection[C]): Unit
+  def removeNodes(nodes: util.Collection[INetworkNode[N]]): Unit
 
   /**
    * Simply remove all nodes from the network.  Does not inform them.
@@ -125,30 +125,20 @@ trait INetwork[C <: INetworkNode[T], T <: INetwork[C, T]] {
    *
    * @param iNetwork Network that this network is taking over.
    */
-  def merge[V <: T](iNetwork: V): Unit
+  def merge(iNetwork: INetwork[C,N]): Unit
 
   /**
    * Called on networks by another network, when that network is incorporating this network.
    *
    * @param iNetwork Network that is taking over this network.
-   * @tparam V
    */
-  def onTakeover[V <: T](iNetwork: V): Unit
+  def onTakeover(iNetwork: INetwork[C,N]): Unit
 
   /**
    * Called on sub networks by a main network, when that network is splitting apart.
    *
    * @param iNetwork Network that will split into this sub network.
-   * @tparam V
    */
-  def onSplit[V <: T](iNetwork: V): Unit
-
-  /**
-   *
-   * Called when the client receives a network packet update from the server network.
-   *
-   * @param data Data sent in a network packet.
-   */
-  def handlePacketData(data: ByteBuf): Unit
+  def onSplit(iNetwork: INetwork[C,N]): Unit
 
 }

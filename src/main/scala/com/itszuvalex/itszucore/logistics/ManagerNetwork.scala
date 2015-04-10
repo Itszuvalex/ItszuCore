@@ -3,7 +3,10 @@ package com.itszuvalex.itszucore.logistics
 import java.util.concurrent.ConcurrentHashMap
 
 import com.itszuvalex.itszucore.ItszuCore
+import cpw.mods.fml.common.eventhandler.SubscribeEvent
+import cpw.mods.fml.common.gameevent.TickEvent
 import cpw.mods.fml.common.network.NetworkRegistry
+import net.minecraftforge.common.MinecraftForge
 
 import scala.actors.threadpool.AtomicInteger
 import scala.collection.JavaConverters._
@@ -24,9 +27,14 @@ object ManagerNetwork {
   def removeNetwork(network: INetwork[_, _]) = networkMap.remove(network.ID)
 
   def init(): Unit = {
-    /*Register Network Messages*/
+    MinecraftForge.EVENT_BUS.register(this)
   }
 
   def getNetwork(id: Int) = networkMap.get(id)
+
+  @SubscribeEvent def onTickBegin(event: TickEvent.ServerTickEvent): Unit = {
+    if (event.phase == TickEvent.Phase.START) networkMap.values.foreach(_.onTickStart())
+    if (event.phase == TickEvent.Phase.END) networkMap.values.foreach(_.onTickEnd())
+  }
 
 }
