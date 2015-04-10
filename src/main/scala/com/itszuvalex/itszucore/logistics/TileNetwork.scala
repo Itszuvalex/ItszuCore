@@ -111,8 +111,9 @@ abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]]() exten
 
     networks.foreach { collect =>
       val nodes = collect.map(_.getTileEntity().get).collect { case a if a.isInstanceOf[INetworkNode[N]] => a.asInstanceOf[INetworkNode[N]] }.asJavaCollection
-      val edges = connections.filter { case (loc, set) => collect.contains(loc) }
-      val network = create(nodes, edges)
+      val edges = mutable.HashMap[Loc4, mutable.HashSet[Loc4]]()
+      connections.foreach { case (loc, set) if collect.contains(loc) => edges.getOrElseUpdate(loc, mutable.HashSet[Loc4]()) ++= connections.get(loc).filter(collect.contains(_)) }
+      val network = create(nodes, edges.map { case (k, v) => k -> v.asJava }.asJava)
       network.onSplit(this)
       network.register()
                      }
