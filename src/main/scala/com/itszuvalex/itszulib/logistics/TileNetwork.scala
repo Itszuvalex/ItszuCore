@@ -173,6 +173,7 @@ abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]]() exten
     if (!(canAddNode(node) && node.canAdd(this))) return
     getNodes.filter { a => a.canConnect(node.getLoc) && node.canConnect(a.getLoc) }.foreach(n => addConnection(n.getLoc, node.getLoc))
     addNodeSilently(node)
+    node.setNetwork(this.asInstanceOf[N])
     node.added(this)
   }
 
@@ -199,7 +200,7 @@ abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]]() exten
 
   override def canAddNode(node: INetworkNode[N]): Boolean = true
 
-  override def register() = ManagerNetwork.addNetwork(this)
+  override def register() : Unit = ManagerNetwork.addNetwork(this)
 
   override def unregister(): Unit = ManagerNetwork.removeNetwork(this)
 
