@@ -1,4 +1,3 @@
-task debug << { println configurations.compile.findAll { it.name.startsWith("scala") } }
 
 buildscript {
     repositories {
@@ -15,6 +14,15 @@ buildscript {
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
+}
+
+plugins {
+    id "com.github.maiflai.scalatest" version "0.6-5-g9065d91"
+}
+
+dependencies {
+    testCompile 'org.scalatest:scalatest_2.11:2+'
+    testRuntime 'org.pegdown:pegdown:1.1.0'
 }
 
 apply plugin: 'scala'
@@ -142,6 +150,7 @@ task jarApiScalaDoc(type:  org.gradle.api.tasks.bundling.Jar) {
     from apiScalaDoc
 }
 
+task debug << { println configurations.compile.findAll { it.name.startsWith("scala") } }
 
 build.dependsOn apiJar
 
