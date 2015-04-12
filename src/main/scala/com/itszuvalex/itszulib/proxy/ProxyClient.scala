@@ -20,14 +20,17 @@
  */
 package com.itszuvalex.itszulib.proxy
 
-import com.itszuvalex.itszulib.render.RenderSimpleMachine
-import cpw.mods.fml.client.registry.RenderingRegistry
+import com.itszuvalex.itszulib.render.{PortalTileTest, RenderPortalTest, RenderSimpleMachine, ShaderUtils}
+import cpw.mods.fml.client.registry.{ClientRegistry, RenderingRegistry}
 
 
 class ProxyClient extends ProxyCommon {
   override def registerRendering() {
     super.registerRendering()
+    ShaderUtils.init()
     RenderSimpleMachine.renderID = RenderingRegistry.getNextAvailableRenderId
     RenderingRegistry.registerBlockHandler(RenderSimpleMachine.renderID, new RenderSimpleMachine)
+
+    ClientRegistry.bindTileEntitySpecialRenderer(classOf[PortalTileTest], new RenderPortalTest)
   }
 }

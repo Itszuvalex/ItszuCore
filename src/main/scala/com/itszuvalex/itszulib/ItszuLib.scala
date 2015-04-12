@@ -2,8 +2,10 @@ package com.itszuvalex.itszulib
 
 import com.itszuvalex.itszulib.network.PacketHandler
 import com.itszuvalex.itszulib.proxy.ProxyCommon
+import com.itszuvalex.itszulib.render.BlockPortalTest
 import cpw.mods.fml.common.Mod.EventHandler
 import cpw.mods.fml.common.event.{FMLInitializationEvent, FMLInterModComms, FMLPostInitializationEvent, FMLPreInitializationEvent}
+import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.common.{Mod, SidedProxy}
 import org.apache.logging.log4j.LogManager
 
@@ -22,12 +24,14 @@ object ItszuLib {
 
   @EventHandler def preInit(event: FMLPreInitializationEvent): Unit = {
     PacketHandler.init()
-    PlayerUUIDTracker.init()
+//    PlayerUUIDTracker.init()
+//    PlayerUUIDTracker.setFile(new File())
     proxy.init()
   }
 
   @EventHandler def load(event: FMLInitializationEvent): Unit = {
 
+      GameRegistry.registerBlock(new BlockPortalTest, "BlockPortalTest")
   }
 
   @EventHandler def postInit(event: FMLPostInitializationEvent): Unit = {

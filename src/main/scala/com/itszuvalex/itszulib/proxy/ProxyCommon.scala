@@ -20,6 +20,9 @@
  */
 package com.itszuvalex.itszulib.proxy
 
+import com.itszuvalex.itszulib.render.PortalTileTest
+import cpw.mods.fml.common.registry.GameRegistry
+
 class ProxyCommon {
   def init(): Unit = {
     registerRendering()
@@ -30,7 +33,8 @@ class ProxyCommon {
   def registerRendering() {
   }
 
-  def registerTileEntities() {
+  def registerTileEntities(): Unit = {
+    GameRegistry.registerTileEntity(classOf[PortalTileTest], "PortalTileTest")
   }
 
   def registerTickHandlers() {
