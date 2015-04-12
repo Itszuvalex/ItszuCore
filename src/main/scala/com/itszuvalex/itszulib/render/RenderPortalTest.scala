@@ -12,12 +12,22 @@ import org.lwjgl.opengl.GL11
  */
 object RenderPortalTest {
   private val skyLocation    : ResourceLocation = new ResourceLocation("textures/environment/end_sky.png")
+  private val pictureLocation: ResourceLocation = new ResourceLocation("textures/entity/end_portal.png")
 }
 
 class RenderPortalTest extends TileEntitySpecialRenderer{
   override def renderTileEntityAt(p_147500_1_ : TileEntity, x : Double, y : Double, z : Double, p_147500_8_ : Float): Unit = {
+    renderBackground(x, y, z)
+  }
+
+  def renderBackground(x: Double, y: Double, z: Double): Unit = {
     this.bindTexture(RenderPortalTest.skyLocation)
     ShaderUtils.bindShader(ShaderUtils.portal)
+    addBoxVerts(x, y, z)
+    ShaderUtils.releaseShader()
+  }
+
+  def addBoxVerts(x: Double, y: Double, z: Double): Unit = {
     val tes = Tessellator.instance
     val xmin = 0
     val xmax = 1
@@ -27,7 +37,7 @@ class RenderPortalTest extends TileEntitySpecialRenderer{
     val zmax = 1
     tes.addTranslation(x.toFloat, y.toFloat, z.toFloat)
     tes.startDrawingQuads()
-    tes.setColorRGBA_F(.1f, .1f, .1f, 1.0F)
+    //    tes.setColorRGBA_F(.1f, .1f, .1f, 1.0F)
     tes.addVertex(xmin, ymax, zmin)
     tes.addVertex(xmin, ymax, zmax)
     tes.addVertex(xmax, ymax, zmax)
@@ -59,6 +69,5 @@ class RenderPortalTest extends TileEntitySpecialRenderer{
     tes.addVertex(xmin, ymax, zmin)
     tes.addTranslation(-x.toFloat, -y.toFloat, -z.toFloat)
     tes.draw()
-    ShaderUtils.releaseShader()
   }
 }
