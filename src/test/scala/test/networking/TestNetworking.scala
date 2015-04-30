@@ -4,14 +4,18 @@ import com.itszuvalex.itszulib.api.core.Loc4
 import com.itszuvalex.itszulib.logistics.{INetwork, TileNetwork, TileNetworkNode}
 import test.TestBase
 
+import scala.collection.JavaConversions._
+
 /**
  * Created by Christopher Harris (Itszuvalex) on 4/14/15.
  */
 class TestNetworking extends TestBase {
 
   trait Network {
+    TestNetworkManager.networkMap.clear()
     TestNetworkManager.nextId = 0
     val network = new TestNetwork(TestNetworkManager.getID)
+    network.register()
   }
 
   trait OriginNode {
@@ -90,27 +94,113 @@ class TestNetworking extends TestBase {
         edges should contain allOf(Loc4(0, 0, 0, 0) -> Loc4(1, 0, 0, 0), Loc4(1, 0, 0, 0) -> Loc4(2, 0, 0, 0))
       }
 
-      "when removing node on edge" should {
-        "have 2 nodes" in new NetworkWithOrigin {
-          val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
-          val neighbor2 = new TestNode(Loc4(2, 0, 0, 0))
-          network.addNode(neighbor)
-          network.addNode(neighbor2)
-          network.removeNode(neighbor2)
-          val nodes = network.getNodes
-          nodes.size() shouldBe 2
-          nodes should contain allOf(origin, neighbor)
+      "when removing nodes" should {
+        "on edge" should {
+          "have 2 nodes" in new NetworkWithOrigin {
+            val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
+            val neighbor2 = new TestNode(Loc4(2, 0, 0, 0))
+            network.addNode(neighbor)
+            network.addNode(neighbor2)
+            network.removeNode(neighbor2)
+            val nodes = network.getNodes
+            nodes.size() shouldBe 2
+            nodes should contain allOf(origin, neighbor)
+          }
+
+          "have 1 edge" in new NetworkWithOrigin {
+            val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
+            val neighbor2 = new TestNode(Loc4(2, 0, 0, 0))
+            network.addNode(neighbor)
+            network.addNode(neighbor2)
+            network.removeNode(neighbor2)
+            val edges = network.getEdges
+            edges.size() shouldBe 1
+            edges should contain(Loc4(0, 0, 0, 0) -> Loc4(1, 0, 0, 0))
+          }
         }
 
-        "have 1 edge" in new NetworkWithOrigin {
-          val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
-          val neighbor2 = new TestNode(Loc4(2, 0, 0, 0))
-          network.addNode(neighbor)
-          network.addNode(neighbor2)
-          network.removeNode(neighbor2)
-          val edges = network.getEdges
-          edges.size() shouldBe 1
-          edges should contain(Loc4(0, 0, 0, 0) -> Loc4(1, 0, 0, 0))
+        "on center" should {
+          "split and after splitting" should {
+            "be empty" in new NetworkWithOrigin {
+              val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
+              val neighbor2 = new TestNode(Loc4(2, 0, 0, 0))
+              network.addNode(neighbor)
+              network.addNode(neighbor2)
+              network.removeNode(neighbor)
+              network.getNodes.isEmpty shouldBe true
+              network.getEdges.isEmpty shouldBe true
+
+            }
+
+            "not be registered" in new NetworkWithOrigin {
+              val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
+              val neighbor2 = new TestNode(Loc4(2, 0, 0, 0))
+              network.addNode(neighbor)
+              network.addNode(neighbor2)
+              network.removeNode(neighbor)
+              network.getNodes.isEmpty shouldBe true
+              network.getEdges.isEmpty shouldBe true
+              TestNetworkManager.networkMap.contains(network.id) shouldBe false
+            }
+
+            "and" should {
+
+              "should create 2 new networks" in new NetworkWithOrigin {
+                val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
+                val neighbor2 = new TestNode(Loc4(2, 0, 0, 0))
+                network.addNode(neighbor)
+                network.addNode(neighbor2)
+                network.removeNode(neighbor)
+               TestNetworkManager.networkMap.values.size shouldBe 2
+              }
+
+             "each should have 1 node" in new NetworkWithOrigin {
+                val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
+                val neighbor2 = new TestNode(Loc4(2, 0, 0, 0))
+                network.addNode(neighbor)
+                network.addNode(neighbor2)
+                network.removeNode(neighbor)
+               val networks = TestNetworkManager.networkMap.values.toArray
+               networks(0).getNodes.size shouldBe 1
+               networks(1).getNodes.size shouldBe 1
+              }
+              "each should have 0 edges" in new NetworkWithOrigin {
+                val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
+                val neighbor2 = new TestNode(Loc4(2, 0, 0, 0))
+                network.addNode(neighbor)
+                network.addNode(neighbor2)
+                network.removeNode(neighbor)
+                val networks = TestNetworkManager.networkMap.values.toArray
+                networks(0).getEdges.size shouldBe 0
+                networks(1).getEdges.size shouldBe 0
+              }
+            }
+
+          }
+        }
+
+        "two at a time" should {
+
+            "have 1 nodes" in new NetworkWithOrigin {
+              val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
+              val neighbor2 = new TestNode(Loc4(2, 0, 0, 0))
+              network.addNode(neighbor)
+              network.addNode(neighbor2)
+              network.removeNodes(List(neighbor, neighbor2))
+              val nodes = network.getNodes
+              nodes.size() shouldBe 1
+              nodes should contain(origin)
+            }
+
+            "have 0 edges" in new NetworkWithOrigin {
+              val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
+              val neighbor2 = new TestNode(Loc4(2, 0, 0, 0))
+              network.addNode(neighbor)
+              network.addNode(neighbor2)
+              network.removeNodes(List(neighbor, neighbor2))
+              val edges = network.getEdges
+              edges.size() shouldBe 0
+            }
         }
       }
 
@@ -219,8 +309,6 @@ class TestNetworking extends TestBase {
      * Called when a tick ends.
      */
     override def onTickEnd(): Unit = {}
-
-    override val id: Int = {TestNetworkManager.nextId += 1; TestNetworkManager.nextId}
   }
 
   class TestNode(val loc: Loc4) extends TileNetworkNode[TestNode, TestNetwork] {
