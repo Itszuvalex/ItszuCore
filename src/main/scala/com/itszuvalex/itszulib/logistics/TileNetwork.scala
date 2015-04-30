@@ -224,7 +224,7 @@ abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]](val id:
    */
   override def getEdges: util.Set[(Loc4, Loc4)] = {
                                                     for {
-                                                      pairs <- getConnections.toSeq
+                                                      pairs <- getConnections.toIterable
                                                       con <- pairs._2
                                                       if pairs._1.compareTo(con) < 0
 
