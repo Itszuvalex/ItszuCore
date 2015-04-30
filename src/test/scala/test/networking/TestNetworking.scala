@@ -89,6 +89,31 @@ class TestNetworking extends TestBase {
         edges.size() shouldBe 2
         edges should contain allOf(Loc4(0, 0, 0, 0) -> Loc4(1, 0, 0, 0), Loc4(1, 0, 0, 0) -> Loc4(2, 0, 0, 0))
       }
+
+      "when removing node on edge" should {
+        "have 2 nodes" in new NetworkWithOrigin {
+          val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
+          val neighbor2 = new TestNode(Loc4(2, 0, 0, 0))
+          network.addNode(neighbor)
+          network.addNode(neighbor2)
+          network.removeNode(neighbor2)
+          val nodes = network.getNodes
+          nodes.size() shouldBe 2
+          nodes should contain allOf(origin, neighbor)
+        }
+
+        "have 1 edge" in new NetworkWithOrigin {
+          val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
+          val neighbor2 = new TestNode(Loc4(2, 0, 0, 0))
+          network.addNode(neighbor)
+          network.addNode(neighbor2)
+          network.removeNode(neighbor2)
+          val edges = network.getEdges
+          edges.size() shouldBe 1
+          edges should contain(Loc4(0, 0, 0, 0) -> Loc4(1, 0, 0, 0))
+        }
+      }
+
     }
     "adding two connectable nodes in L" should {
       "have 3 nodes" in new NetworkWithOrigin {

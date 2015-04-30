@@ -88,6 +88,7 @@ abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]](val id:
     //Removal all edges that touch nodeLocs.
     nodeLocs.foreach { a =>
       getConnections(a).getOrElse(Set()).foreach(removeConnection(a, _))
+      nodeMap.remove(a)
                      }
     split(edges)
   }
