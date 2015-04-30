@@ -100,7 +100,7 @@ class PlayerProperties(protected final var player: EntityPlayer) extends IExtend
     }
   }
 
-  def saveNBTData(compound: NBTTagCompound) {
+  override def saveNBTData(compound: NBTTagCompound) {
     val propTag = new NBTTagCompound
     for (entry <- properties.entrySet) {
       val entryComp = new NBTTagCompound
@@ -110,14 +110,14 @@ class PlayerProperties(protected final var player: EntityPlayer) extends IExtend
     compound.setTag(PlayerProperties.PROP_TAG, propTag)
   }
 
-  def loadNBTData(compound: NBTTagCompound) {
+  override def loadNBTData(compound: NBTTagCompound) {
     val propTag = compound.getCompoundTag(PlayerProperties.PROP_TAG)
     for (entry <- properties.entrySet) {
       entry.getValue.loadFromNBT(propTag.getCompoundTag(entry.getKey))
     }
   }
 
-  def init(entity: Entity, world: World) {
+  override def init(entity: Entity, world: World) {
   }
 
   def handlePacket(compound: NBTTagCompound) {

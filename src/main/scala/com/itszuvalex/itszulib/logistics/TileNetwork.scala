@@ -222,5 +222,12 @@ abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]](val id:
    *
    * @return Tuple of all edge pairs.
    */
-  override def getEdges: util.Set[(Loc4, Loc4)] = connectionMap.flatMap { case (loc, set) => set.map { con => (if (loc.compareTo(con) < 0) loc else con) -> (if (loc.compareTo(con) > 0) loc else con)}}.toSet.asJava
+  override def getEdges: util.Set[(Loc4, Loc4)] = {
+                                                    for {
+                                                      pairs <- getConnections.toSeq
+                                                      con <- pairs._2
+                                                      if pairs._1.compareTo(con) < 0
+
+                                                    } yield (pairs._1, con)
+                                                  }.toSet.asJava
 }

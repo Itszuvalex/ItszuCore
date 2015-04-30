@@ -77,9 +77,9 @@ case class Loc4(var x: Int, var y: Int, var z: Int, var dim: Int) extends NBTSer
 
   def isNeighbor(loc: Loc4): Boolean = {
     if (loc.dim != dim) false
-    else if (Math.abs(loc.x - x) == 1 && loc.y == y && loc.z == z) true //x
-    else if (loc.x == x && Math.abs(loc.y - y) == 1 && loc.z == z) true //y
-    else if (loc.x == x && loc.y == y && Math.abs(loc.z - z) == 1) true //z
+    else if ((Math.abs(loc.x - x) == 1) && loc.y == y && loc.z == z) true //x
+    else if (loc.x == x && (Math.abs(loc.y - y) == 1) && loc.z == z) true //y
+    else if (loc.x == x && loc.y == y && (Math.abs(loc.z - z) == 1)) true //z
     else false
   }
 

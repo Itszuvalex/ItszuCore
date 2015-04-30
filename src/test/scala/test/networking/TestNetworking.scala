@@ -68,6 +68,75 @@ class TestNetworking extends TestBase {
         network.create() shouldBe a[TestNetwork]
       }
     }
+
+    "adding two connectable nodes linearly" should {
+      "have 3 nodes" in new NetworkWithOrigin {
+        val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
+        val neighbor2 = new TestNode(Loc4(2, 0, 0, 0))
+        network.addNode(neighbor)
+        network.addNode(neighbor2)
+        val nodes = network.getNodes
+        nodes.size() shouldBe 3
+        nodes should contain allOf(origin, neighbor, neighbor2)
+      }
+
+      "have 2 edges" in new NetworkWithOrigin {
+        val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
+        val neighbor2 = new TestNode(Loc4(2, 0, 0, 0))
+        network.addNode(neighbor)
+        network.addNode(neighbor2)
+        val edges = network.getEdges
+        edges.size() shouldBe 2
+        edges should contain allOf(Loc4(0, 0, 0, 0) -> Loc4(1, 0, 0, 0), Loc4(1, 0, 0, 0) -> Loc4(2, 0, 0, 0))
+      }
+    }
+    "adding two connectable nodes in L" should {
+      "have 3 nodes" in new NetworkWithOrigin {
+        val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
+        val neighbor2 = new TestNode(Loc4(0, 1, 0, 0))
+        network.addNode(neighbor)
+        network.addNode(neighbor2)
+        val nodes = network.getNodes
+        nodes.size() shouldBe 3
+        nodes should contain allOf(origin, neighbor, neighbor2)
+      }
+
+      "have 2 edges" in new NetworkWithOrigin {
+        val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
+        val neighbor2 = new TestNode(Loc4(0, 1, 0, 0))
+        network.addNode(neighbor)
+        network.addNode(neighbor2)
+        val edges = network.getEdges
+        edges.size() shouldBe 2
+        edges should contain allOf(Loc4(0, 0, 0, 0) -> Loc4(1, 0, 0, 0), Loc4(0, 0, 0, 0) -> Loc4(0, 1, 0, 0))
+      }
+    }
+    "adding three connectable nodes in square" should {
+      "have 4 nodes" in new NetworkWithOrigin {
+        val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
+        val neighbor2 = new TestNode(Loc4(0, 1, 0, 0))
+        val neighbor3 = new TestNode(Loc4(1, 1, 0, 0))
+        network.addNode(neighbor)
+        network.addNode(neighbor2)
+        network.addNode(neighbor3)
+        val nodes = network.getNodes
+        nodes.size() shouldBe 4
+        nodes should contain allOf(origin, neighbor, neighbor2, neighbor3)
+      }
+
+      "have 4 edges" in new NetworkWithOrigin {
+        val neighbor  = new TestNode(Loc4(1, 0, 0, 0))
+        val neighbor2 = new TestNode(Loc4(0, 1, 0, 0))
+        val neighbor3 = new TestNode(Loc4(1, 1, 0, 0))
+        network.addNode(neighbor)
+        network.addNode(neighbor2)
+        network.addNode(neighbor3)
+        val edges = network.getEdges
+        edges.size() shouldBe 4
+        edges should contain allOf(Loc4(0, 0, 0, 0) -> Loc4(1, 0, 0, 0), Loc4(0, 0, 0, 0) -> Loc4(0, 1, 0, 0), Loc4(1, 0, 0, 0) -> Loc4(1, 1, 0, 0),
+                             Loc4(0, 1, 0, 0) -> Loc4(1, 1, 0, 0))
+      }
+    }
   }
 
 
