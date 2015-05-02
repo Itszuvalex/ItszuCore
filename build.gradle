@@ -110,6 +110,13 @@ processResources
             inputs.property "version", project.version
             inputs.property "mcversion", project.minecraft.version
 
+            ext.srcFiles = "$projectDir/src/main/resources"
+            ext.destDir = "$projectDir/build/classes/main"
+
+            // registering inputs & outputs allow gradle to skip if UP-TO-DATE
+            inputs.files srcFiles
+            outputs.dir destDir
+
             // replace stuff in mcmod.info, nothing else
             from(sourceSets.main.resources.srcDirs) {
                 include 'mcmod.info'
@@ -154,3 +161,5 @@ task debug << { println configurations.compile.findAll { it.name.startsWith("sca
 
 build.dependsOn apiJar
 
+
+idea { module { inheritOutputDirs = true } }

@@ -7,6 +7,7 @@ import cpw.mods.fml.common.Mod.EventHandler
 import cpw.mods.fml.common.event.{FMLInitializationEvent, FMLInterModComms, FMLPostInitializationEvent, FMLPreInitializationEvent}
 import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.common.{Mod, SidedProxy}
+import net.minecraft.creativetab.CreativeTabs
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -30,8 +31,7 @@ object ItszuLib {
   }
 
   @EventHandler def load(event: FMLInitializationEvent): Unit = {
-
-      GameRegistry.registerBlock(new BlockPortalTest, "BlockPortalTest")
+      GameRegistry.registerBlock(new BlockPortalTest, "BlockPortalTest").setCreativeTab(CreativeTabs.tabBlock)
   }
 
   @EventHandler def postInit(event: FMLPostInitializationEvent): Unit = {
