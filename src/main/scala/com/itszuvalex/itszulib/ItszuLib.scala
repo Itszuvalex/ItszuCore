@@ -2,7 +2,7 @@ package com.itszuvalex.itszulib
 
 import com.itszuvalex.itszulib.network.PacketHandler
 import com.itszuvalex.itszulib.proxy.ProxyCommon
-import com.itszuvalex.itszulib.render.BlockPortalTest
+import com.itszuvalex.itszulib.testing.BlockPortalTest
 import cpw.mods.fml.common.Mod.EventHandler
 import cpw.mods.fml.common.event.{FMLInitializationEvent, FMLInterModComms, FMLPostInitializationEvent, FMLPreInitializationEvent}
 import cpw.mods.fml.common.registry.GameRegistry

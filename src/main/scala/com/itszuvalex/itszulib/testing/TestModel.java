@@ -26,7 +26,7 @@
 // - ZeuX
 
 
-package com.itszuvalex.itszulib.render;
+package com.itszuvalex.itszulib.testing;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;

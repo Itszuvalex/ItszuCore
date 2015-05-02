@@ -20,7 +20,7 @@
  */
 package com.itszuvalex.itszulib.proxy
 
-import com.itszuvalex.itszulib.render.PortalTileTest
+import com.itszuvalex.itszulib.testing.PortalTileTest
 import cpw.mods.fml.common.registry.GameRegistry
 
 class ProxyCommon {

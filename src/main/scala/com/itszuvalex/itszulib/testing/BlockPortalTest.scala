@@ -1,4 +1,4 @@
-package com.itszuvalex.itszulib.render
+package com.itszuvalex.itszulib.testing
 
 import com.itszuvalex.itszulib.core.TileContainer
 import net.minecraft.block.material.Material
