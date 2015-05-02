@@ -119,6 +119,15 @@ class TestNetworking extends TestBase {
           }
         }
 
+        /*
+
+          /*
+            Cannot test this.
+
+            Reason being, relies upon worldObj().getTileEntity() calls, which cannot be easily tested in this environment.
+
+
+          */
         "on center" should {
           "split and after splitting" should {
             "be empty" in new NetworkWithOrigin {
@@ -178,6 +187,7 @@ class TestNetworking extends TestBase {
 
           }
         }
+        */
 
         "two at a time" should {
 
