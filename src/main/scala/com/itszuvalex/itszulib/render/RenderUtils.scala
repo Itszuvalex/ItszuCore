@@ -22,7 +22,8 @@ package com.itszuvalex.itszulib.render
 
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.inventory.GuiContainer
-import net.minecraft.client.renderer.Tessellator
+import net.minecraft.client.renderer.{ActiveRenderInfo, Tessellator}
+import net.minecraft.client.renderer.entity.RenderManager
 import net.minecraft.util.IIcon
 import net.minecraftforge.common.util.ForgeDirection
 import net.minecraftforge.common.util.ForgeDirection._
@@ -176,6 +177,71 @@ object RenderUtils {
     tes.addVertexWithUV(C.x, C.y, C.z, maxU, minV)
     tes.addVertexWithUV(D.x, D.y, D.z, maxU, maxV)
     tes.addTranslation(-x, -y, -z)
+  }
+
+  def drawBillboard(x:Double, y:Double, z:Double, rot: Float, scale: Double, uMin: Float = 0, uMax: Float = 1, vMin: Float = 0, vMax: Float = 1): Unit = {
+    //
+    //    val billPos = Vector3(x,y,z)
+    //
+    //    GL11.glPushMatrix()
+    //    val cameraDiff = Vector3(0,0.5,0) - billPos
+    //    val up = Vector3(0,1,0)
+    //    val crossA = cameraDiff.cross(up).normalize()
+    //    val crossB = cameraDiff.cross(crossA).normalize()
+    //
+    //    val pos1 = billPos + crossA + crossB
+    //    val pos2 = billPos - crossA + crossB
+    //    val pos3 = billPos - crossA - crossB
+    //    val pos4 = billPos + crossA - crossB
+    //
+    //    val tes = Tessellator.instance
+    //    tes.startDrawingQuads()
+    //    GL11.glColor3f(1, 1, 1)
+    //    tes.setColorRGBA(255, 255, 255, 255)
+    //    tes.addVertexWithUV(pos1.x,pos1.y,pos1.z, uMin, vMin)
+    //    tes.addVertexWithUV(pos2.x,pos2.y,pos2.z, uMin, vMax)
+    //    tes.addVertexWithUV(pos3.x,pos3.y,pos3.z, uMax, vMax)
+    //    tes.addVertexWithUV(pos4.x,pos4.y,pos4.z, uMax, vMin)
+    //    tes.draw()
+    //
+    //    GL11.glPopMatrix()
+    val uMin: Float = 0
+    val uMax: Float = 1
+    val vMin: Float = 0
+    val vMax: Float = 1
+    val scale: Float = 1
+
+//    if (this.particleIcon != null) {
+//      uMin = this.particleIcon.getMinU
+//      uMax = this.particleIcon.getMaxU
+//      vMin = this.particleIcon.getMinV
+//      vMax = this.particleIcon.getMaxV
+//    }
+    val xRot: Float = ActiveRenderInfo.rotationX
+    val zRot: Float = ActiveRenderInfo.rotationZ
+    val rotYZ: Float = ActiveRenderInfo.rotationYZ
+    val rotXY: Float = ActiveRenderInfo.rotationXY
+    val rotXZ: Float = ActiveRenderInfo.rotationXZ
+
+    val red = 1f
+    val green = 1f
+    val blue = 1f
+    val alpha = 1f
+
+//    val f11: Float = (this.prevPosX + (this.posX - this.prevPosX) * p_70539_2_.toDouble - interpPosX).toFloat
+//    val f12: Float = (this.prevPosY + (this.posY - this.prevPosY) * p_70539_2_.toDouble - interpPosY).toFloat
+//    val f13: Float = (this.prevPosZ + (this.posZ - this.prevPosZ) * p_70539_2_.toDouble - interpPosZ).toFloat
+    val f11 = x
+    val f12 = y
+    val f13 = z
+    val tes = Tessellator.instance
+    tes.startDrawingQuads()
+    tes.setColorRGBA_F(red, green, blue, alpha)
+    tes.addVertexWithUV(f11 - xRot * scale - rotYZ * scale, f12 - rotXZ * scale, f13 - zRot * scale - rotXY * scale, uMax.toDouble, vMax.toDouble)
+    tes.addVertexWithUV(f11 - xRot * scale + rotYZ * scale, f12 + rotXZ * scale, f13 - zRot * scale + rotXY * scale, uMax.toDouble, vMin.toDouble)
+    tes.addVertexWithUV(f11 + xRot * scale + rotYZ * scale, f12 + rotXZ * scale, f13 + zRot * scale + rotXY * scale, uMin.toDouble, vMin.toDouble)
+    tes.addVertexWithUV(f11 + xRot * scale - rotYZ * scale, f12 - rotXZ * scale, f13 + zRot * scale - rotXY * scale, uMin.toDouble, vMax.toDouble)
+    tes.draw()
   }
 
   def renderLiquidInGUI(container: GuiContainer, zheight: Float, icon: IIcon, x: Int, y: Int, width: Int, height: Int) {

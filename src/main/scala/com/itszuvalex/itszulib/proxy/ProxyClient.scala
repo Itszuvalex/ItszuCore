@@ -20,8 +20,8 @@
  */
 package com.itszuvalex.itszulib.proxy
 
-import com.itszuvalex.itszulib.render.{RenderSimpleMachine, RenderPortalTest, ShaderUtils}
-import com.itszuvalex.itszulib.testing.PortalTileTest
+import com.itszuvalex.itszulib.render.{RenderSimpleMachine, ShaderUtils}
+import com.itszuvalex.itszulib.testing.{RenderPortalTest, PortalTileTest}
 import cpw.mods.fml.client.registry.{ClientRegistry, RenderingRegistry}
 
 

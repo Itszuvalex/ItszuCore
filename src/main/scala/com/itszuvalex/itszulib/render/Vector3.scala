@@ -27,7 +27,7 @@ import net.minecraft.nbt.NBTTagCompound
 /**
  * Created by Christopher Harris (Itszuvalex) on 5/16/14.
  */
-class Vector3(@Saveable var x: Double, @Saveable var y: Double, @Saveable var z: Double) extends NBTSerializable {
+case class Vector3(@Saveable var x: Double, @Saveable var y: Double, @Saveable var z: Double) extends NBTSerializable {
 
   def this(a: Point3D, b: Point3D) =
     this(a.x - b.x, a.y - b.y, a.z - b.z)
@@ -35,14 +35,22 @@ class Vector3(@Saveable var x: Double, @Saveable var y: Double, @Saveable var z:
   def this() =
     this(0, 0, 0)
 
-  def copy() = new Vector3(x, y, z)
+  def copy() = Vector3(x, y, z)
 
-  def +(other: Vector3) = new Vector3(x + other.x, y + other.y, z + other.z)
+  def +(other: Vector3) = Vector3(x + other.x, y + other.y, z + other.z)
 
   def +=(other: Vector3) = {
     x += other.x
     y += other.y
     z += other.z
+  }
+
+  def -(other: Vector3) = Vector3(x - other.x, y - other.y, z - other.z)
+
+  def -=(other: Vector3) = {
+    x -= other.x
+    y -= other.y
+    z -= other.z
   }
 
   def inversed = copy().inverse()
@@ -68,13 +76,8 @@ class Vector3(@Saveable var x: Double, @Saveable var y: Double, @Saveable var z:
 
   def magnitudeSquared = x * x + y * y + z * z
 
-  def cross(vector: Vector3): Vector3 = {
-    val ret = new Vector3
-    ret.x = y * vector.z - z * vector.y
-    ret.y = z * vector.x - x * vector.z
-    ret.z = x * vector.y - y * vector.x
-    ret
-  }
+  def cross(vector: Vector3): Vector3 = Vector3(vector.z - z * vector.y, z * vector.x - x * vector.z, x * vector.y - y * vector.x)
+
 
   def dot(vector: Vector3) = x * vector.x + y * vector.y + z * vector.z
 

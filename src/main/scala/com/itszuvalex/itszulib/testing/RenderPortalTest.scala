@@ -1,10 +1,10 @@
-package com.itszuvalex.itszulib.render
+package com.itszuvalex.itszulib.testing
 
-import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.{RenderBlocks, Tessellator}
+import com.itszuvalex.itszulib.render.{RenderUtils, ShaderUtils}
+import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.{IIcon, ResourceLocation}
+import net.minecraft.util.ResourceLocation
 import org.lwjgl.opengl.GL11
 
 /**
@@ -15,9 +15,24 @@ object RenderPortalTest {
   private val pictureLocation: ResourceLocation = new ResourceLocation("textures/entity/end_portal.png")
 }
 
-class RenderPortalTest extends TileEntitySpecialRenderer{
-  override def renderTileEntityAt(p_147500_1_ : TileEntity, x : Double, y : Double, z : Double, p_147500_8_ : Float): Unit = {
-    renderBackground(x, y, z)
+class RenderPortalTest extends TileEntitySpecialRenderer {
+  override def renderTileEntityAt(p_147500_1_ : TileEntity, x: Double, y: Double, z: Double, p_147500_8_ : Float): Unit = {
+    //    renderBackground(x, y, z)
+
+    bindTexture(RenderPortalTest.skyLocation)
+
+//    GL11.glPushMatrix()
+
+    GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS)
+//    GL11.glEnable(GL11.GL_BLEND)
+    GL11.glDisable(GL11.GL_LIGHTING)
+//    GL11.glAlphaFunc(GL11.GL_ALWAYS, 1)
+//    GL11.glEnable(GL11.GL_DEPTH)
+//    GL11.glEnable(GL11.GL_DEPTH_TEST)
+    RenderUtils.drawBillboard(x + 0.5, y + 0.5, z + 0.5, 0, .5)
+    GL11.glPopAttrib()
+//
+//    GL11.glPopMatrix()
   }
 
   def renderBackground(x: Double, y: Double, z: Double): Unit = {
