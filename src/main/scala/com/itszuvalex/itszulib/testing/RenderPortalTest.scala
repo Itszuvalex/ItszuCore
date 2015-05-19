@@ -1,8 +1,10 @@
 package com.itszuvalex.itszulib.testing
 
 import com.itszuvalex.itszulib.render.{RenderUtils, ShaderUtils}
+import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer
+import net.minecraft.init.Blocks
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.ResourceLocation
 import org.lwjgl.opengl.GL11
@@ -19,7 +21,10 @@ class RenderPortalTest extends TileEntitySpecialRenderer {
   override def renderTileEntityAt(p_147500_1_ : TileEntity, x: Double, y: Double, z: Double, p_147500_8_ : Float): Unit = {
     //    renderBackground(x, y, z)
 
-    bindTexture(RenderPortalTest.skyLocation)
+//    bindTexture(RenderPortalTest.skyLocation)
+
+    val man = Minecraft.getMinecraft.getTextureManager
+    man.bindTexture(man.getResourceLocation(0))
 
 //    GL11.glPushMatrix()
 
@@ -29,7 +34,8 @@ class RenderPortalTest extends TileEntitySpecialRenderer {
 //    GL11.glAlphaFunc(GL11.GL_ALWAYS, 1)
 //    GL11.glEnable(GL11.GL_DEPTH)
 //    GL11.glEnable(GL11.GL_DEPTH_TEST)
-    RenderUtils.drawBillboard(x + 0.5, y + 0.5, z + 0.5, 0, .5)
+     val icon = Blocks.fire.getFireIcon(0)
+    RenderUtils.drawBillboard(x + 0.5, y + 0.5, z + 0.5, 0, .5, icon.getMinU, icon.getMaxU, icon.getMinV, icon.getMaxV)
     GL11.glPopAttrib()
 //
 //    GL11.glPopMatrix()

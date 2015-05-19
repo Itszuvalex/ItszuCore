@@ -76,7 +76,7 @@ case class Vector3(@Saveable var x: Double, @Saveable var y: Double, @Saveable v
 
   def magnitudeSquared = x * x + y * y + z * z
 
-  def cross(vector: Vector3): Vector3 = Vector3(vector.z - z * vector.y, z * vector.x - x * vector.z, x * vector.y - y * vector.x)
+  def cross(vector: Vector3): Vector3 = Vector3(y*vector.z - z * vector.y, z * vector.x - x * vector.z, x * vector.y - y * vector.x)
 
 
   def dot(vector: Vector3) = x * vector.x + y * vector.y + z * vector.z
