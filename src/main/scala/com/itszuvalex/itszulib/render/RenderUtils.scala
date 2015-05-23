@@ -189,16 +189,29 @@ object RenderUtils {
   def drawBillboardFacing(x: Double, y: Double, z: Double, dx: Double, dy: Double, dz: Double, rot: Float, scale: Double, uMin: Float = 0, uMax: Float = 1, vMin: Float = 0, vMax: Float = 1): Unit = {
     val billPos = Vector3(x, y, z)
 
-    GL11.glPushMatrix()
     val cameraDiff = Vector3(dx, dy, dz) - billPos
     val up = Vector3(0, 1, 0)
-    val crossA = cameraDiff.cross(up).normalize()
-    val crossB = cameraDiff.cross(crossA).normalize()
+    val right = cameraDiff.cross(up).normalize()
+    val facingUp = cameraDiff.cross(right).normalize()
+    drawBillboardUpRightVector(billPos, facingUp, right, uMin, uMax, vMin, vMax)
+  }
 
-    val pos1 = billPos + crossA - crossB
-    val pos2 = billPos + crossA + crossB
-    val pos3 = billPos - crossA + crossB
-    val pos4 = billPos - crossA - crossB
+  def drawBillboardFacingUp(x: Double, y: Double, z: Double, dx: Double, dy: Double, dz: Double, rot: Float, scale: Double, uMin: Float = 0, uMax: Float = 1, vMin: Float = 0, vMax: Float = 1): Unit = {
+    val billPos = Vector3(x, y, z)
+
+    val cameraDiff = Vector3(dx, dy, dz) - billPos
+    val up = Vector3(0, 1, 0)
+    val right = cameraDiff.cross(up).normalize()
+
+    drawBillboardUpRightVector(billPos, up, right, uMin, uMax, vMin, vMax)
+  }
+
+
+  def drawBillboardUpRightVector(billPos: Vector3, upVector: Vector3, rightVector: Vector3, uMin: Float = 0, uMax: Float = 1, vMin: Float = 0, vMax: Float = 1): Unit = {
+    val pos1 = billPos + rightVector - upVector
+    val pos2 = billPos + rightVector + upVector
+    val pos3 = billPos - rightVector + upVector
+    val pos4 = billPos - rightVector - upVector
 
     val tes = Tessellator.instance
     tes.startDrawingQuads()
@@ -207,8 +220,6 @@ object RenderUtils {
     tes.addVertexWithUV(pos3.x, pos3.y, pos3.z, uMax, vMax)
     tes.addVertexWithUV(pos4.x, pos4.y, pos4.z, uMax, vMin)
     tes.draw()
-
-    GL11.glPopMatrix()
   }
 
   def drawBillboardPerpendicular(x: Double, y: Double, z: Double, rot: Float, scale: Double, uMin: Float = 0, uMax: Float = 1, vMin: Float = 0, vMax: Float = 1): Unit = {
