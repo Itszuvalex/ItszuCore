@@ -4,8 +4,6 @@ import com.itszuvalex.itszulib.api.core.Loc4
 import com.itszuvalex.itszulib.logistics.{INetwork, TileNetwork, TileNetworkNode}
 import test.TestBase
 
-import scala.collection.JavaConversions._
-
 /**
  * Created by Christopher Harris (Itszuvalex) on 4/14/15.
  */
@@ -94,6 +92,17 @@ class TestNetworking extends TestBase {
         edges should contain allOf(Loc4(0, 0, 0, 0) -> Loc4(1, 0, 0, 0), Loc4(1, 0, 0, 0) -> Loc4(2, 0, 0, 0))
       }
 
+      /*
+      Cannot test this.
+
+      Reason being, relies upon worldObj().getTileEntity() calls, which cannot be easily tested in this environment.
+
+
+    */
+
+
+      /*
+
       "when removing nodes" should {
         "on edge" should {
           "have 2 nodes" in new NetworkWithOrigin {
@@ -119,15 +128,9 @@ class TestNetworking extends TestBase {
           }
         }
 
-        /*
-
-          /*
-            Cannot test this.
-
-            Reason being, relies upon worldObj().getTileEntity() calls, which cannot be easily tested in this environment.
 
 
-          */
+
         "on center" should {
           "split and after splitting" should {
             "be empty" in new NetworkWithOrigin {
@@ -187,7 +190,7 @@ class TestNetworking extends TestBase {
 
           }
         }
-        */
+
 
         "two at a time" should {
 
@@ -213,6 +216,7 @@ class TestNetworking extends TestBase {
             }
         }
       }
+      */
 
     }
     "adding two connectable nodes in L" should {
@@ -259,7 +263,7 @@ class TestNetworking extends TestBase {
         val edges = network.getEdges
         edges.size() shouldBe 4
         edges should contain allOf(Loc4(0, 0, 0, 0) -> Loc4(1, 0, 0, 0), Loc4(0, 0, 0, 0) -> Loc4(0, 1, 0, 0), Loc4(1, 0, 0, 0) -> Loc4(1, 1, 0, 0),
-                             Loc4(0, 1, 0, 0) -> Loc4(1, 1, 0, 0))
+          Loc4(0, 1, 0, 0) -> Loc4(1, 1, 0, 0))
       }
     }
   }
