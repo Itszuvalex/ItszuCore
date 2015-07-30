@@ -36,29 +36,32 @@ class LocationTracker {
 
   def getLocationsInRange(loc: Loc4, range: Float): Iterable[Loc4] = for {
     chunk <- getChunkCoordsInRadius(loc.chunkCoords, Math.ceil(range / CHUNK_SIZE).toInt)
-    locations <- getLocationsInChunk(loc.dim, chunk)
-    checkLoc <- locations if checkLoc.distSqr(loc) <= range * range
+    checkLoc <- getLocationsInChunk(loc.dim, chunk)
+    if checkLoc.distSqr(loc) <= range * range
   } yield checkLoc
 
   def getLocationsInRange(dim: Int, loc: (Float, Float, Float), range: Float): Iterable[Loc4] = {
     val (x, y, z) = loc
     for {
       chunk <- getChunkCoordsInRadius((x.toInt >> 4, z.toInt >> 4), Math.ceil(range / CHUNK_SIZE).toInt)
-      locations <- getLocationsInChunk(dim, chunk)
-      checkLoc <- locations if ((checkLoc.x - x) * (checkLoc.x - x) + (checkLoc.y - y) * (checkLoc.y - y) + (checkLoc.z - z) * (checkLoc.z - z)) <= range * range
+      checkLoc <- getLocationsInChunk(dim, chunk)
+      if ((checkLoc.x - x) * (checkLoc.x - x) + (checkLoc.y - y) * (checkLoc.y - y) + (checkLoc.z - z) * (checkLoc.z - z)) <= range * range
     } yield checkLoc
   }
 
-  def getLocationsInChunk(dim: Int, chunkLoc: (Int, Int)) =
-    for {
-      dimMap <- trackerMap.get(dim)
-      chunk <- dimMap.get(chunkLoc)
-    } yield chunk
+  def getLocationsInChunk(dim: Int, chunkLoc: (Int, Int)): Iterable[Loc4] = {
+    trackerMap.getOrElse(dim, return Set[Loc4]()).getOrElse(chunkLoc, return Set[Loc4]())
+  }
+
 
   def getChunkCoordsInRadius(loc: (Int, Int), radius: Int) = for {
     i <- -radius to radius
     j <- -radius to radius
   } yield (loc._1 + i, loc._2 + j)
 
+
+  def clear(): Unit = {
+    trackerMap.clear()
+  }
 
 }
