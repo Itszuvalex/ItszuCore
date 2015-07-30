@@ -25,13 +25,13 @@ object ItszuLib {
 
   @EventHandler def preInit(event: FMLPreInitializationEvent): Unit = {
     PacketHandler.init()
-//    PlayerUUIDTracker.init()
-//    PlayerUUIDTracker.setFile(new File())
+    //    PlayerUUIDTracker.init()
+    //    PlayerUUIDTracker.setFile(new File())
     proxy.init()
   }
 
   @EventHandler def load(event: FMLInitializationEvent): Unit = {
-      GameRegistry.registerBlock(new BlockPortalTest, "BlockPortalTest").setCreativeTab(CreativeTabs.tabBlock)
+    GameRegistry.registerBlock(new BlockPortalTest, "BlockPortalTest").setCreativeTab(CreativeTabs.tabBlock)
   }
 
   @EventHandler def postInit(event: FMLPostInitializationEvent): Unit = {

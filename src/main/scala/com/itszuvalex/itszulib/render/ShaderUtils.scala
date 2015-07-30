@@ -5,6 +5,7 @@ import java.nio.{FloatBuffer, IntBuffer}
 import java.util
 
 import com.itszuvalex.itszulib.ItszuLib
+import cpw.mods.fml.relauncher.{Side, SideOnly}
 import net.minecraft.client.renderer.OpenGlHelper
 import org.apache.logging.log4j.Level
 import org.lwjgl.opengl.{ARBFragmentShader, ARBShaderObjects, ARBVertexShader, GL11}
@@ -17,7 +18,7 @@ import scala.collection.JavaConverters._
  *
  * https://github.com/Vazkii/Botania/blob/master/src/main/java/vazkii/botania/client/core/helper/ShaderHelper.java
  */
-object ShaderUtils {
+@SideOnly(Side.CLIENT) object ShaderUtils {
   final val VERT = ARBVertexShader.GL_VERTEX_SHADER_ARB
   final val FRAG = ARBFragmentShader.GL_FRAGMENT_SHADER_ARB
 
@@ -29,9 +30,9 @@ object ShaderUtils {
   * Test
    */
   def init(): Unit = {
-    if (!canUseShaders) return
+    if (!ShaderUtils.canUseShaders) return
 
-    portal = loadShader("/assets/itszulib/shader/portal.vert", "/assets/itszulib/shader/portal.frag")
+    portal = ShaderUtils.loadShader("/assets/itszulib/shader/portal.vert", "/assets/itszulib/shader/portal.frag")
   }
 
   def loadShader(vertFile: String, fragFile: String) = createProgram(vertFile, fragFile)
@@ -41,7 +42,7 @@ object ShaderUtils {
   }
 
   def bindShader(shader: Int) {
-    if (!canUseShaders) return
+    if (!ShaderUtils.canUseShaders) return
 
     try {
       ARBShaderObjects.glUseProgramObjectARB(shader)

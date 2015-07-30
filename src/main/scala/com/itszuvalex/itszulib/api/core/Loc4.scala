@@ -66,12 +66,14 @@ case class Loc4(var x: Int, var y: Int, var z: Int, var dim: Int) extends NBTSer
     case None => None
   }
 
+  def chunkCoords = (x >> 4, z >> 4)
+
   def chunkContains(chunk: Chunk): Boolean = {
     if (chunk.worldObj.provider.dimensionId != dim) false
-    else if (x <= chunk.xPosition) false
-    else if (x > chunk.xPosition + 16) false
-    else if (z <= chunk.zPosition) false
-    else if (z > chunk.zPosition + 16) false
+    else if (x <= chunk.xPosition * 16) false
+    else if (x > chunk.xPosition * 16 + 16) false
+    else if (z <= chunk.zPosition * 16) false
+    else if (z > chunk.zPosition * 16 + 16) false
     else true
   }
 
