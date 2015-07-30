@@ -20,30 +20,33 @@ object LocationTracker {
   }
 
   def getLocationsInRange(loc: Loc4, range: Float): Iterable[Loc4] = {
-    val chunkMap = trackerMap.get(loc.dim)
-    if (chunkMap.isEmpty) return Set[Loc4]()
     val chunkRadius = Math.ceil(range / CHUNK_SIZE).toInt
     val (cx, cz) = loc.chunkCoords
-    val chunks = for {
+    for {
       i <- -chunkRadius to chunkRadius
       j <- -chunkRadius to chunkRadius
-    } yield chunkMap.get((cx + i, cz + j))
-    chunks.flatMap(_.filter(_.distSqr(loc) <= range * range))
+      locations <- getLocationsInChunk(loc.dim, (cx + i, cz + j))
+      checkLoc <- locations if checkLoc.distSqr(loc) <= range * range
+    } yield checkLoc
   }
 
   def getLocationsInRange(dim: Int, loc: (Float, Float, Float), range: Float): Iterable[Loc4] = {
-    val chunkMap = trackerMap.get(dim)
-    if (chunkMap.isEmpty) return Set[Loc4]()
     val (x, y, z) = loc
     val chunkRadius = Math.ceil(range / CHUNK_SIZE).toInt
     val (cx, cz) = (x.toInt >> 4, z.toInt >> 4)
-    val chunks = for {
+    for {
       i <- -chunkRadius to chunkRadius
       j <- -chunkRadius to chunkRadius
-    } yield chunkMap.get((cx + i, cz + j))
-    chunks.flatMap(_.filter(checkLoc => {
-      ((checkLoc.x - x) * (checkLoc.x - x) + (checkLoc.y - y) * (checkLoc.y - y) + (checkLoc.z - z) * (checkLoc.z - z)) <= range * range
-    }))
+      locations <- getLocationsInChunk(dim, (cx + i, cz + j))
+      checkLoc <- locations if ((checkLoc.x - x) * (checkLoc.x - x) + (checkLoc.y - y) * (checkLoc.y - y) + (checkLoc.z - z) * (checkLoc.z - z)) <= range * range
+    } yield checkLoc
   }
+
+  def getLocationsInChunk(dim: Int, chunkLoc: (Int, Int)) =
+    for {
+      dimMap <- trackerMap.get(dim)
+      chunk <- dimMap.get(chunkLoc)
+    } yield chunk
+
 
 }
