@@ -18,4 +18,24 @@ case class Color(var alpha: Byte, var red: Byte, var green: Byte, var blue: Byte
     r1 += blue & 255
     r1
   }
+
+  def setRed(red: Byte) = {
+    this.red = red
+    this
+  }
+
+  def setGreen(green: Byte) = {
+    this.green = green
+    this
+  }
+
+  def setBlue(green: Byte) = {
+    this.green = green
+    this
+  }
+
+  def setAlpha(alpha: Byte) = {
+    this.alpha = alpha
+    this
+  }
 }
