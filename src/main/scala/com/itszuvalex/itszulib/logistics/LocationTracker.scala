@@ -38,6 +38,14 @@ class LocationTracker {
     trackerMap.getOrElse(loc.dim, return false).getOrElse(loc.chunkCoords, return false).contains(loc)
   }
 
+  def getTrackedLocationsInDim(dim: Int) = {
+    trackerMap.get(dim).view.flatMap(_.values).flatten
+  }
+
+  def getTrackedLocations = {
+    trackerMap.values.view.flatMap(_.values).flatten
+  }
+
   def getLocationsInRange(loc: Loc4, range: Float): Iterable[Loc4] = for {
     chunk <- getChunkCoordsInRadius(loc.chunkCoords, Math.ceil(range / CHUNK_SIZE).toInt)
     checkLoc <- getLocationsInChunk(loc.dim, chunk)
