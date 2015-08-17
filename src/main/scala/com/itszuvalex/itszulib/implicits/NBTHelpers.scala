@@ -12,6 +12,12 @@ object NBTHelpers {
 
   object NBTLiterals {
 
+    def NBTCompound(serializable: NBTSerializable) = {
+      val compound = new NBTTagCompound
+      serializable.saveToNBT(compound)
+      compound
+    }
+
     def NBTCompound(elems: (String, Any)*): NBTTagCompound = NBTAdditions.NBTCompoundAdding(new NBTTagCompound)(elems: _*)
 
     def NBTList(collection: TraversableOnce[_ <: NBTBase]) = {
@@ -52,9 +58,7 @@ object NBTHelpers {
           case s: String             => compound.setString(key, s)
           case n: NBTBase            => compound.setTag(key, n)
           case save: NBTSerializable =>
-            val sc = new NBTTagCompound
-            save.saveToNBT(sc)
-            compound.setTag(key, sc)
+            compound.setTag(key, NBTLiterals.NBTCompound(save))
           case _                     =>
         }
                       }
