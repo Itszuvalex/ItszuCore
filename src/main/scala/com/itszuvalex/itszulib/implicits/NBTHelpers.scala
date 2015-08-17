@@ -12,13 +12,20 @@ object NBTHelpers {
 
   object NBTLiterals {
 
-    def NBTCompound(elems: (String, Any)*): NBTTagCompound = NBTAdditions.NBTCompoundAdding(new NBTTagCompound)(elems:_*)
+    def NBTCompound(elems: (String, Any)*): NBTTagCompound = NBTAdditions.NBTCompoundAdding(new NBTTagCompound)(elems: _*)
 
-    def NBTList[T <: NBTBase](elems: T*): NBTTagList = {
+    def NBTList(collection: TraversableOnce[_ <: NBTBase]) = {
+      val list = new NBTTagList
+      collection.foreach(list.appendTag)
+      list
+    }
+
+    def NBTList(elems: NBTBase*): NBTTagList = {
       val list = new NBTTagList
       elems.foreach(list.appendTag)
       list
     }
+
   }
 
   object NBTAdditions {
