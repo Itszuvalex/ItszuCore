@@ -29,6 +29,17 @@ import net.minecraftforge.common.util.ForgeDirection
 /**
  * Created by Christopher Harris (Itszuvalex) on 5/9/14.
  */
+object Loc4 {
+  def apply(compound: NBTTagCompound): Loc4 = {
+    if (compound == null) null
+    else {
+      val loc = new Loc4(0, 0, 0, 0)
+      loc.loadFromNBT(compound)
+      loc
+    }
+  }
+}
+
 case class Loc4(var x: Int, var y: Int, var z: Int, var dim: Int) extends NBTSerializable with Comparable[Loc4] {
 
   def this() = this(0, 0, 0, 0)
@@ -53,17 +64,17 @@ case class Loc4(var x: Int, var y: Int, var z: Int, var dim: Int) extends NBTSer
 
   def getTileEntity(force: Boolean = false) = getWorld match {
     case Some(a) => Option(if (a.blockExists(x, y, z) || force) a.getTileEntity(x, y, z) else null)
-    case None => None
+    case None    => None
   }
 
   def getBlock(force: Boolean = false) = getWorld match {
     case Some(a) => Option(if (a.blockExists(x, y, z) || force) a.getBlock(x, y, z) else null)
-    case None => None
+    case None    => None
   }
 
   def getChunk(force: Boolean = false) = getWorld match {
     case Some(a) => Option(if (a.blockExists(x, y, z) || force) a.getChunkFromBlockCoords(x, z) else null)
-    case None => None
+    case None    => None
   }
 
   def chunkCoords = (x >> 4, z >> 4)

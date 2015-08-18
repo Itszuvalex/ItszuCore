@@ -42,6 +42,23 @@ object NBTHelpers {
       def ++=(xs: TraversableOnce[_ <: NBTBase]) = xs.foreach(list.appendTag)
     }
 
+    implicit class NBTListIterable(list: NBTTagList) extends Iterable[NBTTagCompound] {
+      override def iterator: Iterator[NBTTagCompound] = new NBTListIterator(this.list)
+
+      class NBTListIterator(private val list: NBTTagList) extends Iterator[NBTTagCompound] {
+        var index = 0
+
+        override def hasNext = index < list.tagCount()
+
+        override def next(): NBTTagCompound = {
+          val ret = list.getCompoundTagAt(index)
+          index += 1
+          ret
+        }
+      }
+
+    }
+
     implicit class NBTCompoundAdding(compound: NBTTagCompound) {
       def apply(elems: (String, Any)*): NBTTagCompound = {
         elems.foreach { case (key, value) => value match {
@@ -64,6 +81,40 @@ object NBTHelpers {
                       }
         compound
       }
+    }
+
+
+    implicit class NBTCompoundReading(compound: NBTTagCompound) {
+
+      def Bool(key: String) = compound.getBoolean(key)
+
+      def Byte(key: String) = compound.getByte(key)
+
+      def ByteArray(key: String) = if (compound.hasKey(key)) compound.getByteArray(key) else null
+
+      def Double(key: String) = compound.getDouble(key)
+
+      def Float(key: String) = compound.getFloat(key)
+
+      def IntArray(key: String) = if (compound.hasKey(key)) compound.getIntArray(key) else null
+
+      def Int(key: String) = compound.getInteger(key)
+
+      def Long(key: String) = compound.getLong(key)
+
+      def Short(key: String) = compound.getShort(key)
+
+      def String(key: String) = if (compound.hasKey(key)) compound.getString(key) else null
+
+      def NBTCompound[T <: AnyRef](key: String)(callback: NBTTagCompound => T) : T = if (compound.hasKey(key)) {
+        val read = compound.getCompoundTag(key)
+        if (callback != null) callback(read)
+        else null.asInstanceOf[T]
+      } else null.asInstanceOf[T]
+
+      def NBTList(key: String) = if (compound.hasKey(key)) compound.getTagList(key, 10) else null
+
+      def NBTTag(key: String) = if (compound.hasKey(key)) compound.getTag(key) else null
     }
 
   }
