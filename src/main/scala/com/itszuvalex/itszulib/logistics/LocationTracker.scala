@@ -22,10 +22,10 @@ class LocationTracker {
 
   def removeLocation(loc: Loc4) = {
     trackerMap.get(loc.dim) match {
-      case None =>
+      case None      =>
       case Some(dim) =>
         dim.get(loc.chunkCoords) match {
-          case None =>
+          case None        =>
           case Some(chunk) =>
             chunk -= loc
             if (chunk.isEmpty) dim -= loc.chunkCoords
@@ -54,8 +54,12 @@ class LocationTracker {
 
   def getLocationsInRange(dim: Int, loc: (Float, Float, Float), range: Float): Iterable[Loc4] = {
     val (x, y, z) = loc
+    val radius = Math.ceil(range / CHUNK_SIZE).toInt
     for {
-      chunk <- getChunkCoordsInRadius((x.toInt >> 4, z.toInt >> 4), Math.ceil(range / CHUNK_SIZE).toInt)
+      chunk <- if (radius * radius < trackerMap.get(dim).map(_.size).getOrElse(0))
+        getChunkCoordsInRadius((x.toInt >> 4, z.toInt >> 4), radius)
+      else
+        getChunkCoordsInRadiusInDim((x.toInt >> 4, z.toInt >> 4), radius, dim)
       checkLoc <- getLocationsInChunk(dim, chunk)
       if ((checkLoc.x - x) * (checkLoc.x - x) + (checkLoc.y - y) * (checkLoc.y - y) + (checkLoc.z - z) * (checkLoc.z - z)) <= range * range
     } yield checkLoc
@@ -66,10 +70,17 @@ class LocationTracker {
   }
 
 
-  def getChunkCoordsInRadius(loc: (Int, Int), radius: Int) = for {
+  private def getChunkCoordsInRadius(loc: (Int, Int), radius: Int) = for {
     i <- -radius to radius
     j <- -radius to radius
   } yield (loc._1 + i, loc._2 + j)
+
+  private def getChunkCoordsInRadiusInDim(loc: (Int, Int), radius: Int, dim: Int) = {
+    trackerMap.getOrElse(dim, mutable.HashMap.empty).keys.filter { floc =>
+      (floc._1 >= loc._1 - radius && floc._1 <= loc._1 + radius) &&
+      (floc._2 >= loc._2 - radius && floc._2 <= loc._2 + radius)
+                                                                 }
+  }
 
 
   def clear(): Unit = {
