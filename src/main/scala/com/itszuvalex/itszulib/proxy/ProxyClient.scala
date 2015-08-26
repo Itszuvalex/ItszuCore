@@ -20,15 +20,20 @@
  */
 package com.itszuvalex.itszulib.proxy
 
-import com.itszuvalex.itszulib.render.{RenderSimpleMachine, ShaderUtils}
-import com.itszuvalex.itszulib.testing.{RenderPortalTest, PortalTileTest}
+import com.itszuvalex.itszulib.render.{PreviewableRenderHandler, PreviewableRendererRegistry, RenderSimpleMachine, ShaderUtils}
+import com.itszuvalex.itszulib.testing.{PortalTileTest, PreviewableIDs, RenderPortalTest, TestPreviewableRenderer}
 import cpw.mods.fml.client.registry.{ClientRegistry, RenderingRegistry}
+import net.minecraftforge.common.MinecraftForge
 
 
 class ProxyClient extends ProxyCommon {
   override def registerRendering() {
     super.registerRendering()
     ShaderUtils.init()
+    MinecraftForge.EVENT_BUS.register(new PreviewableRenderHandler)
+
+    // Previewable Rendering Test
+    PreviewableIDs.testID = PreviewableRendererRegistry.bindRenderer(new TestPreviewableRenderer)
     RenderSimpleMachine.renderID = RenderingRegistry.getNextAvailableRenderId
     RenderingRegistry.registerBlockHandler(RenderSimpleMachine.renderID, new RenderSimpleMachine)
 
