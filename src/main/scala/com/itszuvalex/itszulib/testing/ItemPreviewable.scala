@@ -1,18 +1,16 @@
 package com.itszuvalex.itszulib.testing
 
 import com.itszuvalex.itszulib.api.IPreviewable
-import net.minecraft.item.{Item, ItemStack}
-import net.minecraft.world.World
+import net.minecraft.item.Item
 
 /**
-  * Created by Christopher Harris (Itszuvalex) on 8/26/15.
-  */
+ * Created by Christopher Harris (Itszuvalex) on 8/26/15.
+ */
 class ItemPreviewable extends Item with IPreviewable {
-   override def canPlaceAtLocation(stack: ItemStack, world: World, x: Int, y: Int, z: Int): Boolean = true
 
-   /**
-    *
-    * @return The ID of IPreviewableRenderer.  This is separate from Forge RenderIDs.
-    */
-   override def renderID: Int = PreviewableIDs.testID
- }
+  /**
+   *
+   * @return The ID of IPreviewableRenderer.  This is separate from Forge RenderIDs.
+   */
+  override def renderID: Int = PreviewableIDs.testID
+}

@@ -106,10 +106,12 @@ object NBTHelpers {
 
       def String(key: String) = if (compound.hasKey(key)) compound.getString(key) else null
 
-      def NBTCompound[T <: AnyRef](key: String)(callback: NBTTagCompound => T) : T = if (compound.hasKey(key)) {
-        val read = compound.getCompoundTag(key)
-        if (callback != null) callback(read)
-        else null.asInstanceOf[T]
+      def NBTCompound[T <: AnyRef](key: String)(callback: NBTTagCompound => T): T = if (compound != null) {
+        if (compound.hasKey(key)) {
+          val read = compound.getCompoundTag(key)
+          if (callback != null) callback(read)
+          else null.asInstanceOf[T]
+        } else null.asInstanceOf[T]
       } else null.asInstanceOf[T]
 
       def NBTList(key: String) = if (compound.hasKey(key)) compound.getTagList(key, 10) else null

@@ -2,6 +2,7 @@ package com.itszuvalex.itszulib.implicits
 
 import com.itszuvalex.itszulib.util.StringUtils
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NBTTagCompound
 import net.minecraftforge.oredict.OreDictionary
 
 import scala.collection.JavaConversions._
@@ -29,6 +30,14 @@ object ItemStackImplicits {
 
     def isOre(oreDictionary: String) = OreDictionary.getOres(oreDictionary)
                                        .exists(ItemStack.areItemStacksEqual(_, item))
+  }
+
+  implicit class ForcedNBT(i: ItemStack) {
+    def forceTag: NBTTagCompound = {
+      if (!i.hasTagCompound)
+        i.stackTagCompound = new NBTTagCompound
+      i.getTagCompound
+    }
   }
 
 }

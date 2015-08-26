@@ -8,7 +8,6 @@ import net.minecraft.init.Blocks
 import net.minecraft.util.MovingObjectPosition
 import net.minecraftforge.client.event.RenderWorldLastEvent
 import net.minecraftforge.common.util.ForgeDirection
-import org.lwjgl.opengl.GL11
 
 /**
  * Created by Christopher Harris (Itszuvalex) on 8/26/15.
@@ -20,13 +19,13 @@ class PreviewableRenderHandler {
   def render(event: RenderWorldLastEvent): Unit = {
     val player = Minecraft.getMinecraft.thePlayer
     player.getCurrentEquippedItem match {
-      case null =>
+      case null                                                                       =>
       case stack if stack.getItem != null && stack.getItem.isInstanceOf[IPreviewable] =>
         val prev = stack.getItem.asInstanceOf[IPreviewable]
         PreviewableRendererRegistry.getRenderer(prev.renderID) match {
           case Some(renderer) =>
             Minecraft.getMinecraft.objectMouseOver match {
-              case null =>
+              case null                                                                =>
               case vec if vec.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK =>
                 val world = player.getEntityWorld
                 val hitX = vec.blockX
@@ -50,21 +49,13 @@ class PreviewableRenderHandler {
                 val py = player.prevPosY + (player.posY - player.prevPosY) * event.partialTicks
                 val pz = player.prevPosZ + (player.posZ - player.prevPosZ) * event.partialTicks
 
-                GL11.glEnable(GL11.GL_BLEND)
-                if (prev.canPlaceAtLocation(stack, world, bx, by, bz)) {
-                  GL11.glColor4f(0, 1, 0, .5f)
-                } else {
-                  GL11.glColor4f(1, 0, 0, .5f)
-                }
-
                 renderer.renderAtLocation(stack, world, bx, by, bz,
                                           bx - px, by - py, bz - pz)
-                GL11.glDisable(GL11.GL_BLEND)
-              case _ =>
+              case _                                                                   =>
             }
-          case None =>
+          case None           =>
         }
-      case _ =>
+      case _                                                                          =>
     }
   }
 
