@@ -21,7 +21,7 @@ object Comparators {
         case (null, null) => 0
         case (null, _)    => -1
         case (_, null)    => 1
-        case (i1, i2)     => i2.itemID - i1.itemID
+        case (i1, i2)     => i1.itemID - i2.itemID
       }
     }
 
@@ -30,7 +30,7 @@ object Comparators {
         case (null, null) => 0
         case (null, _)    => -1
         case (_, null)    => 1
-        case (i1, i2)     => i2.getItemDamage - i1.getItemDamage
+        case (i1, i2)     => i1.getItemDamage - i2.getItemDamage
       }
     }
 
@@ -42,7 +42,7 @@ object Comparators {
         case (i1, i2)     => (i1.getItemDamage, i2.getItemDamage) match {
           case (OreDictionary.WILDCARD_VALUE, _) => 0
           case (_, OreDictionary.WILDCARD_VALUE) => 0
-          case (d1, d2)                          => d2 - d1
+          case (d1, d2)                          => d1 - d2
         }
       }
     }
@@ -92,14 +92,14 @@ object Comparators {
         case (null, null) => 0
         case (null, _)    => -1
         case (_, null)    => 1
-        case (f1, f2)     => f2.fluidID - f1.fluidID
+        case (f1, f2)     => f1.fluidID - f2.fluidID
       }
     }
 
 
     object IDNBTComparator extends Comparator[FluidStack] {
       override def compare(o1: FluidStack, o2: FluidStack): Int = {
-        IDNBTComparator.compare(o1, o2) match {
+        IDComparator.compare(o1, o2) match {
           case 0 if o1 != null && o2 != null => CompoundSizeComparator.compare(o1.tag, o2.tag)
           case r                             => r
         }
@@ -117,7 +117,7 @@ object Comparators {
         case (null, null) => 0
         case (null, _)    => -1
         case (_, null)    => 1
-        case (c1, c2)     => c2.func_150296_c().size() - c1.func_150296_c().size()
+        case (c1, c2)     => c1.func_150296_c().size() - c2.func_150296_c().size()
       }
     }
 
