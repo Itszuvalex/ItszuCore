@@ -3,6 +3,7 @@ package com.itszuvalex.itszulib.implicits
 import com.itszuvalex.itszulib.api.core.NBTSerializable
 import net.minecraft.nbt.{NBTBase, NBTTagCompound, NBTTagList}
 
+import scala.collection.JavaConversions._
 import scala.collection.TraversableOnce
 
 /**
@@ -77,6 +78,23 @@ object NBTHelpers {
           case save: NBTSerializable =>
             compound.setTag(key, NBTLiterals.NBTCompound(save))
           case _                     =>
+        }
+                      }
+        compound
+      }
+
+      def merge(elems: (String, Any)*): NBTTagCompound = {
+        elems.foreach { case (key, value) => value match {
+          case null              =>
+          case n: NBTTagCompound =>
+            if (compound.hasKey(key)) {
+              val nc = compound.getCompoundTag(key)
+              nc.merge(n.func_150296_c().collect { case key: String => (key, n.getTag(key)) }.toSeq: _*)
+            }
+            else {
+              compound.setTag(key, n)
+            }
+          case _                 => apply((key, value))
         }
                       }
         compound
