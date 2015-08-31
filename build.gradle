@@ -1,4 +1,3 @@
-task debug << { println configurations.compile.findAll { it.name.startsWith("scala") } }
 
 buildscript {
     repositories {
@@ -15,6 +14,15 @@ buildscript {
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
+}
+
+plugins {
+    id "com.github.maiflai.scalatest" version "0.6-5-g9065d91"
+}
+
+dependencies {
+    testCompile 'org.scalatest:scalatest_2.11:2+'
+    testRuntime 'org.pegdown:pegdown:1.5.0'
 }
 
 apply plugin: 'scala'
@@ -35,7 +43,7 @@ if (System.getenv().BUILD_NUMBER != null) {
     version += "-local"
 }
 
-if (System.getenv().JOB_NAME != null && System.getenv().JOB_NAME.equalsIgnoreCase("ItszuCore-1.7.10-Dev")) {
+if (System.getenv().JOB_NAME != null && System.getenv().JOB_NAME.equalsIgnoreCase("ItszuLib-1.7.10-Dev")) {
     version += "-dev"
 }
 
@@ -44,8 +52,8 @@ compileScala {
     targetCompatibility = 1.7
 }
 
-group = "com.itszuvalex.itszucore" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "itszucore"
+group = "com.itszuvalex.itszulib" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "itszulib"
 
 minecraft {
     version = "${project.ext.mcVersion}-10.13.2.1230"
@@ -102,6 +110,13 @@ processResources
             inputs.property "version", project.version
             inputs.property "mcversion", project.minecraft.version
 
+            ext.srcFiles = "$projectDir/src/main/resources"
+            ext.destDir = "$projectDir/build/classes/main"
+
+            // registering inputs & outputs allow gradle to skip if UP-TO-DATE
+            inputs.files srcFiles
+            outputs.dir destDir
+
             // replace stuff in mcmod.info, nothing else
             from(sourceSets.main.resources.srcDirs) {
                 include 'mcmod.info'
@@ -122,11 +137,11 @@ processResources
 //Create API library jar
 //Must be fully qualified name or it attempts to match against scala.io Jar
 task apiJar(type: org.gradle.api.tasks.bundling.Jar) {
-    baseName = 'itszucore-api'
+    baseName = 'itszulib-api'
     dependsOn check
 
     from(sourceSets.main.output) {
-        include 'com/itszuvalex/itszucore/api/**'
+        include 'com/itszuvalex/itszulib/api/**'
     }
     from(sourceSets.main.resources.srcDirs) {
         include 'api-readme.txt'
@@ -134,14 +149,17 @@ task apiJar(type: org.gradle.api.tasks.bundling.Jar) {
 }
 
 task apiScalaDoc(type:  org.gradle.api.tasks.scala.ScalaDoc) {
-    include 'com/itszuvalex/itszucore/api/**.scala'
+    include 'com/itszuvalex/itszulib/api/**.scala'
 }
 
 task jarApiScalaDoc(type:  org.gradle.api.tasks.bundling.Jar) {
-    baseName = 'itszucore-api-scaladoc'
+    baseName = 'itszulib-api-scaladoc'
     from apiScalaDoc
 }
 
+task debug << { println configurations.compile.findAll { it.name.startsWith("scala") } }
 
 build.dependsOn apiJar
 
+
+idea { module { inheritOutputDirs = true } }
