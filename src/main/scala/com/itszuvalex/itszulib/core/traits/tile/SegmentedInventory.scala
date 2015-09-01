@@ -16,7 +16,7 @@ object SegmentedInventory {
   val FullInventory = "Inventory"
 }
 
-trait SegmentedInventory extends Inventory with ISegmentedInventory {
+trait SegmentedInventory extends TileInventory with ISegmentedInventory {
 
   /**
    *

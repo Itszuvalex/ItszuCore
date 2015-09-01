@@ -22,12 +22,12 @@ package com.itszuvalex.itszulib.core
 
 import com.itszuvalex.itszulib.api.core.Loc4
 import com.itszuvalex.itszulib.util.DataUtils
-import com.itszuvalex.itszulib.core.traits.tile.DescriptionPacket
+import com.itszuvalex.itszulib.core.traits.tile.TileDescriptionPacket
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.tileentity.TileEntity
 
-abstract class TileEntityBase extends TileEntity with DescriptionPacket {
+abstract class TileEntityBase extends TileEntity with TileDescriptionPacket {
   override def readFromNBT(par1nbtTagCompound: NBTTagCompound) {
     super.readFromNBT(par1nbtTagCompound)
     DataUtils.loadObjectFromNBT(par1nbtTagCompound, this, DataUtils.EnumSaveType.WORLD)

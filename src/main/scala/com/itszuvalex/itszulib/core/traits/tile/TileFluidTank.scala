@@ -8,7 +8,7 @@ import net.minecraftforge.fluids._
 /**
  * Created by Chris on 11/30/2014.
  */
-trait FluidTank extends TileEntityBase with IFluidHandler {
+trait TileFluidTank extends TileEntityBase with IFluidHandler {
   @Saveable val tank = defaultTank
 
   def defaultTank: IFluidTank

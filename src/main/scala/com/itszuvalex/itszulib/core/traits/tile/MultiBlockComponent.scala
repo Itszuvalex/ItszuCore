@@ -1,6 +1,6 @@
 package com.itszuvalex.itszulib.core.traits.tile
 
-import com.itszuvalex.itszulib.api.core.Saveable
+import com.itszuvalex.itszulib.api.core.{Loc4, Saveable}
 import com.itszuvalex.itszulib.api.multiblock.{IMultiBlockComponent, MultiBlockInfo}
 import com.itszuvalex.itszulib.core.TileEntityBase
 import net.minecraft.nbt.NBTTagCompound
@@ -34,4 +34,24 @@ trait MultiBlockComponent extends TileEntityBase with IMultiBlockComponent {
   }
 
   def getInfo = info
+
+  def forwardToDifferentController[B, T](f: T => B): B = {
+    if (isValidMultiBlock)
+      Loc4(info.x, info.y, info.z, getWorldObj.provider.dimensionId).getTileEntity(true) match {
+        case Some(a) if a.isInstanceOf[T] => return f(a.asInstanceOf[T])
+        case _                            =>
+      }
+    null.asInstanceOf[B]
+  }
+
+  def forwardToController[B](f: this.type => B): B = {
+    if (isValidMultiBlock)
+      Loc4(info.x, info.y, info.z, getWorldObj.provider.dimensionId).getTileEntity(true) match {
+        case Some(a) if a.isInstanceOf[this.type] => return f(a.asInstanceOf[this.type])
+        case _                                    =>
+      }
+    null.asInstanceOf[B]
+  }
+
+  def isController = info.isController(xCoord, yCoord, zCoord)
 }

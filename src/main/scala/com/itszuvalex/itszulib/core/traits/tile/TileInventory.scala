@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack
 /**
  * Created by Chris on 11/29/2014.
  */
-trait Inventory extends TileEntityBase with ISidedInventory {
+trait TileInventory extends TileEntityBase with ISidedInventory {
   @Saveable
   val inventory = defaultInventory
 
