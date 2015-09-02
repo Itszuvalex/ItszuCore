@@ -173,6 +173,19 @@ task getArtifacts(dependsOn: build) {
 //      outputs.files  jar.outputs.getFiles()
 //}
 
+task jarSource(type: org.gradle.api.tasks.bundling.Jar) {
+  baseName = "${archivesBaseName}-src"
+  dependsOn check
+  from sourceSets.main.scala.srcDirs
+}
+
+task jarDeobf(type: org.gradle.api.tasks.bundling.Jar) {
+  baseName = "${archivesBaseName}-deobf"
+  dependsOn check
+
+  from(sourceSets.main.output)
+}
+
 build.dependsOn apiJar
 
 publish.dependsOn assemble
@@ -199,6 +212,22 @@ publishing {
             artifact apiJar {
                 classifier "api"
             }
+        }
+        src(MavenPublication) {
+          groupId group
+          version project.version
+
+          artifact jarSource {
+            classifier "src"
+          }
+        }
+        deobf(MavenPublication) {
+          groupId group
+          version project.version
+
+          artifact jarDeobf {
+            classifier 'deobf'
+          }
         }
         scalaDoc(MavenPublication) {
             groupId group
