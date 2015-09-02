@@ -13,6 +13,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath group: 'com.layer', name: 'gradle-git-repo-plugin', version: '2.0.2'
     }
 }
 
@@ -27,6 +28,8 @@ dependencies {
 
 apply plugin: 'scala'
 apply plugin: 'forge'
+apply plugin: 'maven-publish'
+apply plugin: 'git-repo'
 
 project.ext {
     massive = "0"
@@ -137,7 +140,7 @@ processResources
 //Create API library jar
 //Must be fully qualified name or it attempts to match against scala.io Jar
 task apiJar(type: org.gradle.api.tasks.bundling.Jar) {
-    baseName = 'itszulib-api'
+    baseName = "${archivesBaseName}-api"
     dependsOn check
 
     from(sourceSets.main.output) {
@@ -153,13 +156,53 @@ task apiScalaDoc(type:  org.gradle.api.tasks.scala.ScalaDoc) {
 }
 
 task jarApiScalaDoc(type:  org.gradle.api.tasks.bundling.Jar) {
-    baseName = 'itszulib-api-scaladoc'
+    baseName = "${archivesBaseName}-api-scaladoc"
     from apiScalaDoc
 }
 
 task debug << { println configurations.compile.findAll { it.name.startsWith("scala") } }
 
+task getArtifacts << {fileTree(dir: "$projectDir/build/libs").include('**/*.jar')}
+
 build.dependsOn apiJar
+
+gitPublishConfig{
+  org = "itszuvalex"
+  repo = "itszulib-release"
+}
+
+publishing {
+  publications {
+    mod(MavenPublication) {
+      groupId group
+      version project.version
+
+      artifact fileTree(dir: "$projectDir/build/libs").include('**/*.jar').exclude("**/*api*").iterator().next()
+    }
+    api(MavenPublication) {
+      groupId group
+      version project.version
+
+      artifact apiJar {
+          classifier "api"
+      }
+    }
+    scalaDoc(MavenPublication) {
+      groupId group
+      version project.version
+
+      artifact jarApiScalaDoc {
+          classifier "api-scaladoc"
+      }
+    }
+  }
+  repositories {
+    maven {
+      url "file://${gitPublishConfig.home}/${gitPublishConfig.org}/${gitPublishConfig.repo}/releases"
+    }
+  }
+}
+
 
 
 idea { module { inheritOutputDirs = true } }
