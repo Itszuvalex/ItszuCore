@@ -1,4 +1,3 @@
-
 buildscript {
     repositories {
         mavenCentral()
@@ -151,58 +150,69 @@ task apiJar(type: org.gradle.api.tasks.bundling.Jar) {
     }
 }
 
-task apiScalaDoc(type:  org.gradle.api.tasks.scala.ScalaDoc) {
+task apiScalaDoc(type: org.gradle.api.tasks.scala.ScalaDoc) {
     include 'com/itszuvalex/itszulib/api/**.scala'
 }
 
-task jarApiScalaDoc(type:  org.gradle.api.tasks.bundling.Jar) {
+task jarApiScalaDoc(type: org.gradle.api.tasks.bundling.Jar) {
     baseName = "${archivesBaseName}-api-scaladoc"
     from apiScalaDoc
 }
 
 task debug << { println configurations.compile.findAll { it.name.startsWith("scala") } }
 
-task getArtifacts << {fileTree(dir: "$projectDir/build/libs").include('**/*.jar')}
+task getArtifacts(dependsOn: build) {
+    outputs.files files(fileTree(dir: "$projectDir/build/libs").include('**/*.jar'))
+}
+
+//task getModJar << {
+//    outputs.file file(fileTree(dir: "$projectDir/build/libs", include: '**/*.jar', exclude: '**/*api*').iterator().next())
+//}
+
+//task readOutputs(dependsOn: assemble) {
+//      outputs.files  jar.outputs.getFiles()
+//}
 
 build.dependsOn apiJar
 
-gitPublishConfig{
-  org = "itszuvalex"
-  repo = "itszulib-release"
+gitPublishConfig {
+    org = "itszuvalex"
+    repo = "itszulib-release"
 }
 
+
 publishing {
-  publications {
+
+    publications {
     mod(MavenPublication) {
       groupId group
       version project.version
 
-      artifact fileTree(dir: "$projectDir/build/libs").include('**/*.jar').exclude("**/*api*").iterator().next()
+      artifact jar.outputs.files.iterator().next()
     }
-    api(MavenPublication) {
-      groupId group
-      version project.version
+        api(MavenPublication) {
+            groupId group
+            version project.version
 
-      artifact apiJar {
-          classifier "api"
-      }
-    }
-    scalaDoc(MavenPublication) {
-      groupId group
-      version project.version
+            artifact apiJar {
+                classifier "api"
+            }
+        }
+        scalaDoc(MavenPublication) {
+            groupId group
+            version project.version
 
-      artifact jarApiScalaDoc {
-          classifier "api-scaladoc"
-      }
+            artifact jarApiScalaDoc {
+                classifier "api-scaladoc"
+            }
+        }
     }
-  }
-  repositories {
-    maven {
-      url "file://${gitPublishConfig.home}/${gitPublishConfig.org}/${gitPublishConfig.repo}/releases"
+    repositories {
+        maven {
+            url "file://${gitPublishConfig.home}/${gitPublishConfig.org}/${gitPublishConfig.repo}/releases"
+        }
     }
-  }
 }
-
 
 
 idea { module { inheritOutputDirs = true } }
