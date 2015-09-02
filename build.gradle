@@ -175,21 +175,23 @@ task getArtifacts(dependsOn: build) {
 
 build.dependsOn apiJar
 
+publish.dependsOn assemble
+
 gitPublishConfig {
     org = "itszuvalex"
     repo = "itszulib-release"
 }
 
-
 publishing {
 
     publications {
-    mod(MavenPublication) {
-      groupId group
-      version project.version
 
-      artifact jar.outputs.files.iterator().next()
-    }
+        mod(MavenPublication) {
+            groupId group
+            version project.version
+
+            artifact jar.outputs.files.iterator().next()
+        }
         api(MavenPublication) {
             groupId group
             version project.version
