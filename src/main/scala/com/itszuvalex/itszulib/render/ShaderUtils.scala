@@ -49,8 +49,8 @@ import scala.collection.JavaConverters._
 
       shaderParameterMap.get(shader) match {
         case Some(a) => a.foreach { case (name, vfun) =>
-          val loc = ARBShaderObjects.glGetUniformLocationARB(shader, name)
-          vfun() match {
+          val loc = ARBShaderObjects.glGetUniformLocationARB(shader, name);
+          vfun(Unit) match {
             case i: Int => ARBShaderObjects.glUniform1iARB(loc, i)
             case f: Float => ARBShaderObjects.glUniform1fARB(loc, f)
             case ib: IntBuffer => ARBShaderObjects.glUniform1ARB(loc, ib)

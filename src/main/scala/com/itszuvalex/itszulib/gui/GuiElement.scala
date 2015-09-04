@@ -4,23 +4,40 @@ package com.itszuvalex.itszulib.gui
  * Created by Christopher Harris (Itszuvalex) on 9/3/15.
  */
 trait GuiElement {
-  var x: Int
-  var y: Int
+  var anchorX: Int
 
-  def isMousedOver : Boolean
+  var anchorY: Int
+
+  var moused = false
+
+  def isMousedOver = moused
 
   def isLocationInside(mouseX: Int, mouseY: Int): Boolean
 
-  def onMouseEnter()
+  def onMouseEnter() = moused = true
 
-  def onMouseLeave()
+  def onMouseLeave() = moused = false
 
-  def onMouseClick(mouseX: Int, mouseY: Int, button: Int)
+  /**
+   *
+   * @param mouseX Local mouseX coordinates
+   * @param mouseY Local mouseY coordinates
+   * @param button
+   * @return True if click is handled
+   */
+  def onMouseClick(mouseX: Int, mouseY: Int, button: Int) = false
 
-  def addTooltip(mouseX: Int, mouseY: Int, tooltip: java.util.List[String])
+  def addTooltip(mouseX: Int, mouseY: Int, tooltip: List[String]) = {}
 
-  def render(screenX: Int, screenY: Int)
+  def render(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float) = {
+    (isMousedOver, isLocationInside(mouseX, mouseY)) match {
+      case (true, false) => onMouseLeave()
+      case (false, true) => onMouseEnter()
+      case _ =>
+    }
+  }
 
-  def update()
+  def update() = {}
+
 
 }
