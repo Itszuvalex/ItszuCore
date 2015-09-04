@@ -37,8 +37,11 @@ class GuiButton(override var anchorX: Int,
   def isDisabled = disabled
 
   override def onMouseClick(mouseX: Int, mouseY: Int, button: Int): Boolean = {
-    Minecraft.getMinecraft.getSoundHandler.playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F))
-    true
+    if (isLocationInside(mouseX, mouseY)) {
+      Minecraft.getMinecraft.getSoundHandler.playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F))
+      true
+    }
+    else false
   }
 
   override def addTooltip(mouseX: Int, mouseY: Int, tooltip: List[String]): Unit = {
@@ -47,6 +50,7 @@ class GuiButton(override var anchorX: Int,
   override def update(): Unit = {}
 
   override def render(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
+    super.render(screenX, screenY, mouseX, mouseY, partialTicks)
     /*
           screenX, screenY                                           screenX + panelWidth
           screenX, screenY+1                                         screen1 + panelWidth, screenY + 1
@@ -57,11 +61,11 @@ class GuiButton(override var anchorX: Int,
     //Top raised rect
     Gui.drawRect(screenX, screenY, screenX + panelWidth, screenY + 1, colorRaised)
     //Left raised rect
-    Gui.drawRect(screenX, screenY + 1, screenX + 1, screenY + panelHeight - 2, colorRaised)
+    Gui.drawRect(screenX, screenY + 1, screenX + 1, screenY + panelHeight - 1, colorRaised)
     //Bottom lowered rect
     Gui.drawRect(screenX, screenY + panelHeight - 1, screenX + panelWidth, screenY + panelHeight, colorLowered)
     //Right lowered rect
-    Gui.drawRect(screenX + panelWidth - 1, screenY + 1, screenX + panelWidth, screenY + panelHeight - 2, colorLowered)
+    Gui.drawRect(screenX + panelWidth - 1, screenY + 1, screenX + panelWidth, screenY + panelHeight - 1, colorLowered)
     //Main rect
     Gui.drawRect(screenX + 1, screenY + 1, screenX + panelWidth - 2, screenY + panelHeight - 2, colorDefault)
 

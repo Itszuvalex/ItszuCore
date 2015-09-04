@@ -34,6 +34,7 @@ trait GuiPanel extends GuiElement {
   override def update(): Unit = subElements.foreach(_.update())
 
   override def render(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
+    super.render(screenX, screenY, mouseX, mouseY, partialTicks)
     subElements.foreach(gui => gui.render(screenX + gui.anchorX,
                                           screenY + gui.anchorY,
                                           mouseX - gui.anchorX,
