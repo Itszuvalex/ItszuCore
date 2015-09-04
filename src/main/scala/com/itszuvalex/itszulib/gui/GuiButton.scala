@@ -67,7 +67,7 @@ class GuiButton(override var anchorX: Int,
     //Right lowered rect
     Gui.drawRect(screenX + panelWidth - 1, screenY + 1, screenX + panelWidth, screenY + panelHeight - 1, colorLowered)
     //Main rect
-    Gui.drawRect(screenX + 1, screenY + 1, screenX + panelWidth - 2, screenY + panelHeight - 2, colorDefault)
+    Gui.drawRect(screenX + 1, screenY + 1, screenX + panelWidth - 1, screenY + panelHeight - 1, colorDefault)
 
     if (isDisabled)
       Gui.drawRect(screenX, screenY, screenX + panelWidth, screenY + panelWidth, colorDisabled)
