@@ -47,14 +47,21 @@ class GuiButton(override var anchorX: Int,
   override def update(): Unit = {}
 
   override def render(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
+    /*
+          screenX, screenY                                           screenX + panelWidth
+          screenX, screenY+1                                         screen1 + panelWidth, screenY + 1
+
+
+          screenX, screenY + panelHeight-1                           screenX + panelWidth
+     */
     //Top raised rect
-    Gui.drawRect(screenX, screenY, screenX + panelWidth, screenY, colorRaised)
+    Gui.drawRect(screenX, screenY, screenX + panelWidth, screenY + 1, colorRaised)
     //Left raised rect
-    Gui.drawRect(screenX, screenY + 1, screenX, screenY + panelHeight - 2, colorRaised)
+    Gui.drawRect(screenX, screenY + 1, screenX + 1, screenY + panelHeight - 2, colorRaised)
     //Bottom lowered rect
-    Gui.drawRect(screenX, screenY + panelHeight, screenX + panelWidth, screenY, colorLowered)
+    Gui.drawRect(screenX, screenY + panelHeight - 1, screenX + panelWidth, screenY + panelHeight, colorLowered)
     //Right lowered rect
-    Gui.drawRect(screenX + panelWidth, screenY + 1, screenX + panelWidth, screenY + panelHeight - 2, colorLowered)
+    Gui.drawRect(screenX + panelWidth - 1, screenY + 1, screenX + panelWidth, screenY + panelHeight - 2, colorLowered)
     //Main rect
     Gui.drawRect(screenX + 1, screenY + 1, screenX + panelWidth - 2, screenY + panelHeight - 2, colorDefault)
 

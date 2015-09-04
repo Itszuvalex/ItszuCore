@@ -27,8 +27,8 @@ trait GuiPanel extends GuiElement {
   }
 
   override def isLocationInside(mouseX: Int, mouseY: Int): Boolean = {
-    ((mouseX >= anchorX) && (mouseX < anchorX + panelWidth)) &&
-    ((mouseY >= anchorY) && (mouseY < anchorY + panelHeight))
+    ((mouseX >= 0) && (mouseX < panelWidth)) &&
+    ((mouseY >= 0) && (mouseY < panelHeight))
   }
 
   override def update(): Unit = subElements.foreach(_.update())
