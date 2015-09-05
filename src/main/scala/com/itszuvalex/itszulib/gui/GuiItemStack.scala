@@ -53,22 +53,22 @@ class GuiItemStack(override var anchorX: Int,
     //Main rect
     Gui.drawRect(screenX + 1, screenY + 1, screenX + panelWidth - 1, screenY + panelHeight - 1, colorBackground)
 
-    drawItemStack(if (itemStack == null) "" else itemStack.stackSize.toString)
+    drawItemStack(screenX + 1, screenY + 1, if (itemStack == null) "" else itemStack.stackSize.toString)
   }
 
-  def drawItemStack(amt: String) {
+  def drawItemStack(locX: Int, locY: Int, amt: String) {
     if (itemStack == null) return
 
     GL11.glPushMatrix()
     GL11.glTranslatef(0.0F, 0.0F, 32.0F)
-    GL11.glColor3f(1,1,1)
+    GL11.glColor3f(1, 1, 1)
     //      this.zLevel = 200.0F
     itemRenderer.zLevel = 200.0F
     var font: FontRenderer = null
     if (itemStack != null) font = itemStack.getItem.getFontRenderer(itemStack)
     if (font == null) font = fontRenderer
-    itemRenderer.renderItemAndEffectIntoGUI(font, Minecraft.getMinecraft.getTextureManager, itemStack, anchorX + 1, anchorY + 1)
-    itemRenderer.renderItemOverlayIntoGUI(font, Minecraft.getMinecraft.getTextureManager, itemStack, anchorX + 1, anchorY + 1, amt)
+    itemRenderer.renderItemAndEffectIntoGUI(font, Minecraft.getMinecraft.getTextureManager, itemStack, locX, locY)
+    itemRenderer.renderItemOverlayIntoGUI(font, Minecraft.getMinecraft.getTextureManager, itemStack, locX, locY, amt)
     itemRenderer.zLevel = 0.0F
     GL11.glPopMatrix()
   }
