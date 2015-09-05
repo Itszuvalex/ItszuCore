@@ -24,8 +24,8 @@ class GuiItemStack(override var anchorX: Int,
                    override var anchorY: Int,
                    var itemStack: ItemStack = null) extends GuiPanel {
 
-  override var panelHeight: Int = 16
-  override var panelWidth : Int = 16
+  override var panelHeight: Int = 18
+  override var panelWidth : Int = 18
 
   var colorRaised     = GuiItemStack.DEFAULT_RAISED_COLOR
   var colorLowered    = GuiItemStack.DEFAULT_LOWERED_COLOR
