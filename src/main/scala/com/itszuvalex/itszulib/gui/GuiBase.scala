@@ -11,11 +11,19 @@ abstract class GuiBase(c: Container) extends GuiContainer(c) with GuiPanel {
 
   override def anchorX = guiLeft
 
+  override def anchorX_=(_x: Int) = { guiLeft = _x }
+
   override def anchorY = guiTop
+
+  override def anchorY_=(_y: Int) = { guiTop = _y }
 
   override def panelWidth = xSize
 
+  override def panelWidth_=(_width: Int) = { xSize = width }
+
   override def panelHeight = ySize
+
+  override def panelHeight_=(_height: Int) = { ySize = width }
 
   override def drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
     super.drawScreen(mouseX, mouseY, partialTicks)

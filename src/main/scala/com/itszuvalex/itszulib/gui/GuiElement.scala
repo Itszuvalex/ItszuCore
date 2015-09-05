@@ -1,5 +1,7 @@
 package com.itszuvalex.itszulib.gui
 
+import scala.collection.mutable.ListBuffer
+
 /**
  * Created by Christopher Harris (Itszuvalex) on 9/3/15.
  */
@@ -9,6 +11,10 @@ trait GuiElement {
   var anchorY: Int
 
   var moused = false
+
+  def spaceHorizontal: Int = 0
+
+  def spaceVertical: Int = 0
 
   def isMousedOver = moused
 
@@ -27,7 +33,7 @@ trait GuiElement {
    */
   def onMouseClick(mouseX: Int, mouseY: Int, button: Int) = false
 
-  def addTooltip(mouseX: Int, mouseY: Int, tooltip: List[String]) = {}
+  def addTooltip(mouseX: Int, mouseY: Int, tooltip: ListBuffer[String]) = {}
 
   def render(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float) = {
     (isMousedOver, isLocationInside(mouseX, mouseY)) match {

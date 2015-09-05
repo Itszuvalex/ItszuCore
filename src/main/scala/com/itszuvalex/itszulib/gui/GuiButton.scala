@@ -5,8 +5,10 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.audio.PositionedSoundRecord
 import net.minecraft.client.gui.Gui
 import net.minecraft.util.ResourceLocation
+import org.lwjgl.opengl.GL11
 
 import scala.collection.JavaConversions._
+import scala.collection.mutable.ListBuffer
 
 /**
  * Created by Christopher Harris (Itszuvalex) on 9/3/15.
@@ -44,20 +46,14 @@ class GuiButton(override var anchorX: Int,
     else false
   }
 
-  override def addTooltip(mouseX: Int, mouseY: Int, tooltip: List[String]): Unit = {
+  override def addTooltip(mouseX: Int, mouseY: Int, tooltip: ListBuffer[String]): Unit = {
   }
 
   override def update(): Unit = {}
 
   override def render(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
     super.render(screenX, screenY, mouseX, mouseY, partialTicks)
-    /*
-          screenX, screenY                                           screenX + panelWidth
-          screenX, screenY+1                                         screen1 + panelWidth, screenY + 1
-
-
-          screenX, screenY + panelHeight-1                           screenX + panelWidth
-     */
+    GL11.glColor3f(1, 1, 1)
     //Top raised rect
     Gui.drawRect(screenX, screenY, screenX + panelWidth, screenY + 1, colorRaised)
     //Left raised rect

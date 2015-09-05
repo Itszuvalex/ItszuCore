@@ -1,6 +1,6 @@
 package com.itszuvalex.itszulib.gui
 
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 
 /**
  * Created by Christopher Harris (Itszuvalex) on 9/3/15.
@@ -11,6 +11,10 @@ trait GuiPanel extends GuiElement {
 
   var panelHeight: Int
 
+  override def spaceHorizontal = panelWidth
+
+  override def spaceVertical = panelHeight
+
   val subElements = ArrayBuffer[GuiElement]()
 
   def add(elements: GuiElement*) = {
@@ -19,10 +23,19 @@ trait GuiPanel extends GuiElement {
   }
 
   override def onMouseClick(mouseX: Int, mouseY: Int, button: Int): Boolean = {
+    passAlongMouseClick(mouseX, mouseY, button)
+  }
+
+  def passAlongMouseClick(mouseX: Int, mouseY: Int, button: Int): Boolean = {
     subElements.exists(gui => gui.onMouseClick(mouseX - gui.anchorX, mouseY - gui.anchorY, button))
   }
 
-  override def addTooltip(mouseX: Int, mouseY: Int, tooltip: List[String]): Unit = {
+  override def addTooltip(mouseX: Int, mouseY: Int, tooltip: ListBuffer[String]): Unit = {
+    super.addTooltip(mouseX, mouseY, tooltip)
+    addSubElementTooltips(mouseX, mouseY, tooltip)
+  }
+
+  def addSubElementTooltips(mouseX: Int, mouseY: Int, tooltip: ListBuffer[String]): Unit = {
     subElements.foreach(gui => gui.addTooltip(mouseX - gui.anchorX, mouseY - gui.anchorY, tooltip))
   }
 
@@ -35,6 +48,10 @@ trait GuiPanel extends GuiElement {
 
   override def render(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
     super.render(screenX, screenY, mouseX, mouseY, partialTicks)
+    renderSubElements(screenX, screenY, mouseX, mouseY, partialTicks)
+  }
+
+  def renderSubElements(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
     subElements.foreach(gui => gui.render(screenX + gui.anchorX,
                                           screenY + gui.anchorY,
                                           mouseX - gui.anchorX,
