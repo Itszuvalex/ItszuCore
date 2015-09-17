@@ -46,11 +46,6 @@ trait GuiPanel extends GuiElement {
 
   override def update(): Unit = subElements.foreach(_.update())
 
-  override def render(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
-    super.render(screenX, screenY, mouseX, mouseY, partialTicks)
-    renderSubElements(screenX, screenY, mouseX, mouseY, partialTicks)
-  }
-
   override def renderUpdate(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float) = {
     super.renderUpdate(screenX, screenY, mouseX, mouseY, partialTicks)
     subElements.foreach(gui => gui.renderUpdate(screenX + gui.anchorX,
@@ -58,13 +53,5 @@ trait GuiPanel extends GuiElement {
                                                 mouseX - gui.anchorX,
                                                 mouseY - gui.anchorY,
                                                 partialTicks))
-  }
-
-  def renderSubElements(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
-    subElements.foreach(gui => gui.render(screenX + gui.anchorX,
-                                          screenY + gui.anchorY,
-                                          mouseX - gui.anchorX,
-                                          mouseY - gui.anchorY,
-                                          partialTicks))
   }
 }
