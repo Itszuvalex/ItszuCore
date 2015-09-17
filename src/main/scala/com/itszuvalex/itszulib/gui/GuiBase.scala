@@ -27,6 +27,7 @@ abstract class GuiBase(c: Container) extends GuiContainer(c) with GuiPanel {
 
   override def drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
     super.drawScreen(mouseX, mouseY, partialTicks)
+    renderUpdate(anchorX, anchorY, mouseX, mouseY, partialTicks)
     subElements.foreach(gui => gui.renderUpdate(anchorX + gui.anchorX,
                                                 anchorY + gui.anchorY,
                                                 mouseX - gui.anchorX - anchorX,

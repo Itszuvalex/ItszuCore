@@ -57,6 +57,7 @@ class GuiFlowLayout(override var anchorX: Int,
         var nextY = bufferVertical
         var rowHeight = 0
         elements.foreach { e =>
+          e.shouldRender = true
           (nextX, nextY) match {
             case (_, y) if y >= panelHeight =>
               nextX = panelWidth
@@ -66,7 +67,6 @@ class GuiFlowLayout(override var anchorX: Int,
               nextX = bufferHorizontal
               nextY += rowHeight + bufferVertical
               rowHeight = 0
-              e.shouldRender = true
             case _ =>
           }
           e.anchorX = nextX
@@ -80,6 +80,7 @@ class GuiFlowLayout(override var anchorX: Int,
         var nextY = bufferVertical
         var colWidth = 0
         elements.foreach { e =>
+          e.shouldRender = true
           (nextX, nextY) match {
             case (x, _) if x >= panelWidth =>
               nextX = panelWidth
@@ -89,7 +90,6 @@ class GuiFlowLayout(override var anchorX: Int,
               nextX += colWidth + bufferHorizontal
               nextY = bufferVertical
               colWidth = 0
-              e.shouldRender = true
             case _ =>
           }
           e.anchorX = nextX
