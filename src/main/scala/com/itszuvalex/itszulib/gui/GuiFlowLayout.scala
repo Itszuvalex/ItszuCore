@@ -61,10 +61,12 @@ class GuiFlowLayout(override var anchorX: Int,
             case (_, y) if y >= panelHeight =>
               nextX = panelWidth
               nextY = panelHeight
+              e.shouldRender = false
             case (x, _) if !(x == bufferHorizontal) && (x + e.spaceHorizontal + bufferHorizontal) >= panelWidth =>
               nextX = bufferHorizontal
               nextY += rowHeight + bufferVertical
               rowHeight = 0
+              e.shouldRender = true
             case _ =>
           }
           e.anchorX = nextX
@@ -82,10 +84,12 @@ class GuiFlowLayout(override var anchorX: Int,
             case (x, _) if x >= panelWidth =>
               nextX = panelWidth
               nextY = panelHeight
+              e.shouldRender = false
             case (_, y) if !(y == bufferVertical) && (y + e.spaceVertical + bufferVertical) >= panelHeight =>
               nextX += colWidth + bufferHorizontal
               nextY = bufferVertical
               colWidth = 0
+              e.shouldRender = true
             case _ =>
           }
           e.anchorX = nextX

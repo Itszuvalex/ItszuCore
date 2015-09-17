@@ -12,6 +12,8 @@ trait GuiElement {
 
   var moused = false
 
+  var shouldRender = true
+
   def spaceHorizontal: Int = 0
 
   def spaceVertical: Int = 0
@@ -36,11 +38,15 @@ trait GuiElement {
   def addTooltip(mouseX: Int, mouseY: Int, tooltip: ListBuffer[String]) = {}
 
   def render(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float) = {
+  }
+
+  def renderUpdate(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
     (isMousedOver, isLocationInside(mouseX, mouseY)) match {
       case (true, false) => onMouseLeave()
       case (false, true) => onMouseEnter()
       case _ =>
     }
+    if (shouldRender) render(screenX, screenY, mouseX, mouseY, partialTicks)
   }
 
   def update() = {}
