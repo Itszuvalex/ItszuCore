@@ -42,6 +42,25 @@ class GuiFlowLayout(override var anchorX: Int,
   var bufferVertical   = 0
   var bufferHorizontal = 0
 
+  private var startIndex = 0
+
+  def pageForward(num: Int = 1) = {
+    if ((startIndex < elements.size - 1) && !elements.last.shouldRender) {
+      (1 to num).exists { i =>
+        startIndex += 1
+        layoutElements()
+        elements.last.shouldRender
+                        }
+    }
+  }
+
+  def pageBackward(num: Int = 1) = {
+    if (startIndex > 0) {
+      startIndex -= num
+      startIndex = Math.max(startIndex, 0)
+    }
+  }
+
   override def render(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
     layoutElements()
     //    GL11.glScissor(screenX, screenY, panelWidth, panelHeight)
@@ -51,15 +70,17 @@ class GuiFlowLayout(override var anchorX: Int,
   }
 
   def layoutElements(): Unit = {
+    val numElements = elements.size
+
     primaryFlow match {
       case GuiFlowLayout.FlowDirection.Horizontal =>
         var nextX = bufferHorizontal
         var nextY = bufferVertical
         var rowHeight = 0
-        elements.foreach { e =>
+        elements.zipWithIndex.foreach { case (e: GuiElement, i: Int) =>
           e.shouldRender = true
           (nextX, nextY) match {
-            case (_, y) if y >= panelHeight =>
+            case (_, y) if y >= panelHeight || i < startIndex                                                   =>
               nextX = panelWidth
               nextY = panelHeight
               e.shouldRender = false
@@ -72,21 +93,21 @@ class GuiFlowLayout(override var anchorX: Int,
                 e.shouldRender = false
               }
               rowHeight = 0
-            case _ =>
+            case _                                                                                              =>
           }
           e.anchorX = nextX
           e.anchorY = nextY
           nextX = nextX + e.spaceHorizontal + bufferHorizontal
           rowHeight = Math.max(rowHeight, e.spaceVertical)
-                         }
-      case GuiFlowLayout.FlowDirection.Vertical =>
+                                      }
+      case GuiFlowLayout.FlowDirection.Vertical   =>
         var nextX = bufferHorizontal
         var nextY = bufferVertical
         var colWidth = 0
-        elements.foreach { e =>
+        elements.zipWithIndex.foreach { case (e: GuiElement, i: Int) =>
           e.shouldRender = true
           (nextX, nextY) match {
-            case (x, _) if x >= panelWidth =>
+            case (x, _) if x >= panelWidth || i < startIndex                                               =>
               nextX = panelWidth
               nextY = panelHeight
               e.shouldRender = false
@@ -99,14 +120,14 @@ class GuiFlowLayout(override var anchorX: Int,
                 e.shouldRender = false
               }
               colWidth = 0
-            case _ =>
+            case _                                                                                         =>
           }
           e.anchorX = nextX
           e.anchorY = nextY
           nextY = nextY + e.spaceVertical + bufferVertical
           colWidth = Math.max(colWidth, e.spaceHorizontal)
-                         }
-      case _ =>
+                                      }
+      case _                                      =>
     }
   }
 

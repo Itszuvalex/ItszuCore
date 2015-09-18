@@ -23,7 +23,8 @@ object GuiItemStack {
 class GuiItemStack(override var anchorX: Int,
                    override var anchorY: Int,
                    var itemStack: ItemStack = null,
-                   var drawSlot: Boolean = true) extends GuiPanel {
+                   var drawSlot: Boolean = true,
+                   var str: String = null) extends GuiPanel {
 
   override var panelHeight: Int = 18
   override var panelWidth : Int = 18
@@ -56,7 +57,7 @@ class GuiItemStack(override var anchorX: Int,
       Gui.drawRect(screenX + 1, screenY + 1, screenX + panelWidth - 1, screenY + panelHeight - 1, colorBackground)
     }
 
-    drawItemStack(screenX + 1, screenY + 1, if (itemStack == null) "" else itemStack.stackSize.toString)
+    drawItemStack(screenX + 1, screenY + 1, str)
   }
 
   def drawItemStack(locX: Int, locY: Int, amt: String) {
