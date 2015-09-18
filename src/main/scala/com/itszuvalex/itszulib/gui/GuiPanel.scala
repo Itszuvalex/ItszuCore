@@ -18,7 +18,7 @@ trait GuiPanel extends GuiElement {
   val subElements = ArrayBuffer[GuiElement]()
 
   def add(elements: GuiElement*) = {
-    subElements ++= elements
+    subElements ++= elements.filter(gui => gui.setParent(this))
     this
   }
 

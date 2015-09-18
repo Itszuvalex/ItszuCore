@@ -12,7 +12,27 @@ trait GuiElement {
 
   var moused = false
 
-  var shouldRender = true
+  private var parent: GuiElement = null
+
+  def getParent = parent
+
+  def setParent(s: GuiElement): Boolean = {
+    var p = s
+    while (p != null) {
+      if (p == this) {
+        return false
+      }
+      p = p.getParent
+    }
+    parent = s
+    true
+  }
+
+  private var doRender = true
+
+  def shouldRender: Boolean = doRender && (if (getParent != null) getParent.shouldRender else true)
+
+  def setShouldRender(r: Boolean) = doRender = r
 
   def spaceHorizontal: Int = 0
 
@@ -44,7 +64,7 @@ trait GuiElement {
     (isMousedOver, isLocationInside(mouseX, mouseY)) match {
       case (true, false) => onMouseLeave()
       case (false, true) => onMouseEnter()
-      case _ =>
+      case _             =>
     }
     if (shouldRender) render(screenX, screenY, mouseX, mouseY, partialTicks)
   }

@@ -79,21 +79,21 @@ class GuiFlowLayout(override var anchorX: Int,
           if (i < startIndex) {
             e.anchorX = panelWidth
             e.anchorY = panelHeight
-            e.shouldRender = false
+            e.setShouldRender(false)
           } else {
-            e.shouldRender = true
+            e.setShouldRender(true)
             (nextX, nextY) match {
               case (_, y) if y >= panelHeight                                                                    =>
                 nextX = panelWidth
                 nextY = panelHeight
-                e.shouldRender = false
+                e.setShouldRender(false)
               case (x, _) if !(x == bufferHorizontal) && (x + e.spaceHorizontal + bufferHorizontal) > panelWidth =>
                 nextX = bufferHorizontal
                 nextY += Math.max(rowHeight, e.spaceVertical) + bufferVertical
                 if (nextY >= panelHeight) {
                   nextY = panelHeight
                   nextX = panelWidth
-                  e.shouldRender = false
+                  e.setShouldRender(false)
                 }
                 rowHeight = 0
               case _                                                                                             =>
@@ -112,21 +112,21 @@ class GuiFlowLayout(override var anchorX: Int,
           if (i < startIndex) {
             e.anchorX = panelWidth
             e.anchorY = panelHeight
-            e.shouldRender = false
+            e.setShouldRender(false)
           } else {
-            e.shouldRender = true
+            e.setShouldRender(true)
             (nextX, nextY) match {
               case (x, _) if x >= panelWidth                                                                =>
                 nextX = panelWidth
                 nextY = panelHeight
-                e.shouldRender = false
+                e.setShouldRender(false)
               case (_, y) if !(y == bufferVertical) && (y + e.spaceVertical + bufferVertical) > panelHeight =>
                 nextX += Math.max(colWidth, e.spaceHorizontal) + bufferHorizontal
                 nextY = bufferVertical
                 if (nextX >= panelWidth) {
                   nextY = panelHeight
                   nextX = panelWidth
-                  e.shouldRender = false
+                  e.setShouldRender(false)
                 }
                 colWidth = 0
               case _                                                                                        =>
