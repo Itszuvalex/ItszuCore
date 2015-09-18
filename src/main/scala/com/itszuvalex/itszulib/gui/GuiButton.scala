@@ -39,7 +39,7 @@ class GuiButton(override var anchorX: Int,
   def isDisabled = disabled
 
   override def onMouseClick(mouseX: Int, mouseY: Int, button: Int): Boolean = {
-    if (isLocationInside(mouseX, mouseY)) {
+    if (!isDisabled && isLocationInside(mouseX, mouseY)) {
       Minecraft.getMinecraft.getSoundHandler.playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F))
       true
     }
