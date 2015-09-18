@@ -61,17 +61,15 @@ class GuiFlowLayout(override var anchorX: Int,
     }
   }
 
-  override def render(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
+  override def renderUpdate(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
     layoutElements()
     //    GL11.glScissor(screenX, screenY, panelWidth, panelHeight)
     //    GL11.glEnable(GL11.GL_SCISSOR_TEST)
-    super.render(screenX, screenY, mouseX, mouseY, partialTicks)
+    super.renderUpdate(screenX, screenY, mouseX, mouseY, partialTicks)
     //    GL11.glDisable(GL11.GL_SCISSOR_TEST)
   }
 
   def layoutElements(): Unit = {
-    val numElements = elements.size
-
     primaryFlow match {
       case GuiFlowLayout.FlowDirection.Horizontal =>
         var nextX = bufferHorizontal
