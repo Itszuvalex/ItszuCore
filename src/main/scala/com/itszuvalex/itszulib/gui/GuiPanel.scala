@@ -7,9 +7,9 @@ import scala.collection.mutable.{ArrayBuffer, ListBuffer}
  */
 
 trait GuiPanel extends GuiElement {
-  var panelWidth: Int = 0
+  var panelWidth: Int
 
-  var panelHeight: Int = 0
+  var panelHeight: Int
 
   override def spaceHorizontal = panelWidth
 
