@@ -6,9 +6,9 @@ import scala.collection.mutable.ListBuffer
  * Created by Christopher Harris (Itszuvalex) on 9/3/15.
  */
 trait GuiElement {
-  var anchorX: Int
+  var anchorX: Int = 0
 
-  var anchorY: Int
+  var anchorY: Int = 0
 
   var moused = false
 
