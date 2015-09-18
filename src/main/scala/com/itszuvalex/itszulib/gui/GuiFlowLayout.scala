@@ -104,7 +104,7 @@ class GuiFlowLayout(override var anchorX: Int,
           }
           e.anchorX = nextX
           e.anchorY = nextY
-          nextY = nextY + e.spaceHorizontal + bufferVertical
+          nextY = nextY + e.spaceVertical + bufferVertical
           colWidth = Math.max(colWidth, e.spaceHorizontal)
                          }
       case _ =>
