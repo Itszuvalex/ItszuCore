@@ -44,6 +44,12 @@ class GuiFlowLayout(override var anchorX: Int,
 
   private var startIndex = 0
 
+  def numElements = elements.size
+
+  def startingIndex = startIndex // elements.firstIndexWhere(_.shouldRender)
+
+  def endingIndex = elements.lastIndexWhere(_.shouldRender)
+
   def pageForward(num: Int = 1) = {
     if ((startIndex < elements.size - 1) && !elements.last.shouldRender) {
       (1 to num).exists { i =>

@@ -18,7 +18,6 @@ object GuiButton {
   val DEFAULT_LOWERED_COLOR   = Color(255.toByte, 15, 15, 15).toInt
   val DEFAULT_BUTTON_COLOR    = Color(255.toByte, 40, 40, 40).toInt
   val DEFAULT_HIGHLIGHT_COLOR = Color(60, 45, 0, 110).toInt
-  val DEFAULT_DISABLED_COLOR  = Color(60, 20, 20, 20).toInt
   val DEFAULT_FONT_COLOR      = Color(255.toByte, 255.toByte, 255.toByte, 255.toByte).toInt
 }
 
@@ -31,7 +30,6 @@ class GuiButton(override var anchorX: Int,
   var colorLowered   = GuiButton.DEFAULT_LOWERED_COLOR
   var colorDefault   = GuiButton.DEFAULT_BUTTON_COLOR
   var colorHighlight = GuiButton.DEFAULT_HIGHLIGHT_COLOR
-  var colorDisabled  = GuiButton.DEFAULT_DISABLED_COLOR
   var colorFont      = GuiButton.DEFAULT_FONT_COLOR
 
   var disabled = false
@@ -55,19 +53,17 @@ class GuiButton(override var anchorX: Int,
     super.render(screenX, screenY, mouseX, mouseY, partialTicks)
     GL11.glColor3f(1, 1, 1)
     //Top raised rect
-    Gui.drawRect(screenX, screenY, screenX + panelWidth, screenY + 1, colorRaised)
+    Gui.drawRect(screenX, screenY, screenX + panelWidth, screenY + 1, if (isDisabled) colorLowered else colorRaised)
     //Left raised rect
-    Gui.drawRect(screenX, screenY + 1, screenX + 1, screenY + panelHeight - 1, colorRaised)
+    Gui.drawRect(screenX, screenY + 1, screenX + 1, screenY + panelHeight - 1, if (isDisabled) colorLowered else colorRaised)
     //Bottom lowered rect
-    Gui.drawRect(screenX, screenY + panelHeight - 1, screenX + panelWidth, screenY + panelHeight, colorLowered)
+    Gui.drawRect(screenX, screenY + panelHeight - 1, screenX + panelWidth, screenY + panelHeight, if (isDisabled) colorRaised else colorLowered)
     //Right lowered rect
-    Gui.drawRect(screenX + panelWidth - 1, screenY + 1, screenX + panelWidth, screenY + panelHeight - 1, colorLowered)
+    Gui.drawRect(screenX + panelWidth - 1, screenY + 1, screenX + panelWidth, screenY + panelHeight - 1, if (isDisabled) colorRaised else colorLowered)
     //Main rect
     Gui.drawRect(screenX + 1, screenY + 1, screenX + panelWidth - 1, screenY + panelHeight - 1, colorDefault)
 
-    if (isDisabled)
-      Gui.drawRect(screenX, screenY, screenX + panelWidth, screenY + panelHeight, colorDisabled)
-    else if (isMousedOver)
+    if (!isDisabled && isMousedOver)
       Gui.drawRect(screenX, screenY, screenX + panelWidth, screenY + panelHeight, colorHighlight)
 
     val fr = Minecraft.getMinecraft.fontRenderer
