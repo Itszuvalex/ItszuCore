@@ -66,9 +66,9 @@ class GuiButton(override var anchorX: Int,
     Gui.drawRect(screenX + 1, screenY + 1, screenX + panelWidth - 1, screenY + panelHeight - 1, colorDefault)
 
     if (isDisabled)
-      Gui.drawRect(screenX, screenY, screenX + panelWidth, screenY + panelWidth, colorDisabled)
+      Gui.drawRect(screenX, screenY, screenX + panelWidth, screenY + panelHeight, colorDisabled)
     else if (isMousedOver)
-      Gui.drawRect(screenX, screenY, screenX + panelWidth, screenY + panelWidth, colorHighlight)
+      Gui.drawRect(screenX, screenY, screenX + panelWidth, screenY + panelHeight, colorHighlight)
 
     val fr = Minecraft.getMinecraft.fontRenderer
     val lines = fr.listFormattedStringToWidth(text, panelWidth - 2).asInstanceOf[java.util.List[String]]
