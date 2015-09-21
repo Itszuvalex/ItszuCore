@@ -11,7 +11,7 @@ import net.minecraftforge.fluids._
 trait TileFluidTank extends TileEntityBase with IFluidHandler {
   @Saveable val tank = defaultTank
 
-  def defaultTank: IFluidTank
+  def defaultTank: FluidTank
 
   override def fill(from: ForgeDirection, resource: FluidStack, doFill: Boolean) = tank.fill(resource, doFill)
 
