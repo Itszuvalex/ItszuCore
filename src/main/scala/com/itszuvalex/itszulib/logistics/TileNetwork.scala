@@ -48,7 +48,7 @@ abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]](val id:
 
   override def addConnection(a: Loc4, b: Loc4): Unit = {
     addConnectionSilently(a, b)
-    (a.getTileEntity().get, b.getTileEntity().get) match {
+    (a.getTileEntity().orNull, b.getTileEntity().orNull) match {
       case (nodeA: INetworkNode[N], nodeB: INetworkNode[N]) =>
         if (nodeA.getNetwork != nodeB.getNetwork) {
           if (nodeA.getNetwork == this) takeover(nodeB.getNetwork)
@@ -118,7 +118,7 @@ abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]](val id:
       val edgeTuples = getEdges
 
       networks.foreach { collect =>
-        val nodes = collect.map(_.getTileEntity().get).collect { case a: INetworkNode[N] => a.asInstanceOf[INetworkNode[N]] }.asJavaCollection
+        val nodes = collect.flatMap(_.getTileEntity()).collect { case a: INetworkNode[N] => a.asInstanceOf[INetworkNode[N]] }.asJavaCollection
         val edges = edgeTuples.filter { case (loc1, loc2) => collect.contains(loc1)
                                         /*&& collect.contains(loc2)  Not necessary, as these are fully explored graphs.*/
                                       }.toSet
@@ -146,7 +146,7 @@ abstract class TileNetwork[C <: INetworkNode[N], N <: TileNetwork[C, N]](val id:
 
   override def removeConnection(a: Loc4, b: Loc4): Unit = {
     removeConnectionSilently(a, b)
-    (a.getTileEntity().get, b.getTileEntity().get) match {
+    (a.getTileEntity().orNull, b.getTileEntity().orNull) match {
       case (nodeA: INetworkNode[N], nodeB: INetworkNode[N]) =>
         nodeA.disconnect(b)
         nodeB.disconnect(a)
