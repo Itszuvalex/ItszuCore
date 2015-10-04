@@ -8,10 +8,12 @@ import net.minecraftforge.fluids.{FluidTankInfo, FluidStack, FluidTank}
  * Created by Alex on 04.10.2015.
  */
 trait TileMultiFluidTank extends TileFluidTank {
-  @Saveable val tanks = defaultTanks
+  @Saveable var tanks: Array[FluidTank] = defaultTanks
   override val tank = if (tanks.length > 0) tanks(0) else null
 
   def defaultTanks: Array[FluidTank]
+
+  override def defaultTank: FluidTank = if (tanks.length > 0) tanks(0) else null
 
   override def fill(from: ForgeDirection, resource: FluidStack, doFill: Boolean) = tank.fill(resource, doFill)
 
