@@ -737,6 +737,61 @@ public class DataUtils {
                 saveable.set(obj, tank.readFromNBT(container));
             }
         });
+
+        // FluidTank[]
+        registerSaveManager(FluidTank[].class, new SaveManager() {
+
+            @Override
+            public void saveToNBT(NBTTagCompound compound, Field saveable,
+                                  Object obj) throws IllegalArgumentException,
+                    IllegalAccessException {
+                Saveable anno = saveable.getAnnotation(Saveable.class);
+                NBTTagCompound array = new NBTTagCompound();
+                NBTTagList list = new NBTTagList();
+                FluidTank[] isarr = (FluidTank[]) saveable.get(obj);
+
+                if (isarr == null) {
+                    return;
+                }
+                array.setInteger("size", isarr.length);
+
+                for (int i = 0; i < isarr.length; ++i) {
+                    FluidTank tank = isarr[i];
+                    if (tank == null) {
+                        continue;
+                    }
+
+                    NBTTagCompound scomp = new NBTTagCompound();
+                    scomp.setInteger("index", i);
+                    tank.writeToNBT(scomp);
+                    list.appendTag(scomp);
+                }
+                array.setTag("fluids", list);
+                compound.setTag(anno.tag().isEmpty() ? saveable.getName() : anno.tag(), array);
+            }
+
+            @Override
+            public void readFromNBT(NBTTagCompound compound, Field saveable,
+                                    Object obj) throws IllegalArgumentException,
+                    IllegalAccessException {
+                Saveable anno = saveable.getAnnotation(Saveable.class);
+                if (!compound.hasKey(anno.tag().isEmpty() ? saveable.getName() : anno.tag())) {
+                    saveable.set(obj, null);
+                    return;
+                }
+
+                NBTTagCompound array = compound.getCompoundTag(anno.tag().isEmpty() ? saveable.getName() : anno.tag());
+                NBTTagList list = array.getTagList("fluids", 10);
+                FluidTank[] retarray = new FluidTank[array.getInteger("size")];
+                Arrays.fill(retarray, null);
+                for (int i = 0; i < list.tagCount(); ++i) {
+                    NBTTagCompound tank = list.getCompoundTagAt(i);
+                    retarray[tank.getInteger("index")].readFromNBT(tank);
+                }
+                saveable.set(obj, retarray);
+            }
+        });
+
         // FluidStack
         registerSaveManager(FluidStack.class, new SaveManager() {
 
