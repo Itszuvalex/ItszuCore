@@ -763,6 +763,7 @@ public class DataUtils {
 
                     NBTTagCompound scomp = new NBTTagCompound();
                     scomp.setInteger("index", i);
+                    scomp.setInteger("capacity", tank.getCapacity());
                     tank.writeToNBT(scomp);
                     list.appendTag(scomp);
                 }
@@ -786,6 +787,7 @@ public class DataUtils {
                 Arrays.fill(retarray, null);
                 for (int i = 0; i < list.tagCount(); ++i) {
                     NBTTagCompound tank = list.getCompoundTagAt(i);
+                    retarray[tank.getInteger("index")] = new FluidTank(tank.getInteger("capacity"));
                     retarray[tank.getInteger("index")].readFromNBT(tank);
                 }
                 saveable.set(obj, retarray);
