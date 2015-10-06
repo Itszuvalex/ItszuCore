@@ -57,6 +57,8 @@ class GuiFluidTank(override var anchorX: Int,
     }
   }
 
+  def updateFluid(tank: FluidTank) = this.tank = tank
+
   def drawScale(screenX: Int, screenY: Int): Unit = {
     //Full
     Gui.drawRect(screenX + 1, screenY + 1, screenX + 13, screenY + 2, colorScale)
