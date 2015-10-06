@@ -1,13 +1,14 @@
 package com.itszuvalex.itszulib.core.traits.tile
 
 import com.itszuvalex.itszulib.api.core.Saveable
+import com.itszuvalex.itszulib.core.TileEntityBase
 import net.minecraftforge.common.util.ForgeDirection
 import net.minecraftforge.fluids.{IFluidHandler, FluidTankInfo, FluidStack, FluidTank}
 
 /**
  * Created by Alex on 04.10.2015.
  */
-trait TileMultiFluidTank extends IFluidHandler {
+trait TileMultiFluidTank extends TileEntityBase with IFluidHandler {
   @Saveable var tanks: Array[FluidTank] = defaultTanks
 
   def defaultTanks: Array[FluidTank]
