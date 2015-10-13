@@ -2,9 +2,10 @@ package com.itszuvalex.itszulib
 
 import com.itszuvalex.itszulib.network.PacketHandler
 import com.itszuvalex.itszulib.proxy.ProxyCommon
-import com.itszuvalex.itszulib.testing.{BlockLocTrackerTest, BlockPortalTest, ItemPreviewable}
+import com.itszuvalex.itszulib.testing.{BlockLocTrackerTest, BlockPortalTest, BlockTankTest, ItemPreviewable}
 import cpw.mods.fml.common.Mod.EventHandler
 import cpw.mods.fml.common.event.{FMLInitializationEvent, FMLInterModComms, FMLPostInitializationEvent, FMLPreInitializationEvent}
+import cpw.mods.fml.common.network.NetworkRegistry
 import cpw.mods.fml.common.registry.GameRegistry
 import cpw.mods.fml.common.{Mod, SidedProxy}
 import net.minecraft.creativetab.CreativeTabs
@@ -28,11 +29,13 @@ object ItszuLib {
     //    PlayerUUIDTracker.init()
     //    PlayerUUIDTracker.setFile(new File())
     proxy.init()
+    NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy)
   }
 
   @EventHandler def load(event: FMLInitializationEvent): Unit = {
     GameRegistry.registerBlock(new BlockPortalTest, "BlockPortalTest").setCreativeTab(CreativeTabs.tabBlock)
     GameRegistry.registerBlock(new BlockLocTrackerTest, "BlockLocTrackerTest").setCreativeTab(CreativeTabs.tabBlock)
+    GameRegistry.registerBlock(new BlockTankTest, "BlockTankTest").setCreativeTab(CreativeTabs.tabBlock)
     val prev = new ItemPreviewable
     prev.setCreativeTab(CreativeTabs.tabDecorations)
     GameRegistry.registerItem(prev, "TilePreviewable")
