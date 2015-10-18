@@ -35,7 +35,7 @@ class MessageFluidTankUpdate(var x: Int, var y: Int, var z: Int, var tankID: Int
     val world = Minecraft.getMinecraft.theWorld
     world.getTileEntity(message.x, message.y, message.z) match {
       case tank: TileFluidTank =>
-        tank.tank.setFluid(new FluidStack(FluidRegistry.getFluid(message.fluidID), message.amount))
+        tank.tank.setFluid(if (message.fluidID == -1) null else new FluidStack(FluidRegistry.getFluid(message.fluidID), message.amount))
       case tank: TileMultiFluidTank =>
         tank.tanks(message.tankID).setFluid(if (message.fluidID == -1) null else new FluidStack(FluidRegistry.getFluid(message.fluidID), message.amount))
       case _ =>
