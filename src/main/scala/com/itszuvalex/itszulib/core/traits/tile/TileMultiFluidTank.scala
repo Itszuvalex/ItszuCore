@@ -4,6 +4,7 @@ import com.itszuvalex.itszulib.api.core.Saveable
 import com.itszuvalex.itszulib.core.TileEntityBase
 import com.itszuvalex.itszulib.network.PacketHandler
 import com.itszuvalex.itszulib.network.messages.MessageFluidTankUpdate
+import net.minecraft.nbt.NBTTagCompound
 import net.minecraftforge.common.util.ForgeDirection
 import net.minecraftforge.fluids.{IFluidHandler, FluidTankInfo, FluidStack, FluidTank}
 
@@ -11,7 +12,7 @@ import net.minecraftforge.fluids.{IFluidHandler, FluidTankInfo, FluidStack, Flui
  * Created by Alex on 04.10.2015.
  */
 trait TileMultiFluidTank extends TileEntityBase with IFluidHandler {
-  @Saveable var tanks: Array[FluidTank] = defaultTanks
+  @Saveable(world = true, desc = true, item = true) var tanks: Array[FluidTank] = defaultTanks
 
   var updateNeeded: Boolean = false
 
