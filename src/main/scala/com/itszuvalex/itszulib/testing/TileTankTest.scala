@@ -11,6 +11,8 @@ import net.minecraftforge.fluids.{Fluid, FluidStack, FluidTank}
  * Created by Alex on 12.10.2015.
  */
 class TileTankTest extends TileEntityBase with TileMultiFluidTank {
+  setTanksToSync(0, 1, 2)
+
   override def getMod: AnyRef = ItszuLib
 
   override def drain(from: ForgeDirection, resource: FluidStack, doDrain: Boolean): FluidStack = null
@@ -25,7 +27,7 @@ class TileTankTest extends TileEntityBase with TileMultiFluidTank {
 
   override def canDrain(from: ForgeDirection, fluid: Fluid): Boolean = false
 
-  override def hasDescription: Boolean = true
+  //override def hasDescription: Boolean = true
 
   override def onSideActivate(player: EntityPlayer, side: Int): Boolean = {
     player.openGui(getMod, 0, worldObj, xCoord, yCoord, zCoord)

@@ -4,6 +4,7 @@ import com.itszuvalex.itszulib.api.core.Saveable
 import com.itszuvalex.itszulib.core.TileEntityBase
 import com.itszuvalex.itszulib.network.PacketHandler
 import com.itszuvalex.itszulib.network.messages.MessageFluidTankUpdate
+import net.minecraft.nbt.NBTTagCompound
 import net.minecraftforge.common.util.ForgeDirection
 import net.minecraftforge.fluids._
 
@@ -11,7 +12,9 @@ import net.minecraftforge.fluids._
  * Created by Chris on 11/30/2014.
  */
 trait TileFluidTank extends TileEntityBase with IFluidHandler {
-  @Saveable(world = true, desc = true, item = true) val tank = defaultTank
+  @Saveable var tank = defaultTank
+
+  var syncTank: Boolean = false
 
   def defaultTank: FluidTank
 
@@ -39,5 +42,26 @@ trait TileFluidTank extends TileEntityBase with IFluidHandler {
     updateNeeded = false
   }
 
+  override def hasDescription: Boolean = syncTank
+
+  override def saveToDescriptionCompound(compound: NBTTagCompound): Unit = {
+    super.saveToDescriptionCompound(compound)
+    if (!syncTank) return
+    val tankComp = new NBTTagCompound
+    tankComp.setInteger("capacity", tank.getCapacity)
+    tank.writeToNBT(tankComp)
+    compound.setTag("tank", tankComp)
+  }
+
+  override def handleDescriptionNBT(compound: NBTTagCompound): Unit = {
+    super.handleDescriptionNBT(compound)
+    if (!compound.hasKey("tank")) return
+    val tankComp = compound.getCompoundTag("tank")
+    tank = new FluidTank(tankComp.getInteger("capacity"))
+    tank.readFromNBT(tankComp)
+  }
+
   def setUpdateTank() = updateNeeded = true
+
+  def setTankToSync(value: Boolean) = syncTank = value
 }
