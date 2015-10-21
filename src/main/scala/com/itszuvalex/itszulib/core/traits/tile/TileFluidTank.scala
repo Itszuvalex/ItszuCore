@@ -14,8 +14,6 @@ import net.minecraftforge.fluids._
 trait TileFluidTank extends TileEntityBase with IFluidHandler {
   @Saveable var tank = defaultTank
 
-  var syncTank: Boolean = false
-
   def defaultTank: FluidTank
 
   override def fill(from: ForgeDirection, resource: FluidStack, doFill: Boolean) = tank.fill(resource, doFill)
@@ -42,26 +40,5 @@ trait TileFluidTank extends TileEntityBase with IFluidHandler {
     updateNeeded = false
   }
 
-  override def hasDescription: Boolean = syncTank
-
-  override def saveToDescriptionCompound(compound: NBTTagCompound): Unit = {
-    super.saveToDescriptionCompound(compound)
-    if (!syncTank) return
-    val tankComp = new NBTTagCompound
-    tankComp.setInteger("capacity", tank.getCapacity)
-    tank.writeToNBT(tankComp)
-    compound.setTag("tank", tankComp)
-  }
-
-  override def handleDescriptionNBT(compound: NBTTagCompound): Unit = {
-    super.handleDescriptionNBT(compound)
-    if (!compound.hasKey("tank")) return
-    val tankComp = compound.getCompoundTag("tank")
-    tank = new FluidTank(tankComp.getInteger("capacity"))
-    tank.readFromNBT(tankComp)
-  }
-
   def setUpdateTank() = updateNeeded = true
-
-  def setTankToSync(value: Boolean) = syncTank = value
 }

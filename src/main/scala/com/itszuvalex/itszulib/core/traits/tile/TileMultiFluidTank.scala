@@ -15,7 +15,6 @@ trait TileMultiFluidTank extends TileEntityBase with IFluidHandler {
   @Saveable var tanks: Array[FluidTank] = defaultTanks
 
   var updateNeeded: Boolean = false
-  var tanksToSync: Seq[Int] = Seq.empty[Int]
 
   def defaultTanks: Array[FluidTank]
 
@@ -46,36 +45,5 @@ trait TileMultiFluidTank extends TileEntityBase with IFluidHandler {
     updateNeeded = false
   }
 
-  override def hasDescription: Boolean = tanksToSync.nonEmpty
-
-  override def saveToDescriptionCompound(compound: NBTTagCompound): Unit = {
-    super.saveToDescriptionCompound(compound)
-    if (tanksToSync.isEmpty) return
-    val tankList = new NBTTagList
-    tanksToSync.foreach { id =>
-      val tankComp = new NBTTagCompound
-      tankComp.setInteger("index", id)
-      tankComp.setInteger("capacity", tanks(id).getCapacity)
-      tanks(id).writeToNBT(tankComp)
-      tankList.appendTag(tankComp)
-    }
-    compound.setTag("tanks", tankList)
-  }
-
-  override def handleDescriptionNBT(compound: NBTTagCompound): Unit = {
-    super.handleDescriptionNBT(compound)
-    if (!compound.hasKey("tanks")) return
-    val tankList = compound.getTagList("tanks", 10)
-    for (id <- 0 until tankList.tagCount()) {
-      val tankComp = tankList.getCompoundTagAt(id)
-      tanks.padTo(tankComp.getInteger("index") + 1, null)
-      tanks(tankComp.getInteger("index")) = new FluidTank(tankComp.getInteger("capacity"))
-      tanks(tankComp.getInteger("index")).readFromNBT(tankComp)
-    }
-  }
-
   def setUpdateTanks() = updateNeeded = true
-
-  def setTanksToSync(xs: Int*): Unit = tanksToSync = xs
-
 }
