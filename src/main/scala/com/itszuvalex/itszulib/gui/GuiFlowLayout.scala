@@ -44,18 +44,18 @@ class GuiFlowLayout(override var anchorX: Int,
 
   private var startIndex = 0
 
-  def numElements = elements.size
+  def numElements = subElements.size
 
-  def startingIndex = startIndex // elements.firstIndexWhere(_.shouldRender)
+  def startingIndex = startIndex // subElements.firstIndexWhere(_.shouldRender)
 
-  def endingIndex = elements.lastIndexWhere(_.shouldRender)
+  def endingIndex = subElements.lastIndexWhere(_.shouldRender)
 
   def pageForward(num: Int = 1) = {
-    if ((startIndex < elements.size - 1) && !elements.last.shouldRender) {
+    if ((startIndex < subElements.size - 1) && !subElements.last.shouldRender) {
       (1 to num).exists { i =>
         startIndex += 1
         layoutElements()
-        elements.last.shouldRender
+        subElements.last.shouldRender
                         }
     }
   }
@@ -81,7 +81,7 @@ class GuiFlowLayout(override var anchorX: Int,
         var nextX = bufferHorizontal
         var nextY = bufferVertical
         var rowHeight = 0
-        elements.zipWithIndex.foreach { case (e: GuiElement, i: Int) =>
+        subElements.zipWithIndex.foreach { case (e: GuiElement, i: Int) =>
           if (i < startIndex) {
             e.anchorX = panelWidth
             e.anchorY = panelHeight
@@ -114,7 +114,7 @@ class GuiFlowLayout(override var anchorX: Int,
         var nextX = bufferHorizontal
         var nextY = bufferVertical
         var colWidth = 0
-        elements.zipWithIndex.foreach { case (e: GuiElement, i: Int) =>
+        subElements.zipWithIndex.foreach { case (e: GuiElement, i: Int) =>
           if (i < startIndex) {
             e.anchorX = panelWidth
             e.anchorY = panelHeight
