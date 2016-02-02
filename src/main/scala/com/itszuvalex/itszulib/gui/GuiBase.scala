@@ -1,24 +1,37 @@
 package com.itszuvalex.itszulib.gui
 
+import net.minecraft.client.Minecraft
+import net.minecraft.client.audio.PositionedSoundRecord
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.inventory.Container
+import net.minecraft.util.ResourceLocation
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ListBuffer
 
 /**
- * Created by Christopher Harris (Itszuvalex) on 10/19/14.
- */
+  * Created by Christopher Harris (Itszuvalex) on 10/19/14.
+  */
 abstract class GuiBase(c: Container) extends GuiContainer(c) with GuiPanel {
   def isPointInRegion(x: Int, y: Int, width: Int, height: Int, mouseX: Int, mouseY: Int) = func_146978_c(x, y, width, height, mouseX, mouseY)
 
-  override def anchorX = guiLeft
 
-  override def anchorX_=(_x: Int) = { guiLeft = _x }
+  override def initGui(): Unit = {
+    super.initGui()
+    GuiStack.pushStack(this)
+  }
 
-  override def anchorY = guiTop
 
-  override def anchorY_=(_y: Int) = { guiTop = _y }
+  /**
+    * Override default GUI handler to instead pop the gui stack.
+    */
+  override def keyTyped(char: Char, mod: Int): Unit = {
+    if (mod == 1 || char == this.mc.gameSettings.keyBindInventory.getKeyCode) {
+      Minecraft.getMinecraft.getSoundHandler.playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F))
+      GuiStack.popStack()
+    }
+    else super.keyTyped(char, mod)
+  }
 
   override def panelWidth = xSize
 
@@ -44,7 +57,15 @@ abstract class GuiBase(c: Container) extends GuiContainer(c) with GuiPanel {
     super.drawScreen(mouseX, mouseY, partialTicks)
     renderUpdate(anchorX, anchorY, mouseX - anchorX, mouseY - anchorY, partialTicks)
     val tooltipList = new ListBuffer[String]
-    subElements.foreach( gui => if (gui.isMousedOver) gui.addTooltip(mouseX, mouseY, tooltipList) )
+    subElements.foreach(gui => if (gui.isMousedOver) gui.addTooltip(mouseX, mouseY, tooltipList))
     if (tooltipList.nonEmpty) drawHoveringText(tooltipList.toList, mouseX, mouseY, fontRendererObj)
   }
+
+  override def anchorX = guiLeft
+
+  override def anchorX_=(_x: Int) = { guiLeft = _x }
+
+  override def anchorY = guiTop
+
+  override def anchorY_=(_y: Int) = { guiTop = _y }
 }

@@ -3,22 +3,25 @@ package com.itszuvalex.itszulib.gui
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 
 /**
- * Created by Christopher Harris (Itszuvalex) on 9/3/15.
- */
+  * Created by Christopher Harris (Itszuvalex) on 9/3/15.
+  */
 
 trait GuiPanel extends GuiElement {
+  val subElements = ArrayBuffer[GuiElement]()
   var panelWidth: Int
-
   var panelHeight: Int
 
   override def spaceHorizontal = panelWidth
 
   override def spaceVertical = panelHeight
 
-  val subElements = ArrayBuffer[GuiElement]()
-
   def add(elements: GuiElement*) = {
     subElements ++= elements.filter(gui => gui.setParent(this))
+    this
+  }
+
+  def remove(elements: GuiElement*) = {
+    subElements --= elements.filter(gui => gui.setParent(null))
     this
   }
 

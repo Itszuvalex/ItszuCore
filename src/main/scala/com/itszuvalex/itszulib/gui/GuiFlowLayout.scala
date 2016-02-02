@@ -1,8 +1,8 @@
 package com.itszuvalex.itszulib.gui
 
 /**
- * Created by Christopher Harris (Itszuvalex) on 9/4/15.
- */
+  * Created by Christopher Harris (Itszuvalex) on 9/4/15.
+  */
 object GuiFlowLayout {
 
   object FlowDirection extends Enumeration {
@@ -11,17 +11,17 @@ object GuiFlowLayout {
   }
 
   /**
-   * Reserved for later refinement.
-   */
+    * Reserved for later refinement.
+    */
   object FlowVertical extends Enumeration {
     type FlowVertical = Value
     val Top, Center, Bottom = Value
   }
 
   /**
-   * Reserved for later refinement.
-   *
-   */
+    * Reserved for later refinement.
+    *
+    */
   object FlowHorizontal extends Enumeration {
     type FlowHorizontal = Value
     val Left, Center, Right = Value
@@ -36,43 +36,22 @@ class GuiFlowLayout(override var anchorX: Int,
                     elements: GuiElement*) extends GuiPanel {
   add(elements: _*)
 
+
   var flowVertical     = GuiFlowLayout.FlowVertical.Top
   var flowHorizontal   = GuiFlowLayout.FlowHorizontal.Left
   var primaryFlow      = GuiFlowLayout.FlowDirection.Horizontal
   var bufferVertical   = 0
   var bufferHorizontal = 0
-
   private var startIndex = 0
 
-  def numElements = subElements.size
-
-  def startingIndex = startIndex // subElements.firstIndexWhere(_.shouldRender)
-
-  def endingIndex = subElements.lastIndexWhere(_.shouldRender)
-
-  def pageForward(num: Int = 1) = {
-    if ((startIndex < subElements.size - 1) && !subElements.last.shouldRender) {
-      (1 to num).exists { i =>
-        startIndex += 1
-        layoutElements()
-        subElements.last.shouldRender
-                        }
-    }
+  override def add(elements: GuiElement*): GuiPanel = {
+    super.add(elements: _*)
+    onChanged()
+    this
   }
 
-  def pageBackward(num: Int = 1) = {
-    if (startIndex > 0) {
-      startIndex -= num
-      startIndex = Math.max(startIndex, 0)
-    }
-  }
-
-  override def renderUpdate(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
+  def onChanged(): Unit = {
     layoutElements()
-    //    GL11.glScissor(screenX, screenY, panelWidth, panelHeight)
-    //    GL11.glEnable(GL11.GL_SCISSOR_TEST)
-    super.renderUpdate(screenX, screenY, mouseX, mouseY, partialTicks)
-    //    GL11.glDisable(GL11.GL_SCISSOR_TEST)
   }
 
   def layoutElements(): Unit = {
@@ -89,7 +68,7 @@ class GuiFlowLayout(override var anchorX: Int,
           } else {
             e.setShouldRender(true)
             (nextX, nextY) match {
-              case (_, y) if y >= panelHeight                                                                    =>
+              case (_, y) if y >= panelHeight =>
                 nextX = panelWidth
                 nextY = panelHeight
                 e.setShouldRender(false)
@@ -102,15 +81,15 @@ class GuiFlowLayout(override var anchorX: Int,
                   e.setShouldRender(false)
                 }
                 rowHeight = 0
-              case _                                                                                             =>
+              case _ =>
             }
             e.anchorX = nextX
             e.anchorY = nextY
             nextX = nextX + e.spaceHorizontal + bufferHorizontal
             rowHeight = Math.max(rowHeight, e.spaceVertical)
           }
-                                      }
-      case GuiFlowLayout.FlowDirection.Vertical   =>
+                                         }
+      case GuiFlowLayout.FlowDirection.Vertical =>
         var nextX = bufferHorizontal
         var nextY = bufferVertical
         var colWidth = 0
@@ -122,7 +101,7 @@ class GuiFlowLayout(override var anchorX: Int,
           } else {
             e.setShouldRender(true)
             (nextX, nextY) match {
-              case (x, _) if x >= panelWidth                                                                =>
+              case (x, _) if x >= panelWidth =>
                 nextX = panelWidth
                 nextY = panelHeight
                 e.setShouldRender(false)
@@ -135,16 +114,47 @@ class GuiFlowLayout(override var anchorX: Int,
                   e.setShouldRender(false)
                 }
                 colWidth = 0
-              case _                                                                                        =>
+              case _ =>
             }
             e.anchorX = nextX
             e.anchorY = nextY
             nextY = nextY + e.spaceVertical + bufferVertical
             colWidth = Math.max(colWidth, e.spaceHorizontal)
           }
-                                      }
-      case _                                      =>
+                                         }
+      case _ =>
     }
+  }
+
+  def numElements = subElements.size
+
+  def startingIndex = startIndex // subElements.firstIndexWhere(_.shouldRender)
+
+  def endingIndex = subElements.lastIndexWhere(_.shouldRender)
+
+  def pageForward(num: Int = 1) = {
+    if ((startIndex < subElements.size - 1) && !subElements.last.shouldRender) {
+      (1 to num).exists { i =>
+        startIndex += 1
+        onChanged()
+        subElements.last.shouldRender
+                        }
+    }
+  }
+
+  def pageBackward(num: Int = 1) = {
+    if (startIndex > 0) {
+      startIndex -= num
+      startIndex = Math.max(startIndex, 0)
+      onChanged()
+    }
+  }
+
+  override def renderUpdate(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
+    //    GL11.glScissor(screenX, screenY, panelWidth, panelHeight)
+    //    GL11.glEnable(GL11.GL_SCISSOR_TEST)
+    super.renderUpdate(screenX, screenY, mouseX, mouseY, partialTicks)
+    //    GL11.glDisable(GL11.GL_SCISSOR_TEST)
   }
 
 }

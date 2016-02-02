@@ -20,6 +20,7 @@
  */
 package com.itszuvalex.itszulib.proxy
 
+import com.itszuvalex.itszulib.gui.GuiStack
 import com.itszuvalex.itszulib.render.{PreviewableRenderHandler, PreviewableRendererRegistry, RenderSimpleMachine, ShaderUtils}
 import com.itszuvalex.itszulib.testing._
 import cpw.mods.fml.client.registry.{ClientRegistry, RenderingRegistry}
@@ -40,6 +41,8 @@ class ProxyClient extends ProxyCommon {
     RenderingRegistry.registerBlockHandler(RenderSimpleMachine.renderID, new RenderSimpleMachine)
 
     ClientRegistry.bindTileEntitySpecialRenderer(classOf[PortalTileTest], new RenderPortalTest)
+
+    GuiStack.init()
   }
 
   override def getClientGuiElement(ID: Int, player: EntityPlayer, world: World, x: Int, y: Int, z: Int): AnyRef = {
