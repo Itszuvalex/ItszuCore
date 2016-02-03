@@ -10,18 +10,17 @@ import org.lwjgl.opengl.GL11
   * Created by Christopher Harris (Itszuvalex) on 2/1/2016.
   */
 @SideOnly(Side.CLIENT)
+object GuiTextBox {
+  var activeTextBox: GuiTextBox = null
+}
+
+@SideOnly(Side.CLIENT)
 class GuiTextBox(private val fontRenderer: FontRenderer, anchorX: Int, anchorY: Int, width: Int, height: Int) extends GuiButton(anchorX, anchorY, width, height) {
   /** Has the current text being edited on the textbox. */
   private var textString              = ""
   private var maxStringLength         = 32
   private var cursorCounter           = 0
   private var enableBackgroundDrawing = true
-  /** if true the textbox can lose focus by clicking elsewhere on the screen */
-  private var canLoseFocus            = true
-  /** If this value is true along with isEnabled, keyTyped will process the keys. */
-  private var focused                 = false
-  /** If this value is true along with isFocused, keyTyped will process the keys. */
-  private var isEnabled               = true
   /** The current character index that should be used as start of the rendered text. */
   private var lineScrollOffset        = 0
   private var cursorPosition          = 0
@@ -29,13 +28,11 @@ class GuiTextBox(private val fontRenderer: FontRenderer, anchorX: Int, anchorY: 
   private var selectionEnd            = 0
   private var enabledColor            = 14737632
   private var disabledColor           = 7368816
-  /** True if this textbox is visible */
-  private var visible                 = true
 
   /**
     * Increments the cursor counter
     */
-  def updateCursorCounter() = this.cursorCounter += 1
+  def updateCursorCounter() = cursorCounter += 1
 
   /**
     * Returns the contents of the textbox
@@ -47,13 +44,13 @@ class GuiTextBox(private val fontRenderer: FontRenderer, anchorX: Int, anchorY: 
     * Sets the text of the textbox
     */
   def setText(text: String) {
-    if (text.length > this.maxStringLength) {
-      this.textString = text.substring(0, this.maxStringLength)
+    if (text.length > maxStringLength) {
+      textString = text.substring(0, maxStringLength)
     }
     else {
-      this.textString = text
+      textString = text
     }
-    this.setCursorPositionEnd()
+    setCursorPositionEnd()
   }
 
   /**
@@ -79,7 +76,6 @@ class GuiTextBox(private val fontRenderer: FontRenderer, anchorX: Int, anchorY: 
     val i = if (cursorPosition < selectionEnd) cursorPosition else selectionEnd
     val j = if (cursorPosition < selectionEnd) selectionEnd else cursorPosition
     val k = maxStringLength - textString.length - (i - selectionEnd)
-    val flag = false
     if (textString.length > 0) {
       s1 = s1 + textString.substring(0, i)
     }
@@ -160,34 +156,34 @@ class GuiTextBox(private val fontRenderer: FontRenderer, anchorX: Int, anchorY: 
       while (i1 < l) {
 
         if (flag1) {
-          while (p_146197_3_ && k > 0 && this.textString.charAt(k - 1) == 32) {
+          while (p_146197_3_ && k > 0 && textString.charAt(k - 1) == 32) {
             k -= 1
           }
-          while (k > 0 && this.textString.charAt(k - 1) != 32) {
+          while (k > 0 && textString.charAt(k - 1) != 32) {
             k -= 1
           }
         }
         else {
-          val j1: Int = this.textString.length
-          k = this.textString.indexOf(32, k)
+          val j1: Int = textString.length
+          k = textString.indexOf(32, k)
           if (k == -1) {
             k = j1
           }
           else {
-            while (p_146197_3_ && k < j1 && this.textString.charAt(k) == 32) {
+            while (p_146197_3_ && k < j1 && textString.charAt(k) == 32) {
               k += 1
             }
           }
         }
       }
                         }
-    return k
+    k
   }
 
   /**
     * Moves the text cursor by a specified number of characters and clears the selection
     */
-  def moveCursorBy(num: Int) = setCursorPosition(this.selectionEnd + num)
+  def moveCursorBy(num: Int) = setCursorPosition(selectionEnd + num)
 
   /**
     * sets the cursors position to the beginning
@@ -197,130 +193,131 @@ class GuiTextBox(private val fontRenderer: FontRenderer, anchorX: Int, anchorY: 
   /**
     * Call this method from your GuiScreen to process the keys into the textbox
     */
-  def textboxKeyTyped(p_146201_1_ : Char, p_146201_2_ : Int): Boolean = {
+  override def onKeyTyped(char: Char, keyId: Int): Boolean = {
     if (!isFocused) {
-      return false
+      false
     }
     else {
-      p_146201_1_ match {
+      char match {
         case 1 =>
-          this.setCursorPositionEnd
-          this.setSelectionPos(0)
-          return true
+          setCursorPositionEnd()
+          setSelectionPos(0)
+          true
         case 3 =>
-          GuiScreen.setClipboardString(this.getSelectedText)
-          return true
+          GuiScreen.setClipboardString(getSelectedText)
+          true
         case 22 =>
-          if (this.isEnabled) {
-            this.writeText(GuiScreen.getClipboardString)
+          if (!disabled) {
+            writeText(GuiScreen.getClipboardString)
           }
-          return true
+          true
         case 24 =>
-          GuiScreen.setClipboardString(this.getSelectedText)
-          if (this.isEnabled) {
-            this.writeText("")
+          GuiScreen.setClipboardString(getSelectedText)
+          if (!disabled) {
+            writeText("")
           }
-          return true
+          true
         case _ =>
-          p_146201_2_ match {
+          keyId match {
             case 14 =>
               if (GuiScreen.isCtrlKeyDown) {
-                if (this.isEnabled) {
-                  this.deleteWords(-1)
+                if (!disabled) {
+                  deleteWords(-1)
                 }
               }
-              else if (this.isEnabled) {
-                this.deleteFromCursor(-1)
+              else if (!disabled) {
+                deleteFromCursor(-1)
               }
-              return true
+              true
             case 199 =>
               if (GuiScreen.isShiftKeyDown) {
-                this.setSelectionPos(0)
+                setSelectionPos(0)
               }
               else {
-                this.setCursorPositionZero
+                setCursorPositionZero()
               }
-              return true
+              true
             case 203 =>
               if (GuiScreen.isShiftKeyDown) {
                 if (GuiScreen.isCtrlKeyDown) {
-                  this.setSelectionPos(this.getNthWordFromPos(-1, this.getSelectionEnd))
+                  setSelectionPos(getNthWordFromPos(-1, getSelectionEnd))
                 }
                 else {
-                  this.setSelectionPos(this.getSelectionEnd - 1)
+                  setSelectionPos(getSelectionEnd - 1)
                 }
               }
               else if (GuiScreen.isCtrlKeyDown) {
-                this.setCursorPosition(this.getNthWordFromCursor(-1))
+                setCursorPosition(getNthWordFromCursor(-1))
               }
               else {
-                this.moveCursorBy(-1)
+                moveCursorBy(-1)
               }
-              return true
+              true
             case 205 =>
               if (GuiScreen.isShiftKeyDown) {
                 if (GuiScreen.isCtrlKeyDown) {
-                  this.setSelectionPos(this.getNthWordFromPos(1, this.getSelectionEnd))
+                  setSelectionPos(getNthWordFromPos(1, getSelectionEnd))
                 }
                 else {
-                  this.setSelectionPos(this.getSelectionEnd + 1)
+                  setSelectionPos(getSelectionEnd + 1)
                 }
               }
               else if (GuiScreen.isCtrlKeyDown) {
-                this.setCursorPosition(this.getNthWordFromCursor(1))
+                setCursorPosition(getNthWordFromCursor(1))
               }
               else {
-                this.moveCursorBy(1)
+                moveCursorBy(1)
               }
-              return true
+              true
             case 207 =>
               if (GuiScreen.isShiftKeyDown) {
-                this.setSelectionPos(this.textString.length)
+                setSelectionPos(textString.length)
               }
               else {
-                this.setCursorPositionEnd
+                setCursorPositionEnd()
               }
-              return true
+              true
             case 211 =>
               if (GuiScreen.isCtrlKeyDown) {
-                if (this.isEnabled) {
-                  this.deleteWords(1)
+                if (!disabled) {
+                  deleteWords(1)
                 }
               }
-              else if (this.isEnabled) {
-                this.deleteFromCursor(1)
+              else if (!disabled) {
+                deleteFromCursor(1)
               }
-              return true
+              true
             case _ =>
-              if (ChatAllowedCharacters.isAllowedCharacter(p_146201_1_)) {
-                if (this.isEnabled) {
-                  this.writeText(Character.toString(p_146201_1_))
+              if (ChatAllowedCharacters.isAllowedCharacter(char)) {
+                if (!disabled) {
+                  writeText(Character.toString(char))
                 }
-                return true
+                true
               }
               else {
-                return false
+                false
               }
           }
       }
     }
   }
 
-  /**
-    * Args: x, y, buttonClicked
-    */
-  def mouseClicked(p_146192_1_ : Int, p_146192_2_ : Int, p_146192_3_ : Int) {
-    val flag: Boolean = p_146192_1_ >= this.anchorX && p_146192_1_ < this.anchorX + this.width && p_146192_2_ >= this.anchorY && p_146192_2_ < this.anchorY + this.height
-    if (this.canLoseFocus) {
-      this.setFocused(flag)
-    }
-    if (this.focused && p_146192_3_ == 0) {
-      var l: Int = p_146192_1_ - this.anchorX
-      if (this.enableBackgroundDrawing) {
-        l -= 4
+  override def onMouseClick(mouseX: Int, mouseY: Int, button: Int): Boolean = {
+    if (super.onMouseClick(mouseX, mouseY, button)) {
+      setFocused(true)
+      if (isFocused && button == 0) {
+        var l: Int = mouseX
+        if (enableBackgroundDrawing) {
+          l -= 4
+        }
+        val s: String = fontRenderer.trimStringToWidth(textString.substring(lineScrollOffset), getWidth)
+        setCursorPosition(fontRenderer.trimStringToWidth(s, l).length + lineScrollOffset)
       }
-      val s: String = this.fontRenderer.trimStringToWidth(this.textString.substring(this.lineScrollOffset), this.getWidth)
-      this.setCursorPosition(this.fontRenderer.trimStringToWidth(s, l).length + this.lineScrollOffset)
+      true
+    }
+    else {
+      setFocused(false)
+      false
     }
   }
 
@@ -328,15 +325,15 @@ class GuiTextBox(private val fontRenderer: FontRenderer, anchorX: Int, anchorY: 
     * sets the position of the cursor to the provided index
     */
   def setCursorPosition(p_146190_1_ : Int) {
-    this.cursorPosition = p_146190_1_
-    val j: Int = this.textString.length
-    if (this.cursorPosition < 0) {
-      this.cursorPosition = 0
+    cursorPosition = p_146190_1_
+    val j: Int = textString.length
+    if (cursorPosition < 0) {
+      cursorPosition = 0
     }
-    if (this.cursorPosition > j) {
-      this.cursorPosition = j
+    if (cursorPosition > j) {
+      cursorPosition = j
     }
-    this.setSelectionPos(this.cursorPosition)
+    setSelectionPos(cursorPosition)
   }
 
   /**
@@ -378,71 +375,9 @@ class GuiTextBox(private val fontRenderer: FontRenderer, anchorX: Int, anchorY: 
   }
 
   /**
-    * Sets focus to this gui element
-    */
-  def setFocused(focused: Boolean) {
-    if (focused && !this.focused) {
-      cursorCounter = 0
-    }
-    this.focused = focused
-  }
-
-  /**
-    * Draws the textbox
-    */
-  def drawTextBox() {
-    if (this.getVisible) {
-      if (this.getEnableBackgroundDrawing) {
-        //        drawRect(this.anchorX - 1, this.anchorY - 1, this.anchorX + this.width + 1, this.anchorY + this.height + 1, -6250336)
-        //        drawRect(this.anchorX, this.anchorY, this.anchorX + this.width, this.anchorY + this.height, -16777216)
-      }
-      val i: Int = if (this.isEnabled) this.enabledColor else this.disabledColor
-      val j: Int = this.cursorPosition - this.lineScrollOffset
-      var k: Int = this.selectionEnd - this.lineScrollOffset
-      val s: String = this.fontRenderer.trimStringToWidth(this.textString.substring(this.lineScrollOffset), this.getWidth)
-      val flag: Boolean = j >= 0 && j <= s.length
-      val flag1: Boolean = this.focused && this.cursorCounter / 6 % 2 == 0 && flag
-      val l: Int = if (this.enableBackgroundDrawing) this.anchorX + 4 else this.anchorX
-      val i1: Int = if (this.enableBackgroundDrawing) this.anchorY + (this.height - 8) / 2 else this.anchorY
-      var j1: Int = l
-      if (k > s.length) {
-        k = s.length
-      }
-      if (s.length > 0) {
-        val s1: String = if (flag) s.substring(0, j) else s
-        j1 = this.fontRenderer.drawStringWithShadow(s1, l, i1, i)
-      }
-      val flag2: Boolean = this.cursorPosition < this.textString.length || this.textString.length >= this.getMaxStringLength
-      var k1: Int = j1
-      if (!flag) {
-        k1 = if (j > 0) l + this.width else l
-      }
-      else if (flag2) {
-        k1 = j1 - 1
-        j1 -= 1
-      }
-      if (s.length > 0 && flag && j < s.length) {
-        this.fontRenderer.drawStringWithShadow(s.substring(j), j1, i1, i)
-      }
-      if (flag1) {
-        if (flag2) {
-          Gui.drawRect(k1, i1 - 1, k1 + 1, i1 + 1 + this.fontRenderer.FONT_HEIGHT, -3092272)
-        }
-        else {
-          this.fontRenderer.drawStringWithShadow("_", k1, i1, i)
-        }
-      }
-      if (k != j) {
-        val l1: Int = l + this.fontRenderer.getStringWidth(s.substring(0, k))
-        this.drawCursorVertical(k1, i1 - 1, l1 - 1, i1 + 1 + this.fontRenderer.FONT_HEIGHT)
-      }
-    }
-  }
-
-  /**
     * returns the width of the textbox depending on if background drawing is enabled
     */
-  def getWidth = if (getEnableBackgroundDrawing) this.panelWidth - 8 else panelWidth
+  def getWidth = if (getEnableBackgroundDrawing) panelWidth - 8 else panelWidth
 
   /**
     * get enable drawing background and outline
@@ -453,6 +388,77 @@ class GuiTextBox(private val fontRenderer: FontRenderer, anchorX: Int, anchorY: 
     * enable drawing background and outline
     */
   def setEnableBackgroundDrawing(enableBackground: Boolean) = enableBackgroundDrawing = enableBackground
+
+  /**
+    * Sets focus to this gui element
+    */
+  def setFocused(focused: Boolean) {
+    if (focused && !isFocused) {
+      cursorCounter = 0
+      GuiTextBox.activeTextBox = this
+    }
+    else if (!focused && isFocused) {
+      GuiTextBox.activeTextBox == null
+    }
+  }
+
+  /**
+    * Getter for the focused field
+    */
+  def isFocused = GuiTextBox.activeTextBox == this
+
+  /**
+    * Draws the textbox
+    */
+  override def render(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
+    super.render(screenX, screenY, mouseX, mouseY, partialTicks)
+    if (getVisible) {
+      if (getEnableBackgroundDrawing) {
+        Gui.drawRect(screenX - 1, screenY - 1, screenX + width + 1, screenY + height + 1, -6250336)
+        Gui.drawRect(screenX, screenY, screenX + width, screenY + height, -16777216)
+      }
+      val i: Int = if (!disabled) enabledColor else disabledColor
+      val j: Int = cursorPosition - lineScrollOffset
+      var k: Int = selectionEnd - lineScrollOffset
+      val s: String = fontRenderer.trimStringToWidth(textString.substring(lineScrollOffset), getWidth)
+      val flag: Boolean = j >= 0 && j <= s.length
+      val flag1: Boolean = isFocused && cursorCounter / 6 % 2 == 0 && flag
+      val l: Int = if (enableBackgroundDrawing) anchorX + 4 else anchorX
+      val i1: Int = if (enableBackgroundDrawing) anchorY + (height - 8) / 2 else anchorY
+      var j1: Int = l
+      if (k > s.length) {
+        k = s.length
+      }
+      if (s.length > 0) {
+        val s1: String = if (flag) s.substring(0, j) else s
+        j1 = fontRenderer.drawStringWithShadow(s1, l, i1, i)
+      }
+      val flag2: Boolean = cursorPosition < textString.length || textString.length >= getMaxStringLength
+      var k1: Int = j1
+      if (!flag) {
+        k1 = if (j > 0) l + width else l
+      }
+      else if (flag2) {
+        k1 = j1 - 1
+        j1 -= 1
+      }
+      if (s.length > 0 && flag && j < s.length) {
+        fontRenderer.drawStringWithShadow(s.substring(j), j1, i1, i)
+      }
+      if (flag1) {
+        if (flag2) {
+          Gui.drawRect(k1, i1 - 1, k1 + 1, i1 + 1 + fontRenderer.FONT_HEIGHT, -3092272)
+        }
+        else {
+          fontRenderer.drawStringWithShadow("_", k1, i1, i)
+        }
+      }
+      if (k != j) {
+        val l1: Int = l + fontRenderer.getStringWidth(s.substring(0, k))
+        drawCursorVertical(k1, i1 - 1, l1 - 1, i1 + 1 + fontRenderer.FONT_HEIGHT)
+      }
+    }
+  }
 
   /**
     * draws the vertical line cursor in the textbox
@@ -509,13 +515,7 @@ class GuiTextBox(private val fontRenderer: FontRenderer, anchorX: Int, anchorY: 
   /**
     * returns true if this textbox is visible
     */
-  def getVisible = visible
-
-  /**
-    * Sets whether or not this textbox is visible
-    */
-  def setVisible(visible: Boolean) = this.visible = visible
-
+  def getVisible = !disabled
 
   /**
     * returns the current position of the cursor
@@ -530,19 +530,7 @@ class GuiTextBox(private val fontRenderer: FontRenderer, anchorX: Int, anchorY: 
   def setDisabledTextColour(color: Int) = disabledColor = color
 
   /**
-    * Getter for the focused field
-    */
-  def isFocused = this.focused
-
-  def setEnabled(enabled: Boolean) = isEnabled = enabled
-
-  /**
     * the side of the selection that is not the cursor, may be the same as the cursor
     */
   def getSelectionEnd = selectionEnd
-
-  /**
-    * if true the textbox can lose focus by clicking elsewhere on the screen
-    */
-  def setCanLoseFocus(value: Boolean) = canLoseFocus = value
 }

@@ -15,7 +15,7 @@ object GuiStack {
   val guiStack = new mutable.Stack[GuiBase]()
 
   def popStack() = {
-    val gui = guiStack.pop()
+    val gui = if (guiStack.isEmpty) null else guiStack.pop()
     Minecraft.getMinecraft.displayGuiScreen(gui)
   }
 
@@ -29,6 +29,7 @@ object GuiStack {
   def handleScreen(event: net.minecraftforge.client.event.GuiOpenEvent): Unit = {
     if (event.gui == null)
       clearStack()
+    GuiTextBox.activeTextBox = null // Don't carry over focus between GUIs
   }
 
   def clearStack() = guiStack.clear()

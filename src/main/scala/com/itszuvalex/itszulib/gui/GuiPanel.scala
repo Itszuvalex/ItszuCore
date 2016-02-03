@@ -8,7 +8,7 @@ import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 
 trait GuiPanel extends GuiElement {
   val subElements = ArrayBuffer[GuiElement]()
-  var panelWidth: Int
+  var panelWidth : Int
   var panelHeight: Int
 
   override def spaceHorizontal = panelWidth
@@ -32,6 +32,15 @@ trait GuiPanel extends GuiElement {
   def passAlongMouseClick(mouseX: Int, mouseY: Int, button: Int): Boolean = {
     subElements.exists(gui => gui.onMouseClick(mouseX - gui.anchorX, mouseY - gui.anchorY, button))
   }
+
+
+  /**
+    *
+    * @param char   Character input
+    * @param button Physical button ID
+    * @return True if key press is handled
+    */
+  override def onKeyTyped(char: Char, button: Int): Boolean = subElements.exists(_.onKeyTyped(char, button))
 
   override def addTooltip(mouseX: Int, mouseY: Int, tooltip: ListBuffer[String]): Unit = {
     super.addTooltip(mouseX, mouseY, tooltip)
