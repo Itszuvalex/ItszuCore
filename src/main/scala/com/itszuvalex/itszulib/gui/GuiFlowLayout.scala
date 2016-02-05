@@ -31,17 +31,17 @@ object GuiFlowLayout {
 
 class GuiFlowLayout(override var anchorX: Int,
                     override var anchorY: Int,
-                    override var panelWidth: Int,
-                    override var panelHeight: Int,
+                    override var _panelWidth: Int,
+                    override var _panelHeight: Int,
                     elements: GuiElement*) extends GuiPanel {
   add(elements: _*)
-
 
   var flowVertical     = GuiFlowLayout.FlowVertical.Top
   var flowHorizontal   = GuiFlowLayout.FlowHorizontal.Left
   var primaryFlow      = GuiFlowLayout.FlowDirection.Horizontal
   var bufferVertical   = 0
   var bufferHorizontal = 0
+  var needsLayout      = true
   private var startIndex = 0
 
   override def add(elements: GuiElement*): GuiPanel = {
@@ -50,8 +50,54 @@ class GuiFlowLayout(override var anchorX: Int,
     this
   }
 
+
+  override def panelWidth_=(width: Int) = {
+    super.panelWidth_=(width)
+    onChanged()
+  }
+
+  override def panelHeight_=(height: Int) = {
+    super.panelHeight_=(height)
+    onChanged()
+  }
+
   def onChanged(): Unit = {
-    layoutElements()
+    needsLayout = true
+  }
+
+  def numElements = subElements.size
+
+  def startingIndex = startIndex // subElements.firstIndexWhere(_.shouldRender)
+
+  def endingIndex = subElements.lastIndexWhere(_.shouldRender)
+
+  def pageForward(num: Int = 1) = {
+    if ((startIndex < subElements.size - 1) && !subElements.last.shouldRender) {
+      (1 to num).exists { i =>
+        startIndex += 1
+        onChanged()
+        subElements.last.shouldRender
+                        }
+    }
+  }
+
+  def pageBackward(num: Int = 1) = {
+    if (startIndex > 0) {
+      startIndex -= num
+      startIndex = Math.max(startIndex, 0)
+      onChanged()
+    }
+  }
+
+  override def renderUpdate(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
+    //    GL11.glScissor(screenX, screenY, panelWidth, panelHeight)
+    //    GL11.glEnable(GL11.GL_SCISSOR_TEST)
+    if (needsLayout) {
+      layoutElements()
+      needsLayout = false
+    }
+    super.renderUpdate(screenX, screenY, mouseX, mouseY, partialTicks)
+    //    GL11.glDisable(GL11.GL_SCISSOR_TEST)
   }
 
   def layoutElements(): Unit = {
@@ -125,36 +171,4 @@ class GuiFlowLayout(override var anchorX: Int,
       case _ =>
     }
   }
-
-  def numElements = subElements.size
-
-  def startingIndex = startIndex // subElements.firstIndexWhere(_.shouldRender)
-
-  def endingIndex = subElements.lastIndexWhere(_.shouldRender)
-
-  def pageForward(num: Int = 1) = {
-    if ((startIndex < subElements.size - 1) && !subElements.last.shouldRender) {
-      (1 to num).exists { i =>
-        startIndex += 1
-        onChanged()
-        subElements.last.shouldRender
-                        }
-    }
-  }
-
-  def pageBackward(num: Int = 1) = {
-    if (startIndex > 0) {
-      startIndex -= num
-      startIndex = Math.max(startIndex, 0)
-      onChanged()
-    }
-  }
-
-  override def renderUpdate(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
-    //    GL11.glScissor(screenX, screenY, panelWidth, panelHeight)
-    //    GL11.glEnable(GL11.GL_SCISSOR_TEST)
-    super.renderUpdate(screenX, screenY, mouseX, mouseY, partialTicks)
-    //    GL11.glDisable(GL11.GL_SCISSOR_TEST)
-  }
-
 }

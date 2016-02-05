@@ -56,8 +56,8 @@ class GuiFluidTank(override var anchorX: Int,
   def this(x: Int, y: Int, guiObj: GuiBase, tile: TileMultiFluidTank, _tankID: Int, manAccess: Int, filtFluid: Fluid, _drawTank: Boolean) =
       this(x, y, guiObj, null, tile, _tankID, manAccess, filtFluid, _drawTank)
 
-  override var panelWidth: Int = 18
-  override var panelHeight: Int = 66
+  override var _panelWidth: Int = 18
+  override var _panelHeight: Int = 66
 
   var colorRaised = GuiFluidTank.DEFAULT_RAISED_COLOR
   var colorLowered = GuiFluidTank.DEFAULT_LOWERED_COLOR

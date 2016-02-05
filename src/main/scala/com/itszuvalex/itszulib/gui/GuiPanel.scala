@@ -8,12 +8,20 @@ import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 
 trait GuiPanel extends GuiElement {
   val subElements = ArrayBuffer[GuiElement]()
-  var panelWidth : Int
-  var panelHeight: Int
+  var _panelWidth : Int
+  var _panelHeight: Int
 
   override def spaceHorizontal = panelWidth
 
+  def panelWidth = _panelWidth
+
+  def panelWidth_=(width: Int) = _panelWidth = width
+
   override def spaceVertical = panelHeight
+
+  def panelHeight = _panelHeight
+
+  def panelHeight_=(height: Int) = _panelHeight = height
 
   def add(elements: GuiElement*) = {
     subElements ++= elements.filter(gui => gui.setParent(this))

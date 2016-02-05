@@ -23,8 +23,8 @@ object GuiButton {
 
 class GuiButton(override var anchorX: Int,
                 override var anchorY: Int,
-                override var panelWidth: Int,
-                override var panelHeight: Int,
+                override var _panelWidth: Int,
+                override var _panelHeight: Int,
                 var text: String = "") extends GuiPanel {
   var colorRaised    = GuiButton.DEFAULT_RAISED_COLOR
   var colorLowered   = GuiButton.DEFAULT_LOWERED_COLOR

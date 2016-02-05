@@ -12,13 +12,13 @@ import scala.collection.mutable.ListBuffer
 abstract class GuiBase(c: Container) extends GuiContainer(c) with GuiPanel {
   def isPointInRegion(x: Int, y: Int, width: Int, height: Int, mouseX: Int, mouseY: Int) = func_146978_c(x, y, width, height, mouseX, mouseY)
 
-  override def panelWidth = xSize
+  override def _panelWidth = xSize
 
-  override def panelWidth_=(_width: Int) = { xSize = _width }
+  override def _panelWidth_=(_width: Int) = { xSize = _width }
 
-  override def panelHeight = ySize
+  override def _panelHeight = ySize
 
-  override def panelHeight_=(_height: Int) = { ySize = _height }
+  override def _panelHeight_=(_height: Int) = { ySize = _height }
 
   override def mouseClicked(mouseX: Int, mouseY: Int, button: Int): Unit = {
     val atb = GuiTextBox.activeTextBox

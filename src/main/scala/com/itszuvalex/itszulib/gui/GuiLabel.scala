@@ -12,8 +12,8 @@ object GuiLabel {
 
 class GuiLabel(override var anchorX: Int,
                override var anchorY: Int,
-               override var panelWidth: Int,
-               override var panelHeight: Int,
+               override var _panelWidth: Int,
+               override var _panelHeight: Int,
                var text: String) extends GuiPanel {
   var colorFont = GuiLabel.DEFAULT_FONT_COLOR
   var xPadding  = 0
