@@ -2,7 +2,7 @@ package com.itszuvalex.itszulib
 
 import com.itszuvalex.itszulib.network.PacketHandler
 import com.itszuvalex.itszulib.proxy.ProxyCommon
-import com.itszuvalex.itszulib.testing.{BlockLocTrackerTest, BlockPortalTest, BlockTankTest, ItemPreviewable}
+import com.itszuvalex.itszulib.testing._
 import cpw.mods.fml.common.Mod.EventHandler
 import cpw.mods.fml.common.event.{FMLInitializationEvent, FMLInterModComms, FMLPostInitializationEvent, FMLPreInitializationEvent}
 import cpw.mods.fml.common.network.NetworkRegistry
@@ -36,6 +36,7 @@ object ItszuLib {
     GameRegistry.registerBlock(new BlockPortalTest, "BlockPortalTest").setCreativeTab(CreativeTabs.tabBlock)
     GameRegistry.registerBlock(new BlockLocTrackerTest, "BlockLocTrackerTest").setCreativeTab(CreativeTabs.tabBlock)
     GameRegistry.registerBlock(new BlockTankTest, "BlockTankTest").setCreativeTab(CreativeTabs.tabBlock)
+    GameRegistry.registerBlock(new BlockCustomRenderTest, "BlockCustomRenderTest").setCreativeTab(CreativeTabs.tabBlock)
     val prev = new ItemPreviewable
     prev.setCreativeTab(CreativeTabs.tabDecorations)
     GameRegistry.registerItem(prev, "TilePreviewable")
