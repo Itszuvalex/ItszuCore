@@ -2,7 +2,7 @@ package com.itszuvalex.itszulib.testing
 
 import com.itszuvalex.itszulib.ItszuLib
 import com.itszuvalex.itszulib.core.TileEntityBase
-import com.itszuvalex.itszulib.render.vbo.VBOObjLoader
+import com.itszuvalex.itszulib.render.vbo.obj.VBOObjLoader
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.ResourceLocation
 

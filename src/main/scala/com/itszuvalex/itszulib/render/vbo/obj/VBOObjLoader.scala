@@ -1,4 +1,4 @@
-package com.itszuvalex.itszulib.render.vbo
+package com.itszuvalex.itszulib.render.vbo.obj
 
 import java.io.{BufferedReader, InputStreamReader}
 import java.nio.{FloatBuffer, ShortBuffer}
