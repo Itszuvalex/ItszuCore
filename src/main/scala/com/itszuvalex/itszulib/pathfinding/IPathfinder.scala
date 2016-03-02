@@ -14,13 +14,13 @@ trait IPathfinder {
 
   def getPath: Seq[Loc4]
 
-  abstract def initialize(start: Loc4, goalSet: (Loc4) => Boolean): Unit = {
+  def initialize(start: Loc4, goalSet: (Loc4) => Boolean): Unit = {
     if (start == null) throw new IllegalArgumentException("Start location cannot be null.")
     if (goalSet == null) throw new IllegalArgumentException("Goal set cannot be empty.")
     isGoalState = goalSet
   }
 
-  def initialize(start: Loc4, goalLoc: Loc4) = initialize(start, (loc) => loc == goalLoc)
+  def initialize(start: Loc4, goalLoc: Loc4): Unit = initialize(start, (loc) => loc == goalLoc)
 
   def setMaxPathLength(length: Int): Unit
 
