@@ -48,18 +48,19 @@ abstract class SimplePathfinder[B <: mutable.AbstractSeq[Loc4]](_openSet: B) ext
     if (isGoalState == null) throw new IllegalStateException("Cannot search without a goal state.")
 
     var expands = 0
-    while (openSet.nonEmpty && expands < maxExpands) {
+    while (!isCompleted && openSet.nonEmpty && expands < maxExpands) {
       openSetPop() match {
         case goal if isGoalState(goal) =>
           complete()
           calculatePath(goal)
         case discovered if closedSet.contains(discovered) => /* do nothing */
-        case unpathable if !isPathable(unpathable) => /* do nothing */
+        case unpathable if !isPathable(unpathable) => closedSet.add(unpathable)
         case expand =>
-          getNeighbors(expand).view.filterNot(openSet.contains).foreach { n =>
+          getNeighbors(expand).view.filterNot(openSet.contains).filterNot(closedSet.contains).foreach { n =>
             originMap(n) = expand
             openSetPush(n)
                                                                         }
+          closedSet.add(expand)
       }
 
       expands += 1
