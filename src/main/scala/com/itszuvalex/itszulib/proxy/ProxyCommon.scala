@@ -40,6 +40,7 @@ class ProxyCommon extends IGuiHandler {
     GameRegistry.registerTileEntity(classOf[PortalTileTest], "PortalTileTest")
     GameRegistry.registerTileEntity(classOf[TileLocTrackerTest], "TileLocTrackerTest")
     GameRegistry.registerTileEntity(classOf[TileTankTest], "TileTankTest")
+    GameRegistry.registerTileEntity(classOf[TileCustomRenderTest], "TileCustomRenderTest")
   }
 
   def registerTickHandlers() {
@@ -48,6 +49,7 @@ class ProxyCommon extends IGuiHandler {
   override def getServerGuiElement(ID: Int, player: EntityPlayer, world: World, x: Int, y: Int, z: Int): AnyRef = {
     (ID, world.getTileEntity(x, y, z)) match {
       case (0, te: TileTankTest) => new ContainerTankTest(player, player.inventory, te)
+      case (1, te: TileCustomRenderTest) => new ContainerCustomRenderTest(player, player.inventory, te)
       case (_, _) => null
     }
   }

@@ -41,6 +41,7 @@ class ProxyClient extends ProxyCommon {
     RenderingRegistry.registerBlockHandler(RenderSimpleMachine.renderID, new RenderSimpleMachine)
 
     ClientRegistry.bindTileEntitySpecialRenderer(classOf[PortalTileTest], new RenderPortalTest)
+    ClientRegistry.bindTileEntitySpecialRenderer(classOf[TileCustomRenderTest], new CustomRendererTest)
 
     GuiStack.init()
   }
@@ -48,6 +49,7 @@ class ProxyClient extends ProxyCommon {
   override def getClientGuiElement(ID: Int, player: EntityPlayer, world: World, x: Int, y: Int, z: Int): AnyRef = {
     (ID, world.getTileEntity(x, y, z)) match {
       case (0, te: TileTankTest) => new GuiTankTest(player, player.inventory, te)
+      case (1, te: TileCustomRenderTest) => new GuiCustomRenderTest(player, player.inventory, te)
       case (_, _) => null
     }
   }

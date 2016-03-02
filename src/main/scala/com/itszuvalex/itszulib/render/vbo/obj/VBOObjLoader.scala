@@ -108,11 +108,11 @@ object VBOObjLoader {
       dataBuffer.put(currentData.toArray)
       dataBuffer.flip()
       currentGroup.setDataBuffer(dataBuffer)
-      val indBuffer = BufferUtils.createShortBuffer(currentIndices.length)
+      val indCount = currentIndices.length
+      val indBuffer = BufferUtils.createShortBuffer(indCount)
       indBuffer.put(currentIndices.toArray)
       indBuffer.flip()
-      currentGroup.setIndexBuffer(indBuffer)
-      currentGroup.compileVAO()
+      currentGroup.setIndexBuffer(indBuffer, indCount)
       obj.addGroup(currentGroup)
 
       currentGroup = nextGroup
@@ -182,6 +182,7 @@ class Group(val name: String, val vn: Boolean, val vt: Boolean) {
 
   var vertDataBuffer: FloatBuffer = null
   var indexBuffer: ShortBuffer = null
+  var indexAmount: Int = 0
   var vaoId = 0
   var vboId = 0
   var vboiId = 0
@@ -190,8 +191,9 @@ class Group(val name: String, val vn: Boolean, val vt: Boolean) {
     vertDataBuffer = buf
   }
 
-  def setIndexBuffer(buf: ShortBuffer): Unit = {
+  def setIndexBuffer(buf: ShortBuffer, amt: Int): Unit = {
     indexBuffer = buf
+    indexAmount = amt
   }
 
   def compileVAO(): Unit = {
@@ -203,16 +205,8 @@ class Group(val name: String, val vn: Boolean, val vt: Boolean) {
     GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId)
     GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertDataBuffer, GL15.GL_STATIC_DRAW)
     GL20.glVertexAttribPointer(0, 4, GL11.GL_FLOAT, false, stride, 0)
-    (vn, vt) match {
-      case (true, true) =>
-        GL20.glVertexAttribPointer(1, 3, GL11.GL_FLOAT, true, stride, vnOffset)
-        GL20.glVertexAttribPointer(2, 2, GL11.GL_FLOAT, false, stride, vtOffset)
-      case (true, false) =>
-        GL20.glVertexAttribPointer(1, 3, GL11.GL_FLOAT, true, stride, vnOffset)
-      case (false, true) =>
-        GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, stride, vtOffset)
-      case _ =>
-    }
+    if (vn) GL20.glVertexAttribPointer(1, 3, GL11.GL_FLOAT, true, stride, vnOffset)
+    if (vt) GL20.glVertexAttribPointer(2, 2, GL11.GL_FLOAT, false, stride, vtOffset)
     GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0)
 
     GL30.glBindVertexArray(0)
@@ -226,18 +220,18 @@ class Group(val name: String, val vn: Boolean, val vt: Boolean) {
   def render(): Unit = {
     GL30.glBindVertexArray(vaoId)
     GL20.glEnableVertexAttribArray(0)
-    if (vn || vt) GL20.glEnableVertexAttribArray(1)
-    if (vn && vt) GL20.glEnableVertexAttribArray(2)
+    if (vn) GL20.glEnableVertexAttribArray(1)
+    if (vt) GL20.glEnableVertexAttribArray(2)
 
     GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboiId)
 
-    GL11.glDrawElements(GL11.GL_TRIANGLES, indexBuffer.capacity(), GL11.GL_UNSIGNED_SHORT, 0)
+    GL11.glDrawElements(GL11.GL_TRIANGLES, indexAmount, GL11.GL_UNSIGNED_SHORT, 0)
 
     GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0)
 
     GL20.glDisableVertexAttribArray(0)
-    GL20.glDisableVertexAttribArray(1)
-    GL20.glDisableVertexAttribArray(2)
+    if (vn) GL20.glDisableVertexAttribArray(1)
+    if (vt) GL20.glDisableVertexAttribArray(2)
     GL30.glBindVertexArray(0)
   }
 
@@ -246,20 +240,29 @@ class Group(val name: String, val vn: Boolean, val vt: Boolean) {
 class WavefrontObject {
 
   var groups = mutable.Map[String, Group]()
+  var setupDone = false
+
+  def setupVAOs(): Unit = {
+    groups.foreach(gr => gr._2.compileVAO())
+    setupDone = true
+  }
 
   def addGroup(group: Group): Unit = {
     groups(group.name) = group
   }
 
   def renderAll(): Unit = {
+    if (!setupDone) setupVAOs()
     groups.foreach(gr => gr._2.render())
   }
 
   def render(name: String*): Unit = {
+    if (!setupDone) setupVAOs()
     name.foreach(str => groups(str).render())
   }
 
   def renderExcept(name: String*): Unit = {
+    if (!setupDone) setupVAOs()
     groups.foreach(gr => if (!name.contains(gr._1)) gr._2.render())
   }
 

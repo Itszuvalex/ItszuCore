@@ -2,9 +2,7 @@ package com.itszuvalex.itszulib.testing
 
 import com.itszuvalex.itszulib.ItszuLib
 import com.itszuvalex.itszulib.core.TileEntityBase
-import com.itszuvalex.itszulib.render.vbo.obj.VBOObjLoader
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.util.ResourceLocation
 
 /**
   * Created by Alex on 20.02.2016.
@@ -16,7 +14,7 @@ class TileCustomRenderTest extends TileEntityBase {
   override def hasDescription: Boolean = true
 
   override def onSideActivate(player: EntityPlayer, side: Int): Boolean = {
-    if (worldObj.isRemote) VBOObjLoader.load(new ResourceLocation("itszulib", "models/Frame.obj"))
+    player.openGui(getMod, 1, worldObj, xCoord, yCoord, zCoord)
     true
   }
 
