@@ -37,7 +37,7 @@ project.ext {
     mcVersion = "1.7.10"
 }
 
-version = "${project.ext.mcVersion}-${project.ext.massive}.${project.ext.major}.${project.minor}"
+version = "${project.ext.mcVersion}-${project.ext.massive}.${project.ext.major}.${project.ext.minor}"
 
 if (System.getenv().CIRCLE_BUILD_NUM != null) {
     version += "-${System.getenv().CIRCLE_BUILD_NUM}"
@@ -61,9 +61,9 @@ minecraft {
     version = "${project.ext.mcVersion}-10.13.4.1448-${project.ext.mcVersion}"
     runDir = "eclipse"
 // replacing stuff in the source
-    replace '@MASSIVE@', project.massive
-    replace '@MAJOR@', project.major
-    replace '@MINOR@', project.minor
+    replace '@MASSIVE@', project.ext.massive
+    replace '@MAJOR@', project.ext.major
+    replace '@MINOR@', project.ext.minor
     replace '@MC_VERSION@', version
     if (System.getenv("CIRCLE_BUILD_NUM") != null) {
         replace '@BUILD_NUMBER@', System.getenv("CIRCLE_BUILD_NUM")

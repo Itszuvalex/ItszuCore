@@ -11,8 +11,8 @@ import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent
 import scala.collection.mutable
 
 /**
- * Created by Christopher Harris (Itszuvalex) on 3/29/15.
- */
+  * Created by Christopher Harris (Itszuvalex) on 3/29/15.
+  */
 object PlayerUUIDTracker {
   private var xml: XMLLoaderWriter = null
 
@@ -33,11 +33,11 @@ object PlayerUUIDTracker {
 
   def getUUID(string: String) = UsernameToUUID.getOrElse(string, null)
 
-  def addMapping(uuid: UUID, username: String) = {
+  def addMapping(uuid: UUID, username: String, doSave: Boolean = true) = {
     if (UUIDToUsername.get(uuid).orNull != username) {
       UUIDToUsername(uuid) = username
       UsernameToUUID(username) = uuid
-      save()
+      if (doSave) save()
     }
   }
 
@@ -51,7 +51,7 @@ object PlayerUUIDTracker {
   def load() = {
     UUIDToUsername.clear()
     xml.load()
-    (xml.xml \ "Mapping").foreach(node => try addMapping(UUID.fromString(node \@ "uuid"), node \@ "username") catch {case _: Throwable =>})
+    (xml.xml \ "Mapping").foreach(node => try addMapping(UUID.fromString(node \@ "uuid"), node \@ "username", doSave = false) catch {case _: Throwable =>})
   }
 
   @SubscribeEvent
