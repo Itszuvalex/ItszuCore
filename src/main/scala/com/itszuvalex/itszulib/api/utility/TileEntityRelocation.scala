@@ -12,7 +12,7 @@ import net.minecraftforge.event.world.BlockEvent.{BreakEvent, PlaceEvent}
 /**
  * Created by Chris on 12/30/2014.
  */
-object SpatialRelocation {
+object TileEntityRelocation {
   val shiftElseRemake = false
 
   def shiftBlock(world: World, x: Int, y: Int, z: Int, direction: ForgeDirection, player: EntityPlayer): Unit = {
