@@ -1,4 +1,4 @@
-package com.itszuvalex.itszulib
+package com.itszuvalex.itszulib.testing
 
 import net.minecraft.item.{Item, ItemStack}
 

@@ -1,6 +1,7 @@
 package com.itszuvalex.itszulib.api.access
 
-import com.itszuvalex.itszulib.{StubItem, TestBase}
+import com.itszuvalex.itszulib.TestBase
+import com.itszuvalex.itszulib.testing.StubItem
 import net.minecraft.item.ItemStack
 
 /**
