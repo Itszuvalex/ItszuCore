@@ -5,6 +5,8 @@ import com.itszuvalex.itszulib.implicits.NBTHelpers.NBTAdditions._
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
 
+import scala.collection.JavaConversions._
+
 /**
   * Created by Christopher Harris (Itszuvalex) on 3/10/16.
   */
@@ -26,12 +28,28 @@ object NBTItemCollectionAccess {
   *
   * @param nbt NBT compound storing items.
   */
-class NBTItemCollectionAccess(nbt: NBTTagCompound) extends IItemCollectionAccess {
+class NBTItemCollectionAccess(private[access] val nbt: NBTTagCompound, isEmpty: Boolean = false, caching: Boolean = true) extends IItemCollectionAccess {
+  if (isEmpty)
+    initializeEmptyNBT()
+
+  def initializeEmptyNBT() = {
+    nbt.func_150296_c().collect { case i: String => i }.foreach(nbt.removeTag)
+    setSize(0)
+  }
+
+  def setSize(i: Int) = nbt.setInteger(SIZE_KEY, i)
+
   override def canPlayerAccess(player: EntityPlayer): Boolean = true
 
   override def length: Int = nbt.Int(SIZE_KEY)
 
-  override def apply(idx: Int): IItemAccess = new NBTItemAccess(nbt, idx)
+  override def apply(idx: Int): IItemAccess = new NBTItemAccess(this, idx)
 
   override def iterator: Iterator[IItemAccess] = new DefaultItemCollectionAccessIterator(this)
+
+  override def copyFromAccess(access: IItemCollectionAccess, copy: Boolean): Unit = {
+    nbt.func_150296_c().collect { case i: String => i }.foreach(nbt.removeTag)
+    setSize(access.length) //This lets us copy from any access
+    super.copyFromAccess(access, copy)
+  }
 }

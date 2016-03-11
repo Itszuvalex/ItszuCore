@@ -9,7 +9,7 @@ import scala.beans.BeanProperty
 /**
  * Created by Itszuvalex on 1/1/15.
  */
-object EventSpatialRelocation {
+object EventTileEntityRelocation {
 
   /**
    * Posted when a block or item using the SpatialRelocation format will be picked up from the world.
@@ -20,7 +20,7 @@ object EventSpatialRelocation {
    * @param z
    */
   @Cancelable
-  class Pickup(world: World, x: Int, y: Int, z: Int) extends EventSpatialRelocation(world, x, y, z)
+  class Pickup(world: World, x: Int, y: Int, z: Int) extends EventTileEntityRelocation(world, x, y, z)
 
   /**
    * Posted when a block or item using the SpatialRelocation format will place the given block at the given world coordinates.
@@ -33,7 +33,7 @@ object EventSpatialRelocation {
    */
   @Cancelable
   class Placement(world: World, x: Int, y: Int, z: Int, @BeanProperty val block: Block)
-    extends EventSpatialRelocation(world, x, y, z)
+    extends EventTileEntityRelocation(world, x, y, z)
 
 }
 
@@ -45,5 +45,5 @@ object EventSpatialRelocation {
  * @param y
  * @param z
  */
-@Cancelable abstract class EventSpatialRelocation(@BeanProperty val world: World, @BeanProperty val x: Int,
-                                                  @BeanProperty val y: Int, @BeanProperty val z: Int) extends Event
+@Cancelable abstract class EventTileEntityRelocation(@BeanProperty val world: World, @BeanProperty val x: Int,
+                                                     @BeanProperty val y: Int, @BeanProperty val z: Int) extends Event

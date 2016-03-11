@@ -1,6 +1,6 @@
 package com.itszuvalex.itszulib.api.utility
 
-import com.itszuvalex.itszulib.api.events.EventSpatialRelocation
+import com.itszuvalex.itszulib.api.events.EventTileEntityRelocation
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Blocks
 import net.minecraft.tileentity.TileEntity
@@ -44,7 +44,7 @@ object TileEntityRelocation {
         }
       case _ =>
     }
-    if (MinecraftForge.EVENT_BUS.post(new EventSpatialRelocation.Pickup(world, x, y, z))) return null
+    if (MinecraftForge.EVENT_BUS.post(new EventTileEntityRelocation.Pickup(world, x, y, z))) return null
     val tileEntity = world.getTileEntity(x, y, z)
     val block = world.getBlock(x, y, z)
     val metadata = world.getBlockMetadata(x, y, z)
@@ -79,7 +79,7 @@ object TileEntityRelocation {
         }
       case _ =>
     }
-    if (MinecraftForge.EVENT_BUS.post(new EventSpatialRelocation.Placement(destWorld, destX, destY, destZ, s.block))) {
+    if (MinecraftForge.EVENT_BUS.post(new EventTileEntityRelocation.Placement(destWorld, destX, destY, destZ, s.block))) {
       return false
     }
     destWorld.setBlock(destX, destY, destZ, s.block, s.metadata, 3)

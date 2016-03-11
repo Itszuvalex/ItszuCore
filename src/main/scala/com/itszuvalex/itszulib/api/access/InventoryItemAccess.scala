@@ -6,13 +6,21 @@ import net.minecraft.item.ItemStack
 /**
   * Created by Christopher Harris (Itszuvalex) on 3/10/16.
   */
-class InventoryItemAccess(val inventory: IInventory, index: Int) extends IItemAccess {
+class InventoryItemAccess(private[access] val inventoryAccess: InventoryItemCollectionAccess, private[access] val index: Int) extends IItemAccess {
+  private[access] val inventory: IInventory = inventoryAccess.inventory
+
   /**
     * Don't use unless absolutely necessary
     *
     * @return Backing ItemStack
     */
-  override def getItemStack: Option[ItemStack] = Option(inventory.getStackInSlot(index))
+  override def getItemStack: Option[ItemStack] = if (isValid) Option(inventory.getStackInSlot(index)) else None
+
+  /**
+    *
+    * @return True if this access is still valid.  False if underlying storage is no longer correct.
+    */
+  override def isValid: Boolean = true //Always true because we don't cache, IInventory does.
 
   /**
     * Sets this item access's storage to the ItemStack.

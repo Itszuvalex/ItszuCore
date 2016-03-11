@@ -22,6 +22,21 @@ trait IItemAccess {
 
   /**
     *
+    * @param amount Amount to increase ItemStack stacksize by.  Must be >= 0
+    * @return Math.min(amount, MaxStorage - CurrentStorage) -> Amount of amount added to the ItemStack.
+    */
+  def increment(amount: Int): Int = getItemStack.map { i =>
+    if (amount < 0) return 0
+
+    val room = maxStorage.get - currentStorage.get
+    val inc = Math.min(amount, room)
+    getItemStack.get.stackSize += inc
+    onItemChanged()
+    inc
+                                                     }.getOrElse(0)
+
+  /**
+    *
     * @return Usually ItemStack.MaxStackSize, but could be different for different storages.
     */
   def maxStorage: Option[Int] = getItemStack.map(_.stackSize)
@@ -33,18 +48,9 @@ trait IItemAccess {
   def currentStorage: Option[Int] = getItemStack.map(_.getMaxStackSize)
 
   /**
-    *
-    * @param amount Amount to increase ItemStack stacksize by.  Must be >= 0
-    * @return Math.min(amount, MaxStorage - CurrentStorage) -> Amount of amount added to the ItemStack.
+    * Call when backing item changes.
     */
-  def increment(amount: Int): Int = getItemStack.map { i =>
-    if (amount < 0) return 0
-
-    val room = maxStorage.get - currentStorage.get
-    val inc = Math.min(amount, room)
-    getItemStack.get.stackSize += inc
-    inc
-                                                     }.getOrElse(0)
+  def onItemChanged(): Unit = {}
 
   /**
     *
@@ -61,8 +67,16 @@ trait IItemAccess {
     else {
       getItemStack.get.stackSize -= dec
     }
+    onItemChanged()
     dec
                                                      }.getOrElse(0)
+
+  /**
+    * Remove Item and metadata from this access.
+    */
+  def clear(): Unit = {
+    setItemStack(null)
+  }
 
   /**
     *
@@ -83,10 +97,9 @@ trait IItemAccess {
                  })
 
   /**
-    * Remove Item and metadata from this access.
+    *
+    * @return True if this access is still valid.  False if underlying storage is no longer correct.
     */
-  def clear(): Unit = {
-    setItemStack(null)
-  }
+  def isValid: Boolean
 
 }

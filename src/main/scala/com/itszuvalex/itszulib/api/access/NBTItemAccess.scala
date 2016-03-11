@@ -8,16 +8,44 @@ import scala.collection.JavaConversions._
 /**
   * Created by Christopher Harris (Itszuvalex) on 3/10/16.
   */
-class NBTItemAccess(nbt: NBTTagCompound, index: Int) extends IItemAccess {
+class NBTItemAccess(private[access] val nbtAccess: NBTItemCollectionAccess, private[access] val index: Int) extends IItemAccess {
+  private[access] val revision                = nbtAccess.getRevision
+  private[access] val nbt                     = nbtAccess.nbt
+  private[access] var item: Option[ItemStack] = getItemCompound(false) match {
+    case None => None
+    case Some(comp) => Some(ItemStack.loadItemStackFromNBT(comp))
+  }
+
+  /**
+    *
+    * @param amount Amount to remove from this storage and transfer to a new one.
+    * @return New item access
+    */
+  override def split(amount: Int): IItemAccess = amount match {
+    case invalid if invalid <= 0 => new FloatingItemAccess(null)
+    case other => new FloatingItemAccess(
+                                          getItemStack.map { i =>
+                                            val item = i.copy()
+                                            val size = Math.min(currentStorage.get, amount)
+                                            item.stackSize = size
+                                            decrement(size)
+                                            item
+                                                           }.orNull
+                                        )
+  }
+
   /**
     * Don't use unless absolutely necessary
     *
     * @return Backing ItemStack
     */
-  override def getItemStack: Option[ItemStack] = getItemCompound(false) match {
-    case None => None
-    case Some(comp) => Some(ItemStack.loadItemStackFromNBT(comp))
-  }
+  override def getItemStack: Option[ItemStack] = if (isValid) item else None
+
+  /**
+    *
+    * @return True if this access is still valid.  False if underlying storage is no longer correct.
+    */
+  override def isValid: Boolean = revision == nbtAccess.getRevision
 
   /**
     * Sets this item access's storage to the ItemStack.
@@ -25,6 +53,17 @@ class NBTItemAccess(nbt: NBTTagCompound, index: Int) extends IItemAccess {
     * @param stack ItemStack to set this to.
     */
   override def setItemStack(stack: ItemStack): Unit = {
+    if (isValid) {
+      item = Option(stack)
+      onItemChanged()
+    }
+  }
+
+  /**
+    * Call when backing item changes.
+    */
+  override def onItemChanged(): Unit = {
+    super.onItemChanged()
     (getItemStack, getItemCompound(force = getItemStack.isDefined)) match {
       case (None, None) =>
       case (None, Some(_)) => nbt.removeTag(index.toString)
@@ -32,43 +71,8 @@ class NBTItemAccess(nbt: NBTTagCompound, index: Int) extends IItemAccess {
         comp.func_150296_c().collect { case s: String => s }.foreach(comp.removeTag)
         i.writeToNBT(comp)
     }
+    nbtAccess.onInventoryChanged(index)
   }
-
-  /**
-    *
-    * @param amount Amount to increase ItemStack stacksize by.  Must be >= 0
-    * @return Math.min(amount, MaxStorage - CurrentStorage) -> Amount of amount added to the ItemStack.
-    */
-  override def increment(amount: Int): Int = getItemStack.map { i =>
-    if (amount < 0) return 0
-
-    val room = maxStorage.get - currentStorage.get
-    val inc = Math.min(amount, room)
-    val item = getItemStack.get
-    item.stackSize += inc
-    setItemStack(item)
-    inc
-                                                              }.getOrElse(0)
-
-  /**
-    *
-    * @param amount Amount to decrease ItemStack stacksize by.  Must be <= 0
-    * @return Math.min(amount, currentStorage) -> Amount of amount removed from the ItemStack.  Clears ItemStack if amount == CurrentStorage
-    */
-  override def decrement(amount: Int): Int = getItemStack.map { i =>
-    if (amount < 0) return 0
-
-    val dec = Math.min(amount, currentStorage.get)
-    if (dec == currentStorage.get) {
-      clear()
-    }
-    else {
-      val item = getItemStack.get
-      item.stackSize -= dec
-      setItemStack(item)
-    }
-    dec
-                                                              }.getOrElse(0)
 
   def getItemCompound(force: Boolean = false): Option[NBTTagCompound] = {
     val exists = nbt.hasKey(index.toString)
@@ -76,7 +80,7 @@ class NBTItemAccess(nbt: NBTTagCompound, index: Int) extends IItemAccess {
       if (force && !exists) {
         nbt.setTag(index.toString, new NBTTagCompound)
       }
-      Some(nbt.getCompoundTag(index.toString))
+      Option(nbt.getCompoundTag(index.toString))
     }
     else None
   }

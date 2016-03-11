@@ -1,9 +1,10 @@
 package test
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalamock.scalatest.MockFactory
+import org.scalatest.{Matchers, OneInstancePerTest, WordSpec}
 
 /**
- * Created by Christopher Harris (Itszuvalex) on 4/14/15.
- */
-class TestBase extends WordSpec with Matchers
+  * Created by Christopher Harris (Itszuvalex) on 4/14/15.
+  */
+abstract class TestBase extends WordSpec with Matchers with OneInstancePerTest with MockFactory
 

@@ -6,21 +6,13 @@ import net.minecraft.item.ItemStack
   * Created by Christopher Harris (Itszuvalex) on 3/10/16.
   */
 class FloatingItemAccess(item: ItemStack) extends IItemAccess {
-  private var backingItem = Option(item)
+  private[access] var backingItem = Option(item)
 
   /**
-    * Don't use unless absolutely necessary
     *
-    * @return Backing ItemStack
+    * @return True if this access is still valid.  False if underlying storage is no longer correct.
     */
-  override def getItemStack: Option[ItemStack] = backingItem
-
-  /**
-    * Sets this item access's storage to the ItemStack.
-    *
-    * @param stack ItemStack to set this to.
-    */
-  override def setItemStack(stack: ItemStack): Unit = backingItem = Option(stack)
+  override def isValid: Boolean = true
 
   /**
     *
@@ -39,4 +31,18 @@ class FloatingItemAccess(item: ItemStack) extends IItemAccess {
                                                            }.orNull
                                         )
   }
+
+  /**
+    * Don't use unless absolutely necessary
+    *
+    * @return Backing ItemStack
+    */
+  override def getItemStack: Option[ItemStack] = backingItem
+
+  /**
+    * Sets this item access's storage to the ItemStack.
+    *
+    * @param stack ItemStack to set this to.
+    */
+  override def setItemStack(stack: ItemStack): Unit = backingItem = Option(stack)
 }
