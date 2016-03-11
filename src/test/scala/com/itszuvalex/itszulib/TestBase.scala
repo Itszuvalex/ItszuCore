@@ -1,4 +1,4 @@
-package test
+package com.itszuvalex.itszulib
 
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{Matchers, OneInstancePerTest, WordSpec}

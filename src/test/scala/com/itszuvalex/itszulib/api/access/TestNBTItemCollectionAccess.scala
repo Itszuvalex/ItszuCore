@@ -1,6 +1,6 @@
-package test.api.access
+package com.itszuvalex.itszulib.api.access
 
-import test.TestBase
+import com.itszuvalex.itszulib.TestBase
 
 /**
   * Created by Christopher Harris (Itszuvalex) on 3/10/2016.
