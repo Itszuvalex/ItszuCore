@@ -10,8 +10,8 @@ import net.minecraftforge.common.util.{BlockSnapshot, ForgeDirection}
 import net.minecraftforge.event.world.BlockEvent.{BreakEvent, PlaceEvent}
 
 /**
- * Created by Chris on 12/30/2014.
- */
+  * Created by Chris on 12/30/2014.
+  */
 object TileEntityRelocation {
   val shiftElseRemake = false
 

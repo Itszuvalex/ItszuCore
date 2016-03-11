@@ -375,21 +375,6 @@ class GuiTextBox(private val fontRenderer: FontRenderer, anchorX: Int, anchorY: 
   }
 
   /**
-    * returns the width of the textbox depending on if background drawing is enabled
-    */
-  def getWidth = if (getEnableBackgroundDrawing) panelWidth - 8 else panelWidth
-
-  /**
-    * get enable drawing background and outline
-    */
-  def getEnableBackgroundDrawing = enableBackgroundDrawing
-
-  /**
-    * enable drawing background and outline
-    */
-  def setEnableBackgroundDrawing(enableBackground: Boolean) = enableBackgroundDrawing = enableBackground
-
-  /**
     * Sets focus to this gui element
     */
   def setFocused(focused: Boolean) {
@@ -401,11 +386,6 @@ class GuiTextBox(private val fontRenderer: FontRenderer, anchorX: Int, anchorY: 
       GuiTextBox.activeTextBox == null
     }
   }
-
-  /**
-    * Getter for the focused field
-    */
-  def isFocused = GuiTextBox.activeTextBox == this
 
   /**
     * Draws the textbox
@@ -459,6 +439,26 @@ class GuiTextBox(private val fontRenderer: FontRenderer, anchorX: Int, anchorY: 
       }
     }
   }
+
+  /**
+    * returns the width of the textbox depending on if background drawing is enabled
+    */
+  def getWidth = if (getEnableBackgroundDrawing) panelWidth - 8 else panelWidth
+
+  /**
+    * get enable drawing background and outline
+    */
+  def getEnableBackgroundDrawing = enableBackgroundDrawing
+
+  /**
+    * enable drawing background and outline
+    */
+  def setEnableBackgroundDrawing(enableBackground: Boolean) = enableBackgroundDrawing = enableBackground
+
+  /**
+    * Getter for the focused field
+    */
+  def isFocused = GuiTextBox.activeTextBox == this
 
   /**
     * draws the vertical line cursor in the textbox

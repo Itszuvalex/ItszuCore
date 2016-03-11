@@ -7,8 +7,8 @@ import net.minecraft.inventory.ISidedInventory
 import net.minecraft.item.ItemStack
 
 /**
- * Created by Chris on 11/29/2014.
- */
+  * Created by Chris on 11/29/2014.
+  */
 trait TileInventory extends TileEntityBase with ISidedInventory {
   @Saveable
   val inventory = defaultInventory
@@ -29,6 +29,11 @@ trait TileInventory extends TileEntityBase with ISidedInventory {
     ret
   }
 
+  override def markDirty() = {
+    inventory.markDirty()
+    notifyNeighborsOfChange()
+  }
+
   override def getSizeInventory = inventory.getSizeInventory
 
   override def getInventoryStackLimit = inventory.getInventoryStackLimit
@@ -42,11 +47,6 @@ trait TileInventory extends TileEntityBase with ISidedInventory {
   override def setInventorySlotContents(slot: Int, item: ItemStack) = {
     inventory.setInventorySlotContents(slot, item)
     markDirty()
-  }
-
-  override def markDirty() = {
-    inventory.markDirty()
-    notifyNeighborsOfChange()
   }
 
   override def isUseableByPlayer(player: EntityPlayer) = canPlayerUse(player) && inventory.isUseableByPlayer(player)

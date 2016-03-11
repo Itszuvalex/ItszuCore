@@ -31,17 +31,17 @@ import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 
 /**
- *
- * @param size Utility class for storing and saving/loading ItemStack[]s with ease.
- */
+  *
+  * @param size Utility class for storing and saving/loading ItemStack[]s with ease.
+  */
 class BaseInventory(size: Int) extends IInventory with NBTSerializable {
   @Saveable private var inventory = new Array[ItemStack](size)
 
   def this() = this(0)
 
   /**
-   * @return ItemStack[] that backs this inventory class. Modifications to it modify this.
-   */
+    * @return ItemStack[] that backs this inventory class. Modifications to it modify this.
+    */
   def getInventory: Array[ItemStack] = inventory
 
   override def getSizeInventory = inventory.length
@@ -99,11 +99,11 @@ class BaseInventory(size: Int) extends IInventory with NBTSerializable {
                                                        .loadObjectFromNBT(compound, this, EnumSaveType.WORLD)
 
   /**
-   * Changes size of the inventory to be equal to size.  Keeps current inventory from slots 0 -> (size-1), and will
-   * drop extra itemstacks.
-   *
-   * @param size new size of inventory
-   */
+    * Changes size of the inventory to be equal to size.  Keeps current inventory from slots 0 -> (size-1), and will
+    * drop extra itemstacks.
+    *
+    * @param size new size of inventory
+    */
   def setInventorySize(size: Int) = inventory = util.Arrays.copyOfRange(inventory, 0, size)
 
   def getComparatorInputOverride = Container.calcRedstoneFromInventory(this)

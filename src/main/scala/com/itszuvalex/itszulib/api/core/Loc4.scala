@@ -60,8 +60,6 @@ case class Loc4(var x: Int, var y: Int, var z: Int, var dim: Int) extends NBTSer
     dim = compound.getInteger("dim")
   }
 
-  def getWorld = Option(DimensionManager.getWorld(dim))
-
   def getTileEntity(force: Boolean = false) = getWorld match {
     case Some(a) => Option(if (a.blockExists(x, y, z) || force) a.getTileEntity(x, y, z) else null)
     case None => None
@@ -76,6 +74,8 @@ case class Loc4(var x: Int, var y: Int, var z: Int, var dim: Int) extends NBTSer
     case Some(a) => Option(if (a.blockExists(x, y, z) || force) a.getBlockMetadata(x, y, z) else null)
     case None => None
   }
+
+  def getWorld = Option(DimensionManager.getWorld(dim))
 
   def getChunk(force: Boolean = false) = getWorld match {
     case Some(a) => Option(if (a.blockExists(x, y, z) || force) a.getChunkFromBlockCoords(x, z) else null)
@@ -113,13 +113,13 @@ case class Loc4(var x: Int, var y: Int, var z: Int, var dim: Int) extends NBTSer
     distSqr(other.x, other.y, other.z)
   }
 
+  def distSqr(x: Int, y: Int, z: Int): Double =
+    (this.x - x) * (this.x - x) + (this.y - y) * (this.y - y) + (this.z - z) * (this.z - z)
+
   def dist(other: Loc4): Double = {
     if (other.dim != dim) return Float.MaxValue
     dist(other.x, other.y, other.z)
   }
-
-  def distSqr(x: Int, y: Int, z: Int): Double =
-    (this.x - x) * (this.x - x) + (this.y - y) * (this.y - y) + (this.z - z) * (this.z - z)
 
   def dist(x: Int, y: Int, z: Int) = Math.sqrt(distSqr(x, y, z))
 

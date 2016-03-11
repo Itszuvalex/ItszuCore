@@ -4,8 +4,8 @@ import com.itszuvalex.itszulib.util.Color
 import net.minecraft.client.Minecraft
 
 /**
- * Created by Christopher Harris (Itszuvalex) on 9/17/15.
- */
+  * Created by Christopher Harris (Itszuvalex) on 9/17/15.
+  */
 object GuiLabel {
   val DEFAULT_FONT_COLOR = Color(255.toByte, 255.toByte, 255.toByte, 255.toByte).toInt
 }

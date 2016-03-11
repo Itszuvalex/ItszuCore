@@ -9,20 +9,13 @@ import scala.collection.mutable
   */
 
 abstract class SimplePathfinder[B <: mutable.AbstractSeq[Loc4]](_openSet: B) extends IRealTimePathfinder {
-  protected var completed      = false
-  protected var maxPathLength  = Int.MaxValue
   protected val path           = mutable.ArrayBuffer[Loc4]()
   protected val closedSet      = mutable.HashSet[Loc4]()
   protected val originMap      = mutable.HashMap[Loc4, Loc4]()
-  protected var startLoc: Loc4 = null
-
   protected val openSet: B = _openSet
-
-  override def complete(): Unit = {
-    completed = true
-  }
-
-  override def isCompleted = completed
+  protected var completed      = false
+  protected var maxPathLength  = Int.MaxValue
+  protected var startLoc: Loc4 = null
 
   override def setMaxPathLength(length: Int) = maxPathLength = length
 
@@ -43,7 +36,6 @@ abstract class SimplePathfinder[B <: mutable.AbstractSeq[Loc4]](_openSet: B) ext
     openSetPush(startLoc)
   }
 
-
   override def run(maxExpands: Int): Unit = {
     if (isGoalState == null) throw new IllegalStateException("Cannot search without a goal state.")
 
@@ -59,7 +51,7 @@ abstract class SimplePathfinder[B <: mutable.AbstractSeq[Loc4]](_openSet: B) ext
           getNeighbors(expand).view.filterNot(openSet.contains).filterNot(closedSet.contains).foreach { n =>
             originMap(n) = expand
             openSetPush(n)
-                                                                        }
+                                                                                                      }
           closedSet.add(expand)
       }
 
@@ -67,7 +59,11 @@ abstract class SimplePathfinder[B <: mutable.AbstractSeq[Loc4]](_openSet: B) ext
     }
   }
 
-  override def getPath: Seq[Loc4] = path
+  override def complete(): Unit = {
+    completed = true
+  }
+
+  override def isCompleted = completed
 
   /**
     * Due to depth first search, we track the location that was expanded from.  Thus, we reconstruct backwards from destination to source.
@@ -88,4 +84,6 @@ abstract class SimplePathfinder[B <: mutable.AbstractSeq[Loc4]](_openSet: B) ext
       cur = next.orNull
     }
   }
+
+  override def getPath: Seq[Loc4] = path
 }

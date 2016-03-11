@@ -52,9 +52,8 @@ object SidedMultiBlockComponent {
 
 trait SidedMultiBlockComponent extends MultiBlockComponent with ISidedInventory {
 
-  var sideConfig = Array[Int](-1, -1, -1, -1, -1, -1)
-
   val groups: Array[Array[Int]]
+  var sideConfig = Array[Int](-1, -1, -1, -1, -1, -1)
 
   override def getAccessibleSlotsFromSide(side: Int): Array[Int] = {
     if (groups.isDefinedAt(sideConfig(side))) {

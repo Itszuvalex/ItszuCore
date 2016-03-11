@@ -19,10 +19,6 @@ trait GuiPanel extends GuiElement {
 
   override def spaceVertical = panelHeight
 
-  def panelHeight = _panelHeight
-
-  def panelHeight_=(height: Int) = _panelHeight = height
-
   def add(elements: GuiElement*) = {
     subElements ++= elements.filter(gui => gui.setParent(this))
     this
@@ -40,7 +36,6 @@ trait GuiPanel extends GuiElement {
   def passAlongMouseClick(mouseX: Int, mouseY: Int, button: Int): Boolean = {
     subElements.exists(gui => gui.onMouseClick(mouseX - gui.anchorX, mouseY - gui.anchorY, button))
   }
-
 
   /**
     *
@@ -63,6 +58,10 @@ trait GuiPanel extends GuiElement {
     ((mouseX >= 0) && (mouseX < panelWidth)) &&
     ((mouseY >= 0) && (mouseY < panelHeight))
   }
+
+  def panelHeight = _panelHeight
+
+  def panelHeight_=(height: Int) = _panelHeight = height
 
   override def update(): Unit = subElements.foreach(_.update())
 

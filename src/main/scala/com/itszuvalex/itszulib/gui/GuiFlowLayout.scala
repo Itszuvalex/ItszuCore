@@ -61,10 +61,6 @@ class GuiFlowLayout(override var anchorX: Int,
     onChanged()
   }
 
-  def onChanged(): Unit = {
-    needsLayout = true
-  }
-
   def numElements = subElements.size
 
   def startingIndex = startIndex // subElements.firstIndexWhere(_.shouldRender)
@@ -87,6 +83,10 @@ class GuiFlowLayout(override var anchorX: Int,
       startIndex = Math.max(startIndex, 0)
       onChanged()
     }
+  }
+
+  def onChanged(): Unit = {
+    needsLayout = true
   }
 
   override def renderUpdate(screenX: Int, screenY: Int, mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
