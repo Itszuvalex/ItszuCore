@@ -11,7 +11,9 @@ import net.minecraft.entity.player.EntityPlayer
 trait IItemCollectionAccess extends scala.collection.immutable.Seq[IItemAccess] {
   private val revision = new AtomicInteger(0)
 
-  def hasEmptySpace: Boolean = contains(null)
+  def hasEmptySpace: Boolean = exists(_.isEmpty)
+
+  def hasItems: Boolean = exists(_.isDefined)
 
   def canPlayerAccess(player: EntityPlayer): Boolean
 
@@ -31,5 +33,6 @@ trait IItemCollectionAccess extends scala.collection.immutable.Seq[IItemAccess] 
 
   def getRevision: Int = revision.intValue()
 
+  override def iterator: Iterator[IItemAccess] = new DefaultItemCollectionAccessIterator(this)
 }
 

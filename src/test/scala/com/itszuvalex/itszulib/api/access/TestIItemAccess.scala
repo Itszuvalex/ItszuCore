@@ -159,6 +159,5 @@ class TestIItemAccess extends TestBase {
         }
       }
     }
-
   }
 }

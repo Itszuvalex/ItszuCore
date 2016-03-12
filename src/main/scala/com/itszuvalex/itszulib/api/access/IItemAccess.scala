@@ -20,6 +20,14 @@ trait IItemAccess {
     */
   def setItemStack(stack: ItemStack): Unit
 
+  def isEmpty: Boolean = getItemStack.isEmpty
+
+  def isDefined: Boolean = getItemStack.isDefined
+
+  def matches(matcher: (ItemStack) => Boolean) = matcher != null && matcher(getItemStack.orNull)
+
+  def isItemValid(stack: ItemStack): Boolean = true
+
   /**
     *
     * @param amount Amount to increase ItemStack stacksize by.  Must be >= 0

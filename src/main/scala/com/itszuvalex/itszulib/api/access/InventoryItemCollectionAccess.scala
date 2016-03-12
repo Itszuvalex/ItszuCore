@@ -12,6 +12,4 @@ class InventoryItemCollectionAccess(private[access] val inventory: IInventory) e
   override def length: Int = inventory.getSizeInventory
 
   override def apply(idx: Int): IItemAccess = new InventoryItemAccess(this, idx)
-
-  override def iterator: Iterator[IItemAccess] = new DefaultItemCollectionAccessIterator(this)
 }

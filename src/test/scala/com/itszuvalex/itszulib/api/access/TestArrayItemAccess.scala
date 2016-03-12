@@ -1,7 +1,8 @@
 package com.itszuvalex.itszulib.api.access
 
 import com.itszuvalex.itszulib.TestBase
-import net.minecraft.item.{Item, ItemStack}
+import com.itszuvalex.itszulib.testing.StubItem
+import net.minecraft.item.ItemStack
 
 /**
   * Created by Christopher Harris (Itszuvalex) on 3/10/2016.
@@ -78,12 +79,6 @@ class TestArrayItemAccess extends TestBase {
           access.maxDamage.get shouldEqual access.getItemStack.get.getMaxDamage
         }
       }
-      "for Increment" must {
-
-      }
-      "for Decrement" must {
-
-      }
     }
     "referencing an out of bounds Array slot" should {
       "throw ArrayIndexOutOfBoundsException" in new Access(-1, new EmptyCollection) {
@@ -95,7 +90,7 @@ class TestArrayItemAccess extends TestBase {
         access shouldBe 'Valid
       }
       "set ItemStack and get same ItemStack out" in new Access(0, new EmptyCollection) {
-        val item = new ItemStack(null.asInstanceOf[Item])
+        val item = new ItemStack(new StubItem)
         access.setItemStack(item)
         access.getItemStack shouldBe defined
         val out = access.getItemStack.get

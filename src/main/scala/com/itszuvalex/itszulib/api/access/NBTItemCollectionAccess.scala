@@ -45,8 +45,6 @@ class NBTItemCollectionAccess(private[access] val nbt: NBTTagCompound, isEmpty: 
 
   override def apply(idx: Int): IItemAccess = new NBTItemAccess(this, idx)
 
-  override def iterator: Iterator[IItemAccess] = new DefaultItemCollectionAccessIterator(this)
-
   override def copyFromAccess(access: IItemCollectionAccess, copy: Boolean): Unit = {
     nbt.func_150296_c().collect { case i: String => i }.foreach(nbt.removeTag)
     setSize(access.length) //This lets us copy from any access
