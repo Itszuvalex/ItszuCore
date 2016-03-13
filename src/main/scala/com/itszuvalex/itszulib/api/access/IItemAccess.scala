@@ -36,18 +36,19 @@ trait IItemAccess {
   def increment(amount: Int): Int = getItemStack.map { i =>
     if (amount < 0) return 0
 
-    val room = maxStorage.get - currentStorage.get
-    val inc = Math.min(amount, room)
-    getItemStack.get.stackSize += inc
-    onItemChanged()
+    val inc = Math.min(amount, room.get)
+    i.stackSize += inc
+    onChanged()
     inc
                                                      }.getOrElse(0)
+
+  def room: Option[Int] = maxStorage.map(_ - currentStorage.get)
 
   /**
     *
     * @return Usually ItemStack.MaxStackSize, but could be different for different storages.
     */
-  def maxStorage: Option[Int] = getItemStack.map(_.getMaxStackSize)
+  def maxStorage: Option[Int] = getItemStack.map(i => Math.min(i.getMaxStackSize, 128)) //128 because ItemStack's deserializer only loads a Byte, and it's signed
 
   def damage: Option[Int] = getItemStack.map(_.getItemDamage)
 
@@ -62,13 +63,10 @@ trait IItemAccess {
     if (amount < 0) return 0
 
     val dec = Math.min(amount, currentStorage.get)
-    if (dec == currentStorage.get) {
+    i.stackSize -= dec
+    if (i.stackSize <= 0)
       clear()
-    }
-    else {
-      getItemStack.get.stackSize -= dec
-    }
-    onItemChanged()
+    onChanged()
     dec
                                                      }.getOrElse(0)
 
@@ -81,7 +79,7 @@ trait IItemAccess {
   /**
     * Call when this changes backing item.
     */
-  def onItemChanged(): Unit = {}
+  def onChanged(): Unit = {}
 
   /**
     * Remove Item and metadata from this access.

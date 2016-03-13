@@ -80,15 +80,15 @@ class NBTItemAccess(private[access] val nbtAccess: NBTItemCollectionAccess, priv
   override def setItemStack(stack: ItemStack): Unit = {
     if (isValid) {
       item = Option(stack)
-      onItemChanged()
+      onChanged()
     }
   }
 
   /**
     * Call when backing item changes.
     */
-  override def onItemChanged(): Unit = {
-    super.onItemChanged()
+  override def onChanged(): Unit = {
+    super.onChanged()
     (getItemStack, getItemCompound(force = getItemStack.isDefined)) match {
       case (None, None) =>
       case (None, Some(_)) => nbt.removeTag(index.toString)

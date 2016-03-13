@@ -40,14 +40,14 @@ class ArrayItemAccess(private[access] val arrayAccess: ArrayItemCollectionAccess
     */
   override def setItemStack(stack: ItemStack): Unit = {
     array(index) = stack
-    onItemChanged()
+    onChanged()
   }
 
   /**
     * Call when backing item changes.
     */
-  override def onItemChanged(): Unit = {
-    super.onItemChanged()
+  override def onChanged(): Unit = {
+    super.onChanged()
     arrayAccess.onInventoryChanged(index)
   }
 

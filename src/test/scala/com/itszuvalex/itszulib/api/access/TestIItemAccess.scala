@@ -24,7 +24,7 @@ class TestIItemAccess extends TestBase {
     /**
       * Call when backing item changes.
       */
-    override def onItemChanged(): Unit = {
+    override def onChanged(): Unit = {
       changed = true
     }
 
