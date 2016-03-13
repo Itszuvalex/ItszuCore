@@ -22,6 +22,7 @@ package com.itszuvalex.itszulib.api.core
 
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.tileentity.TileEntity
+import net.minecraft.world.World
 import net.minecraft.world.chunk.Chunk
 import net.minecraftforge.common.DimensionManager
 import net.minecraftforge.common.util.ForgeDirection
@@ -30,6 +31,13 @@ import net.minecraftforge.common.util.ForgeDirection
   * Created by Christopher Harris (Itszuvalex) on 5/9/14.
   */
 object Loc4 {
+  // World to Int
+  val defaultWorldIntMapper: (World) => Int = _.provider.dimensionId
+  // Int to World
+  val defaultIntWorldMapper: (Int) => World = DimensionManager.getWorld
+  var currentWorldIntMapper                 = defaultWorldIntMapper
+  var currentIntWorldMapper                 = defaultIntWorldMapper
+
   def apply(compound: NBTTagCompound): Loc4 = {
     if (compound == null) null
     else {
@@ -38,13 +46,25 @@ object Loc4 {
       loc
     }
   }
+
+  def setWorldIntMapper(func: (World) => Int) = currentWorldIntMapper = func
+
+  def restoreDefaultWorldIntMapper() = currentWorldIntMapper = defaultWorldIntMapper
+
+  def mapWorld(world: World): Int = currentWorldIntMapper(world)
+
+  def setIntWorldMapper(func: (Int) => World) = currentIntWorldMapper = func
+
+  def restoreDefaultIntWorldMapper() = currentIntWorldMapper = defaultIntWorldMapper
+
+  def mapInt(int: Int): World = currentIntWorldMapper(int)
 }
 
 case class Loc4(var x: Int, var y: Int, var z: Int, var dim: Int) extends NBTSerializable with Comparable[Loc4] {
 
   def this() = this(0, 0, 0, 0)
 
-  def this(te: TileEntity) = this(te.xCoord, te.yCoord, te.zCoord, te.getWorldObj.provider.dimensionId)
+  def this(te: TileEntity) = this(te.xCoord, te.yCoord, te.zCoord, Loc4.mapWorld(te.getWorldObj))
 
   def saveToNBT(compound: NBTTagCompound) {
     compound.setInteger("x", x)
@@ -70,12 +90,12 @@ case class Loc4(var x: Int, var y: Int, var z: Int, var dim: Int) extends NBTSer
     case None => None
   }
 
+  def getWorld = Option(Loc4.mapInt(dim))
+
   def getMetadata(force: Boolean = false) = getWorld match {
     case Some(a) => Option(if (a.blockExists(x, y, z) || force) a.getBlockMetadata(x, y, z) else null)
     case None => None
   }
-
-  def getWorld = Option(DimensionManager.getWorld(dim))
 
   def getChunk(force: Boolean = false) = getWorld match {
     case Some(a) => Option(if (a.blockExists(x, y, z) || force) a.getChunkFromBlockCoords(x, z) else null)
@@ -85,7 +105,7 @@ case class Loc4(var x: Int, var y: Int, var z: Int, var dim: Int) extends NBTSer
   def chunkCoords = (x >> 4, z >> 4)
 
   def chunkContains(chunk: Chunk): Boolean = {
-    if (chunk.worldObj.provider.dimensionId != dim) false
+    if (Loc4.mapWorld(chunk.worldObj) != dim) false
     else if (x <= chunk.xPosition * 16) false
     else if (x > chunk.xPosition * 16 + 16) false
     else if (z <= chunk.zPosition * 16) false
