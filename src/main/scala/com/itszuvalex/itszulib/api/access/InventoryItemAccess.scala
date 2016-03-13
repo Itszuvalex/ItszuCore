@@ -7,14 +7,14 @@ import net.minecraft.item.ItemStack
   * Created by Christopher Harris (Itszuvalex) on 3/10/16.
   */
 class InventoryItemAccess(private[access] val inventoryAccess: InventoryItemCollectionAccess, private[access] val index: Int) extends IItemAccess {
-  private[access] val inventory: IInventory = inventoryAccess.inventory
-
   /**
     * Don't use unless absolutely necessary
     *
     * @return Backing ItemStack
     */
   override def getItemStack: Option[ItemStack] = if (isValid) Option(inventory.getStackInSlot(index)) else None
+
+  private[access] def inventory: IInventory = inventoryAccess.inventory
 
   /**
     *

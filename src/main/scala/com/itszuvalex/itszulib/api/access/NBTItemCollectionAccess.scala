@@ -28,16 +28,9 @@ object NBTItemCollectionAccess {
   *
   * @param nbt NBT compound storing items.
   */
-class NBTItemCollectionAccess(private[access] val nbt: NBTTagCompound, isEmpty: Boolean = false, caching: Boolean = true) extends IItemCollectionAccess {
+class NBTItemCollectionAccess(private[access] var nbt: NBTTagCompound, isEmpty: Boolean = false, caching: Boolean = true) extends IItemCollectionAccess {
   if (isEmpty)
     initializeEmptyNBT()
-
-  def initializeEmptyNBT() = {
-    nbt.func_150296_c().collect { case i: String => i }.foreach(nbt.removeTag)
-    setSize(0)
-  }
-
-  def setSize(i: Int) = nbt.setInteger(SIZE_KEY, i)
 
   override def canPlayerAccess(player: EntityPlayer): Boolean = true
 
@@ -49,5 +42,19 @@ class NBTItemCollectionAccess(private[access] val nbt: NBTTagCompound, isEmpty: 
     nbt.func_150296_c().collect { case i: String => i }.foreach(nbt.removeTag)
     setSize(access.length) //This lets us copy from any access
     super.copyFromAccess(access, copy)
+  }
+
+  def setSize(i: Int) = nbt.setInteger(SIZE_KEY, i)
+
+  private[itszuvalex] def updateBackingStore(n: NBTTagCompound, isEmpty: Boolean = false) = {
+    nbt = n
+    if (isEmpty)
+      initializeEmptyNBT()
+    onInventoryChanged(-1)
+  }
+
+  def initializeEmptyNBT() = {
+    nbt.func_150296_c().collect { case i: String => i }.foreach(nbt.removeTag)
+    setSize(0)
   }
 }

@@ -31,11 +31,12 @@ object NBTItemAccess {
 
 class NBTItemAccess(private[access] val nbtAccess: NBTItemCollectionAccess, private[access] val index: Int) extends IItemAccess {
   private[access] val revision                = nbtAccess.getRevision
-  private[access] val nbt                     = nbtAccess.nbt
   private[access] var item: Option[ItemStack] = getItemCompound(false) match {
     case None => None
     case Some(comp) => Option(NBTItemAccess.deserialize(comp))
   }
+
+  private[access] def nbt                 = nbtAccess.nbt
 
   /**
     *

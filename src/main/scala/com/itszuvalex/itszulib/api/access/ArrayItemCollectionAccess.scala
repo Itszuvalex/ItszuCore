@@ -6,8 +6,8 @@ import net.minecraft.item.ItemStack
 /**
   * Created by Christopher Harris (Itszuvalex) on 3/10/16.
   */
-class ArrayItemCollectionAccess(private[access] val array: Array[ItemStack], private[access] var caching: Boolean = true) extends IItemCollectionAccess {
-  private[access] lazy val cache = new Array[IItemAccess](array.length)
+class ArrayItemCollectionAccess(private[access] var array: Array[ItemStack], private[access] var caching: Boolean = true) extends IItemCollectionAccess {
+  private[access] var cache = new Array[IItemAccess](array.length)
 
   override def canPlayerAccess(player: EntityPlayer): Boolean = true
 
@@ -23,4 +23,11 @@ class ArrayItemCollectionAccess(private[access] val array: Array[ItemStack], pri
   def isCaching = caching
 
   def setCaching(c: Boolean) = caching = c
+
+  private[itszuvalex] def updateBackingStore(a: Array[ItemStack]): Unit = {
+    array = a
+
+    cache = new Array[IItemAccess](array.length)
+    onInventoryChanged(-1)
+  }
 }

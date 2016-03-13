@@ -31,8 +31,9 @@ import net.minecraft.nbt.NBTTagCompound
   */
 class ArrayItemStorage(size: Int) extends IItemStorage {
   private var inventory = new Array[ItemStack](size)
-  private var access    = new ArrayItemCollectionAccess(inventory)
-  private var invAccess = ItemAccessWrapperFactory.wrap(access)
+
+  private val access    = new ArrayItemCollectionAccess(inventory)
+  private val invAccess = ItemAccessWrapperFactory.wrap(access)
 
   def this() = this(0)
 
@@ -57,9 +58,7 @@ class ArrayItemStorage(size: Int) extends IItemStorage {
 
   private def updateBackingStore(array: Array[ItemStack]): Unit = {
     inventory = array
-    access.incrementRevision()
-    access = new ArrayItemCollectionAccess(inventory)
-    invAccess = ItemAccessWrapperFactory.wrap(access)
+    access.updateBackingStore(inventory)
   }
 
 }

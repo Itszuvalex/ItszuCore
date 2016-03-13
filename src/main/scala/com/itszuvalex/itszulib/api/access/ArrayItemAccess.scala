@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack
   * Created by Christopher Harris (Itszuvalex) on 3/10/16.
   */
 class ArrayItemAccess(private[access] val arrayAccess: ArrayItemCollectionAccess, private[access] val index: Int) extends IItemAccess {
-  private[access] val array = arrayAccess.array
+  private[access] def array = arrayAccess.array
 
   /**
     *
