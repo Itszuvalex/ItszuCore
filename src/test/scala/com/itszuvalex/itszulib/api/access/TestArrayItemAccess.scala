@@ -79,6 +79,27 @@ class TestArrayItemAccess extends TestBase {
           access.maxDamage.get shouldEqual access.getItemStack.get.getMaxDamage
         }
       }
+      "increment" should {
+        "return total increment when incrementing less than remaining space" in new Access(0, new PartialCollection) {
+          access.increment(5) shouldBe 5
+          access.currentStorage.get shouldBe 6
+        }
+        "return remaining space when incrementing more than remaining space" in new Access(7, new PartialCollection) {
+          access.increment(5) shouldBe 1
+          access.currentStorage.get shouldBe access.maxStorage.get
+        }
+      }
+      "decrement" should {
+        "return total decrement when decrementing less than currentStorage" in new Access(3, new PartialCollection) {
+          access.decrement(5) shouldBe 5
+          access.currentStorage.get shouldBe 5
+        }
+        "return currentStorage and clear ItemStack when decrementing more than currentStorage" in new Access(1, new PartialCollection) {
+          access.decrement(5) shouldBe 2
+          access.getItemStack shouldBe empty
+          access.currentStorage shouldBe empty
+        }
+      }
     }
     "referencing an out of bounds Array slot" should {
       "throw ArrayIndexOutOfBoundsException" in new Access(-1, new EmptyCollection) {
@@ -110,7 +131,18 @@ class TestArrayItemAccess extends TestBase {
             val amt = access.currentStorage.get
             val res = access.split(1)
             access.currentStorage.get should equal(amt - 1)
+            res.currentStorage.get shouldEqual 1
           }
+        }
+        "when splitting for its current amount, set clear its internal ItemStack" in new Access(3, new PartialCollection) {
+          val res = access.split(10)
+          access shouldBe 'Empty
+          res.currentStorage.get shouldEqual 10
+        }
+        "when splitting for more than its current amount, return its current amount and clear its ItemStack" in new Access(3, new PartialCollection) {
+          val res = access.split(15)
+          access shouldBe 'Empty
+          res.currentStorage.get shouldEqual 10
         }
       }
     }

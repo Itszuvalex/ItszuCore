@@ -15,15 +15,15 @@ class ArrayItemAccess(private[access] val arrayAccess: ArrayItemCollectionAccess
     */
   override def split(amount: Int): IItemAccess = amount match {
     case invalid if invalid <= 0 => new FloatingItemAccess(null)
-    case other => new FloatingItemAccess(
-                                          getItemStack.map { i =>
-                                            val item = i.copy()
-                                            val size = Math.min(currentStorage.get, amount)
-                                            item.stackSize = size
-                                            decrement(size)
-                                            item
-                                                           }.orNull
-                                        )
+    case _ => new FloatingItemAccess(
+                                      getItemStack.map { i =>
+                                        val item = i.copy()
+                                        item.stackSize = decrement(amount)
+                                        if (item.stackSize > 0)
+                                          item
+                                        else null
+                                                       }.orNull
+                                    )
   }
 
   /**

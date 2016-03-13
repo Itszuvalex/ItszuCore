@@ -49,17 +49,6 @@ trait IItemAccess {
     */
   def maxStorage: Option[Int] = getItemStack.map(_.getMaxStackSize)
 
-  /**
-    *
-    * @return Usually ItemStack.StackSize, but could be different for different storages.
-    */
-  def currentStorage: Option[Int] = getItemStack.map(_.stackSize)
-
-  /**
-    * Call when backing item changes.
-    */
-  def onItemChanged(): Unit = {}
-
   def damage: Option[Int] = getItemStack.map(_.getItemDamage)
 
   def maxDamage: Option[Int] = getItemStack.map(_.getMaxDamage)
@@ -82,6 +71,17 @@ trait IItemAccess {
     onItemChanged()
     dec
                                                      }.getOrElse(0)
+
+  /**
+    *
+    * @return Usually ItemStack.StackSize, but could be different for different storages.
+    */
+  def currentStorage: Option[Int] = getItemStack.map(_.stackSize)
+
+  /**
+    * Call when this changes backing item.
+    */
+  def onItemChanged(): Unit = {}
 
   /**
     * Remove Item and metadata from this access.

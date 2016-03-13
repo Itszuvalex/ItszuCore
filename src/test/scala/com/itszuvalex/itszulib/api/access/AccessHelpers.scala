@@ -18,9 +18,11 @@ object AccessHelpers extends TestBase {
   trait PartialArray {
     val array = new Array[ItemStack](10)
     val item0 = new ItemStack(new StubItem)
-    val item3 = new ItemStack(new StubItem, 5)
-    val item7 = new ItemStack(new StubItem, 64)
+    val item1 = new ItemStack(new StubItem, 2)
+    val item3 = new ItemStack(new StubItem, 10)
+    val item7 = new ItemStack(new StubItem, 63)
     array(0) = item0
+    array(1) = item1
     array(3) = item3
     array(7) = item7
   }
@@ -32,10 +34,12 @@ object AccessHelpers extends TestBase {
       val copy = item.copy()
       val amount = Math.min(amt, item.stackSize)
       item.stackSize -= amount
-      if (item.stackSize == 0)
+      if (item.stackSize <= 0)
         setInventorySlotContents(slot, null)
       copy.stackSize = amount
-      copy
+      if (copy.stackSize > 0)
+        copy
+      else null
     }
 
     override def setInventorySlotContents(slot: Int, item: ItemStack): Unit = {
