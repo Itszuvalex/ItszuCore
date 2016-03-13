@@ -101,5 +101,6 @@ abstract class TileEntityBase extends TileEntity with TileDescriptionPacket {
 
   def notifyNeighborsOfChange() = if (worldObj != null) worldObj.func_147453_f(xCoord, yCoord, zCoord, getBlockType)
 
+  def onBlockBreak(): Unit = {}
 
 }
