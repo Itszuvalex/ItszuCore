@@ -23,6 +23,4 @@ class ArrayItemCollectionAccess(private[access] val array: Array[ItemStack], pri
   def isCaching = caching
 
   def setCaching(c: Boolean) = caching = c
-
-  override def iterator: Iterator[IItemAccess] = new DefaultItemCollectionAccessIterator(this)
 }

@@ -1,15 +1,11 @@
 package com.itszuvalex.itszulib.api.access
 
-import java.util.concurrent.atomic.AtomicInteger
-
 import net.minecraft.entity.player.EntityPlayer
 
 /**
   * Created by Christopher Harris (Itszuvalex) on 3/12/2016.
   */
-trait IPowerCollectionAccess extends scala.collection.mutable.Seq[IPowerAccess] {
-  private val revision = new AtomicInteger(0)
-
+trait IPowerCollectionAccess extends scala.collection.mutable.Seq[IPowerAccess] with Revisioned {
   def canPlayerAccess(player: EntityPlayer): Boolean
 
   /**
@@ -22,11 +18,9 @@ trait IPowerCollectionAccess extends scala.collection.mutable.Seq[IPowerAccess] 
   def copyFromAccess(access: IPowerCollectionAccess) = {
     if (length == access.length) {
       (this zip access).foreach(pair => pair._1.copyFromAccess(pair._2))
-      revision.incrementAndGet()
+      incrementRevision()
     }
   }
 
-  def getRevision: Int = revision.intValue()
-
-  override def iterator: Iterator[IPowerAccess] = new DefaultPowerCollectionAccessIterator(this)
+  override def iterator: Iterator[IPowerAccess] = new AccessCollectionIterator[IPowerCollectionAccess, IPowerAccess](this)
 }
