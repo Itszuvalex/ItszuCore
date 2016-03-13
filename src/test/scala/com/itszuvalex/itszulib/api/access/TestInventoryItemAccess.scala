@@ -44,7 +44,7 @@ class TestInventoryItemAccess extends TestBase {
         "return ItemStack Some(_)" in new Access(0, new PartialCollection) {
           access.getItemStack should not be empty
         }
-        "return ItemStack from backing array" in new Access(0, new PartialCollection) {
+        "return ItemStack from backing inventory" in new Access(0, new PartialCollection) {
           access.getItemStack.get should be theSameInstanceAs collection.inventory.getStackInSlot(0)
         }
       }

@@ -8,12 +8,33 @@ import scala.collection.JavaConversions._
 /**
   * Created by Christopher Harris (Itszuvalex) on 3/10/16.
   */
+object NBTItemAccess {
+  // Serialize
+  val defaultItemStackNBTSerializer  : (ItemStack, NBTTagCompound) => Unit = _.writeToNBT(_)
+  // Deserialize
+  val defaultItemStackNBTDeserializer: (NBTTagCompound) => ItemStack       = ItemStack.loadItemStackFromNBT
+  var currentItemStackNBTSerializer                                        = defaultItemStackNBTSerializer
+  var currentItemStackNBTDeserializer                                      = defaultItemStackNBTDeserializer
+
+  def setNBTItemSerializer(func: (ItemStack, NBTTagCompound) => Unit) = currentItemStackNBTSerializer = func
+
+  def restoreDefaultNBTItemSerializer() = currentItemStackNBTSerializer = defaultItemStackNBTSerializer
+
+  def serialize(item: ItemStack, nbt: NBTTagCompound) = currentItemStackNBTSerializer(item, nbt)
+
+  def setNBTItemDeserializer(func: (NBTTagCompound) => ItemStack) = currentItemStackNBTDeserializer = func
+
+  def restoreDefaultNBTItemDeserializer() = currentItemStackNBTDeserializer = defaultItemStackNBTDeserializer
+
+  def deserialize(tag: NBTTagCompound): ItemStack = currentItemStackNBTDeserializer(tag)
+}
+
 class NBTItemAccess(private[access] val nbtAccess: NBTItemCollectionAccess, private[access] val index: Int) extends IItemAccess {
   private[access] val revision                = nbtAccess.getRevision
   private[access] val nbt                     = nbtAccess.nbt
   private[access] var item: Option[ItemStack] = getItemCompound(false) match {
     case None => None
-    case Some(comp) => Some(ItemStack.loadItemStackFromNBT(comp))
+    case Some(comp) => Option(NBTItemAccess.deserialize(comp))
   }
 
   /**
@@ -39,7 +60,11 @@ class NBTItemAccess(private[access] val nbtAccess: NBTItemCollectionAccess, priv
     *
     * @return Backing ItemStack
     */
-  override def getItemStack: Option[ItemStack] = if (isValid) item else None
+  override def getItemStack: Option[ItemStack] = {
+    if (index < 0 || index >= nbtAccess.length)
+      throw new ArrayIndexOutOfBoundsException
+    if (isValid) item else None
+  }
 
   /**
     *
@@ -69,7 +94,8 @@ class NBTItemAccess(private[access] val nbtAccess: NBTItemCollectionAccess, priv
       case (None, Some(_)) => nbt.removeTag(index.toString)
       case (Some(i), Some(comp)) =>
         comp.func_150296_c().collect { case s: String => s }.foreach(comp.removeTag)
-        i.writeToNBT(comp)
+        NBTItemAccess.serialize(i, comp)
+        nbt.setTag(index.toString, comp)
     }
     nbtAccess.onInventoryChanged(index)
   }
