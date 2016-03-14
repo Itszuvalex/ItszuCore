@@ -11,20 +11,7 @@ import org.scalatest.BeforeAndAfterEach
   */
 class TestNBTItemAccess extends TestBase with BeforeAndAfterEach {
 
-  override protected def afterEach(): Unit = {
-    NBTItemAccess.restoreDefaultNBTItemDeserializer()
-  }
-
-  trait Collection {val collection: NBTItemCollectionAccess}
-
-  class EmptyCollection extends Collection with AccessHelpers.EmptyArray {
-    override val collection = new NBTItemCollectionAccess(new NBTTagCompound, true)
-    collection.setSize(10)
-  }
-
-  class PartialCollection extends Collection with AccessHelpers.PartialArray {
-    override val collection = new NBTItemCollectionAccess(new NBTTagCompound, false)
-    val other = new ArrayItemCollectionAccess(array)
+  override protected def beforeEach(): Unit = {
     NBTItemAccess.setNBTItemDeserializer({ nbt =>
       if (nbt.hasNoTags)
         null
@@ -39,9 +26,24 @@ class TestNBTItemAccess extends TestBase with BeforeAndAfterEach {
         item
       }
                                          })
-    collection.copyFromAccess(other, copy = false)
   }
 
+  override protected def afterEach(): Unit = {
+    NBTItemAccess.restoreDefaultNBTItemDeserializer()
+  }
+
+  trait Collection {val collection: NBTItemCollectionAccess}
+
+  class EmptyCollection extends Collection with AccessHelpers.EmptyArray {
+    override val collection = new NBTItemCollectionAccess(new NBTTagCompound, true)
+    collection.setSize(10)
+  }
+
+  class PartialCollection extends Collection with AccessHelpers.PartialArray {
+    override val collection = new NBTItemCollectionAccess(new NBTTagCompound, false)
+    val other = new ArrayItemCollectionAccess(array)
+    collection.copyFromAccess(other, copy = false)
+  }
 
   "An NBTItemAccess" when {
     "referencing an empty Array slot" should {

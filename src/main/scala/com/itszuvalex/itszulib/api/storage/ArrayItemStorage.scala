@@ -27,13 +27,12 @@ import net.minecraft.nbt.NBTTagCompound
 
 /**
   *
-  * @param size Utility class for storing and saving/loading ItemStack[]s with ease.
   */
-class ArrayItemStorage(size: Int) extends IItemStorage {
-  private var inventory = new Array[ItemStack](size)
-
-  private val access    = new ArrayItemCollectionAccess(inventory)
+class ArrayItemStorage(private var array: Array[ItemStack]) extends IItemStorage {
+  private val access    = new ArrayItemCollectionAccess(array)
   private val invAccess = ItemAccessWrapperFactory.wrap(access)
+
+  def this(size: Int) = this(new Array[ItemStack](size))
 
   def this() = this(0)
 
@@ -44,10 +43,10 @@ class ArrayItemStorage(size: Int) extends IItemStorage {
   /**
     * @return ItemStack[] that backs this inventory class. Modifications to it modify this.
     */
-  def getArray: Array[ItemStack] = inventory
+  def getArray: Array[ItemStack] = array
 
   override def saveToNBT(compound: NBTTagCompound) = {
-    new NBTItemCollectionAccess(compound).copyFromAccess(access, copy = false)
+    new NBTItemCollectionAccess(compound, true).copyFromAccess(access, copy = false)
   }
 
   override def loadFromNBT(compound: NBTTagCompound) = {
@@ -56,9 +55,9 @@ class ArrayItemStorage(size: Int) extends IItemStorage {
     access.copyFromAccess(nbt, copy = false)
   }
 
-  private def updateBackingStore(array: Array[ItemStack]): Unit = {
-    inventory = array
-    access.updateBackingStore(inventory)
+  private def updateBackingStore(a: Array[ItemStack]): Unit = {
+    array = a
+    access.updateBackingStore(array)
   }
 
 }
