@@ -22,7 +22,7 @@ package com.itszuvalex.itszulib.proxy
 
 import com.itszuvalex.itszulib.gui.GuiStack
 import com.itszuvalex.itszulib.render.{PreviewableRenderHandler, PreviewableRendererRegistry, RenderSimpleMachine, ShaderUtils}
-import com.itszuvalex.itszulib.testing._
+import com.itszuvalex.itszulib.testing.{PortalTileTest, _}
 import cpw.mods.fml.client.registry.{ClientRegistry, RenderingRegistry}
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.world.World

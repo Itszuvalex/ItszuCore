@@ -1,5 +1,6 @@
 package com.itszuvalex.itszulib.api.access
 
+import com.itszuvalex.itszulib.api.OverridableFunction
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 
@@ -9,24 +10,23 @@ import scala.collection.JavaConversions._
   * Created by Christopher Harris (Itszuvalex) on 3/10/16.
   */
 object NBTItemAccess {
-  // Serialize
-  val defaultItemStackNBTSerializer  : (ItemStack, NBTTagCompound) => Unit = _.writeToNBT(_)
-  // Deserialize
-  val defaultItemStackNBTDeserializer: (NBTTagCompound) => ItemStack       = ItemStack.loadItemStackFromNBT
-  var currentItemStackNBTSerializer                                        = defaultItemStackNBTSerializer
-  var currentItemStackNBTDeserializer                                      = defaultItemStackNBTDeserializer
+  val itemStackNBTDeserializer = new OverridableFunction(ItemStack.loadItemStackFromNBT _)
+  val itemStackNBTSerializer   = new OverridableFunction((i: ItemStack, n: NBTTagCompound) => {
+    i.writeToNBT(n)
+    () // Fix Unit.type error
+  })
 
-  def setNBTItemSerializer(func: (ItemStack, NBTTagCompound) => Unit) = currentItemStackNBTSerializer = func
+  def setNBTItemSerializer(func: (ItemStack, NBTTagCompound) => Unit) = itemStackNBTSerializer.overrideFunc(func)
 
-  def restoreDefaultNBTItemSerializer() = currentItemStackNBTSerializer = defaultItemStackNBTSerializer
+  def restoreDefaultNBTItemSerializer() = itemStackNBTSerializer.revert()
 
-  def serialize(item: ItemStack, nbt: NBTTagCompound) = currentItemStackNBTSerializer(item, nbt)
+  def serialize(item: ItemStack, nbt: NBTTagCompound) = itemStackNBTSerializer.apply(item, nbt)
 
-  def setNBTItemDeserializer(func: (NBTTagCompound) => ItemStack) = currentItemStackNBTDeserializer = func
+  def setNBTItemDeserializer(func: (NBTTagCompound) => ItemStack) = itemStackNBTDeserializer.overrideFunc(func)
 
-  def restoreDefaultNBTItemDeserializer() = currentItemStackNBTDeserializer = defaultItemStackNBTDeserializer
+  def restoreDefaultNBTItemDeserializer() = itemStackNBTDeserializer.revert()
 
-  def deserialize(tag: NBTTagCompound): ItemStack = currentItemStackNBTDeserializer(tag)
+  def deserialize(tag: NBTTagCompound): ItemStack = itemStackNBTDeserializer.apply(tag)
 }
 
 class NBTItemAccess(private[access] val nbtAccess: NBTItemCollectionAccess, private[access] val index: Int) extends IItemAccess {
@@ -35,8 +35,6 @@ class NBTItemAccess(private[access] val nbtAccess: NBTItemCollectionAccess, priv
     case None => None
     case Some(comp) => Option(NBTItemAccess.deserialize(comp))
   }
-
-  private[access] def nbt                 = nbtAccess.nbt
 
   /**
     *
@@ -111,4 +109,6 @@ class NBTItemAccess(private[access] val nbtAccess: NBTItemCollectionAccess, priv
     }
     else None
   }
+
+  private[access] def nbt = nbtAccess.nbt
 }
